@@ -6,3 +6,6 @@ build/
 
 # Main executable
 main
+
+# Swap files
+*.swp
