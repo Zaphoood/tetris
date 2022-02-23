@@ -1,2 +1,8 @@
 # Visual Studio Code project files
 .vscode/
+
+# Build files
+build/
+
+# Main executable
+main
