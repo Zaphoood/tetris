@@ -1,18 +1,21 @@
 #include "iostream"
 #include "SDL.h"
 
+#include "playfield.h"
+
 int main(int argc, char *argv[])
 {
-
-    // returns zero on success else non-zero
+    // Initialize SDL and create window
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
         printf("error initializing SDL: %s\n", SDL_GetError());
     }
-    SDL_Window *win = SDL_CreateWindow("Tetris",
-                                       SDL_WINDOWPOS_CENTERED,
-                                       SDL_WINDOWPOS_CENTERED,
-                                       600, 400, 0);
+    SDL_Window *window = SDL_CreateWindow("Tetris",
+                                          SDL_WINDOWPOS_CENTERED,
+                                          SDL_WINDOWPOS_CENTERED,
+                                          600, 400, 0);
+
+    Playfield playfield = Playfield();
 
     bool isRunning = true;
 
