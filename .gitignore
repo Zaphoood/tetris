@@ -5,7 +5,7 @@
 build/
 
 # Main executable
-main
+main.out
 
 # Swap files
 *.swp

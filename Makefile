@@ -6,7 +6,7 @@ CXXFLAGS=-I./libs/SDL2/include -std=c++17
 src_dir=./src
 build_dir=./build
 
-bin=main
+bin=main.out
 srcs=main.cpp playfield.cpp
 headers=playfield.h
 objs=main.o playfield.o
