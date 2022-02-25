@@ -6,15 +6,14 @@ CXXFLAGS=-I./libs/SDL2/include -std=c++17
 src_dir=./src
 build_dir=./build
 
-bin=main.out
-srcs=main.cpp playfield.cpp
-headers=playfield.h
-objs=main.o playfield.o
+bin := main.out
+srcs := $(wildcard $(src_dir)/*.cpp)
+objs := $(patsubst $(src_dir)/%.cpp,$(build_dir)/%.o,$(srcs))
 
-all: $(patsubst %, build/%, $(objs))
-	$(CXX) $(CXXFLAGS) -o $(bin) $(patsubst %, build/%, $(objs)) $(LINK_FLAGS)
+all: $(objs)
+	$(CXX) $(CXXFLAGS) -o $(bin) $^ $(LINK_FLAGS)
 
-$(patsubst %, build/%, $(objs)): build/%.o: $(src_dir)/%.cpp $(src_dir)/$(headers)
+$(build_dir)/%.o: $(src_dir)/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
