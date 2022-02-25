@@ -1,10 +1,15 @@
-#include "active.h"
 #include "array"
+#include "iostream"
+#include "stdexcept"
+
+#include "active.h"
+#include "playfield.h"
 
 std::array<std::array<int, 2>, 2> test = {{{0, 0}, {0, 0}}};
 
+inline const uint8_t N_TETROMINOS = 7;
 // clang-format off
-inline const std::array<std::array<std::array<uint8_t, 4>, 4>, 7> TETROMINOS = {{
+inline const std::array<std::array<std::array<uint8_t, 4>, 4>, N_TETROMINOS> TETROMINOS = {{
     // I
     {{
         {0, 0, 0, 0},
@@ -61,16 +66,120 @@ Active::Active(uint8_t type) {
     respawn(type);
 }
 
+void Active::loadGrid() {
+    m_grid = TETROMINOS[m_type];
+}
+
 void Active::respawn(uint8_t type) {
+    // Move the Tetromino to the top and load the new Tetromino
+    // into the grid
+    if (type < 0 || type >= N_TETROMINOS) {
+        throw std::out_of_range("Tetromino type must be in range [0..6].");
+    }
     // Set new Tetromino type
     m_type = type;
     // Load corresponding Tetromino into grid
-    loadTetromino();
+    loadGrid();
     // Set starting position
     m_x = STARTING_POSITION_X;
     m_y = STARTING_POSITION_Y;
 }
 
-void Active::loadTetromino() {
-    m_grid = TETROMINOS[m_type];
+void Active::setAndRespawn(uint8_t new_type, Playfield *playfield) {
+    // 'Bake' the current Tetromino into the Playfield, afterwards respawn
+    for (int x = 0; x < 4; x++) {
+        for (int y = 0; y < 4; y++) {
+            if (m_grid[y][x]) {
+                playfield->setAt(m_x + x, m_y + y, m_type);
+            }
+        }
+    }
+    respawn(new_type);
+}
+
+void Active::draw(SDL_Renderer *renderer, Playfield *playfield) {
+    for (int x = 0; x < 4; x++) {
+        for (int y = 0; y < 4; y++) {
+            if (m_grid[y][x]) {
+                playfield->drawMino(renderer, m_x + x, m_y + y,
+                                    TETROMINO_COLORS[m_type]);
+            }
+        }
+    }
+}
+
+bool Active::moveRight(Playfield *playfield) {
+    bool can_move = canMoveRight(playfield);
+    if (can_move) {
+        m_x++;
+    }
+    return can_move;
+}
+
+bool Active::canMoveRight(Playfield *playfield) {
+    // Get the offset of the rightmost Mino in the grid
+    uint8_t rightmost = 0;
+    for (uint8_t row = 0; row < 4; row++) {
+        for (uint8_t col = 0; col < 4; col++) {
+            if (m_grid[row][col]) {
+                // At right border, can't move any further
+                if (m_x + col >= GRID_SIZE_X - 1 ||
+                    // Spot to the right is filled
+                    !playfield->isEmpty(m_x + col + 1, m_y + row)) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+
+bool Active::moveLeft(Playfield *playfield) {
+    bool can_move = canMoveLeft(playfield);
+    if (can_move) {
+        m_x--;
+    }
+    return can_move;
+}
+
+bool Active::canMoveLeft(Playfield *playfield) {
+    for (uint8_t row = 0; row < 4; row++) {
+        for (uint8_t col = 0; col < 4; col++) {
+            if (m_grid[row][col]) {
+                // At left border, can't move any further
+                if (m_x + col <= 0 ||
+                    // Spot to the left is filled
+                    !playfield->isEmpty(m_x + col - 1, m_y + row)) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+
+bool Active::stepDown(Playfield *playfield) {
+    if (canStepDown(playfield)) {
+        m_y++;
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool Active::canStepDown(Playfield *playfield) {
+    // Check if there would be any collision with a Mino on the Playfield
+    for (uint8_t row = 0; row < 4; row++) {
+        for (uint8_t col = 0; col < 4; col++) {
+            if (m_grid[row][col]) {
+                // At bottom, can't move any further down
+                if (m_y + row >= GRID_SIZE_Y - 1 ||
+                    // Spot below is filled
+                    !playfield->isEmpty(m_x + col, m_y + row + 1)) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
 }

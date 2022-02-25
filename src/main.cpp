@@ -1,4 +1,5 @@
 #include "SDL.h"
+#include "chrono"
 #include "iostream"
 
 #include "active.h"
@@ -15,7 +16,8 @@ int main(int argc, char *argv[]) {
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
 
     Playfield playfield = Playfield();
-    Active active = Active(0);
+    uint8_t type = 0;
+    Active active = Active(type);
 
     bool isRunning = true;
 
@@ -26,13 +28,32 @@ int main(int argc, char *argv[]) {
             case SDL_QUIT:
                 isRunning = false;
                 break;
-            default:
+            case SDL_KEYDOWN:
+                switch (e.key.keysym.sym) {
+                case SDLK_RIGHT:
+                    active.moveRight(&playfield);
+                    break;
+                case SDLK_LEFT:
+                    active.moveLeft(&playfield);
+                    break;
+                case SDLK_DOWN:
+                    active.stepDown(&playfield);
+                    break;
+                case SDLK_UP:
+                    active.m_y--;
+                    break;
+                case SDLK_SPACE:
+                    type = (type + 1) % 7;
+                    active.setAndRespawn(type, &playfield);
+                    break;
+                }
                 break;
             }
         }
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderClear(renderer);
-        playfield.draw(renderer, &active, 0, 0);
+        playfield.draw(renderer, 0, 0);
+        active.draw(renderer, &playfield);
         SDL_RenderPresent(renderer);
     }
 

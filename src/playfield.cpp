@@ -13,17 +13,12 @@ Playfield::Playfield() {
             grid[i][j] = 7;
         }
     }
-
-    // Set bottom right cell to 0
-    grid[39][0] = 0;
 }
 
-void Playfield::draw(SDL_Renderer *renderer, Active *active, int pos_x,
-                     int pos_y) {
+void Playfield::draw(SDL_Renderer *renderer, int pos_x, int pos_y) {
     // TODO: Accept different drawing positions
     drawGrid(renderer);
     drawPlayfield(renderer);
-    drawActiveTetromino(renderer, active);
 }
 
 void Playfield::drawPlayfield(SDL_Renderer *renderer) {
@@ -49,23 +44,6 @@ void Playfield::drawGrid(SDL_Renderer *renderer) {
     }
 }
 
-void Playfield::drawActiveTetromino(SDL_Renderer *renderer, Active *active) {
-    for (int x = 0; x < 4; x++) {
-        for (int y = 0; y < 4; y++) {
-            switch (active->m_grid[y][x]) {
-            case 0:
-                break;
-            case 1:
-                drawMino(renderer, active->m_x + x, active->m_y + y,
-                         TETROMINO_COLORS[active->m_type]);
-                break;
-            default:
-                break;
-            }
-        }
-    }
-}
-
 void Playfield::drawMino(SDL_Renderer *renderer, int x, int y,
                          const std::array<uint8_t, 3> &color) {
     // Compute rectangle according to cell size
@@ -77,4 +55,21 @@ void Playfield::drawMino(SDL_Renderer *renderer, int x, int y,
     // Draw a black outline
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderDrawRect(renderer, &rect);
+}
+
+uint8_t Playfield::getAt(int x, int y) {
+    return grid[y][x];
+}
+
+bool Playfield::isEmpty(int x, int y) {
+    return getAt(x, y) > 6;
+}
+
+bool Playfield::setAt(int x, int y, uint8_t mino_type) {
+    if (mino_type < 0 || mino_type > 6) {
+        return false;
+    } else {
+        grid[y][x] = mino_type;
+        return true;
+    }
 }

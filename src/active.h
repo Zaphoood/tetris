@@ -1,9 +1,10 @@
 #pragma once
 #include "array"
+#include "playfield.h"
 #include "stdint.h"
 
-inline const int STARTING_POSITION_X = 3;
-inline const int STARTING_POSITION_Y = 20;
+inline const int STARTING_POSITION_X = 3;  // 3;
+inline const int STARTING_POSITION_Y = 28; // 20;
 
 class Active {
   public:
@@ -14,13 +15,18 @@ class Active {
     uint8_t m_type; // Type of current Tetrmino (e.g. O)
 
   private:
-    void loadTetromino();
+    void loadGrid();
+    bool canMoveRight(Playfield *playfield);
+    bool canMoveLeft(Playfield *playfield);
 
   public:
     Active(uint8_t type);
 
     void respawn(uint8_t type);
-    void move_right();
-    void move_left();
-    void step_down();
+    void setAndRespawn(uint8_t type, Playfield *playfield);
+    void draw(SDL_Renderer *renderer, Playfield *playfield);
+    bool canStepDown(Playfield *playfield);
+    bool moveRight(Playfield *playfield);
+    bool moveLeft(Playfield *playfield);
+    bool stepDown(Playfield *playfield);
 };
