@@ -183,3 +183,87 @@ bool Active::canStepDown(Playfield *playfield) {
     }
     return true;
 }
+
+std::array<std::array<uint8_t, 4>, 4> Active::getGridRotatedClockw() {
+    std::array<std::array<uint8_t, 4>, 4> new_grid{};
+    switch (m_type) {
+    case 0: // I
+        for (int row = 0; row < 4; row++) {
+            for (int col = 0; col < 4; col++) {
+                new_grid[col][3 - row] = m_grid[row][col];
+            }
+        }
+        break;
+    case 3: // O
+        new_grid = m_grid;
+        break;
+    default: // all other Tetrominos
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 3; col++) {
+                new_grid[col][2 - row] = m_grid[row][col];
+            }
+        }
+    }
+    return new_grid;
+}
+std::array<std::array<uint8_t, 4>, 4> Active::getGridRotatedCounterclockw() {
+    std::array<std::array<uint8_t, 4>, 4> new_grid{};
+    switch (m_type) {
+    case 0: // I
+        for (int row = 0; row < 4; row++) {
+            for (int col = 0; col < 4; col++) {
+                new_grid[3 - col][row] = m_grid[row][col];
+            }
+        }
+        break;
+    case 3: // O
+        new_grid = m_grid;
+        break;
+    default: // all other Tetrominos
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 3; col++) {
+                new_grid[2 - col][row] = m_grid[row][col];
+            }
+        }
+    }
+    return new_grid;
+}
+
+bool Active::doesGridConflict(const std::array<std::array<uint8_t, 4>, 4> &grid,
+                              Playfield *playfield) {
+    // Return true if the given grid overlaps with the playfield at any point if
+    // it were to replace the actual current grid
+    for (int row = 0; row < 3; row++) {
+        for (int col = 0; col < 3; col++) {
+            if (grid[row][col]) {
+                if (!playfield->isEmpty(m_x + col, m_y + row)) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+bool Active::rotateClockw(Playfield *playfield) {
+    std::array<std::array<uint8_t, 4>, 4> new_grid = getGridRotatedClockw();
+    if (doesGridConflict(new_grid, playfield)) {
+        // TODO: Do wall kicks!
+        return false;
+    } else {
+        m_grid = new_grid;
+        return true;
+    }
+}
+
+bool Active::rotateCounterclockw(Playfield *playfield) {
+    std::array<std::array<uint8_t, 4>, 4> new_grid =
+        getGridRotatedCounterclockw();
+    if (doesGridConflict(new_grid, playfield)) {
+        // TODO: Do wall kicks!
+        return false;
+    } else {
+        m_grid = new_grid;
+        return true;
+    }
+}

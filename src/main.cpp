@@ -40,11 +40,14 @@ int main(int argc, char *argv[]) {
                     active.stepDown(&playfield);
                     break;
                 case SDLK_UP:
-                    active.m_y--;
+                    active.rotateClockw(&playfield);
+                    break;
+                case SDLK_c:
+                    active.rotateCounterclockw(&playfield);
                     break;
                 case SDLK_SPACE:
                     type = (type + 1) % 7;
-                    active.setAndRespawn(type, &playfield);
+                    active.respawn(type);
                     break;
                 }
                 break;

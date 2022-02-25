@@ -18,6 +18,10 @@ class Active {
     void loadGrid();
     bool canMoveRight(Playfield *playfield);
     bool canMoveLeft(Playfield *playfield);
+    std::array<std::array<uint8_t, 4>, 4> getGridRotatedClockw();
+    std::array<std::array<uint8_t, 4>, 4> getGridRotatedCounterclockw();
+    bool doesGridConflict(const std::array<std::array<uint8_t, 4>, 4> &grid,
+                          Playfield *playfield);
 
   public:
     Active(uint8_t type);
@@ -29,4 +33,6 @@ class Active {
     bool moveRight(Playfield *playfield);
     bool moveLeft(Playfield *playfield);
     bool stepDown(Playfield *playfield);
+    bool rotateClockw(Playfield *playfield);
+    bool rotateCounterclockw(Playfield *playfield);
 };
