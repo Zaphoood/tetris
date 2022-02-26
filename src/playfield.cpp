@@ -1,9 +1,11 @@
-#include "playfield.h"
-#include "SDL.h"
-#include "active.h"
 #include "array"
 #include "iostream"
 #include "stdint.h"
+
+#include "SDL.h"
+
+#include "active.h"
+#include "playfield.h"
 
 Playfield::Playfield() {
     // Initialize all cells to 7, which represents an empty space

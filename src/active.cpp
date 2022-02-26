@@ -3,9 +3,8 @@
 #include "stdexcept"
 
 #include "active.h"
+#include "constants.h"
 #include "playfield.h"
-
-inline const uint8_t N_TETROMINOS = 7;
 
 // clang-format off
 inline const std::array<TetroGrid_t, N_TETROMINOS> TETROMINOS = {{

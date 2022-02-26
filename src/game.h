@@ -5,8 +5,6 @@
 #include "active.h"
 #include "playfield.h"
 
-const int FALL_DELAY_MS = 250;
-
 class Game {
   private:
     int randomTetrominoType();

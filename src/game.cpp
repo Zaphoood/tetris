@@ -1,5 +1,6 @@
 #include "cstdlib"
 
+#include "constants.h"
 #include "game.h"
 
 Game::Game() {
