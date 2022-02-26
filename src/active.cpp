@@ -5,11 +5,9 @@
 #include "active.h"
 #include "playfield.h"
 
-std::array<std::array<int, 2>, 2> test = {{{0, 0}, {0, 0}}};
-
 inline const uint8_t N_TETROMINOS = 7;
 // clang-format off
-inline const std::array<std::array<std::array<uint8_t, 4>, 4>, N_TETROMINOS> TETROMINOS = {{
+inline const std::array<TetroGrid_t, N_TETROMINOS> TETROMINOS = {{
     // I
     {{
         {0, 0, 0, 0},
@@ -168,7 +166,8 @@ bool Active::stepDown(Playfield *playfield) {
 }
 
 bool Active::canStepDown(Playfield *playfield) {
-    // Check if there would be any collision with a Mino on the Playfield
+    // Check if already at the bottom or if there would be any collision with a
+    // Mino on the Playfield
     for (uint8_t row = 0; row < 4; row++) {
         for (uint8_t col = 0; col < 4; col++) {
             if (m_grid[row][col]) {
@@ -184,8 +183,8 @@ bool Active::canStepDown(Playfield *playfield) {
     return true;
 }
 
-std::array<std::array<uint8_t, 4>, 4> Active::getGridRotatedClockw() {
-    std::array<std::array<uint8_t, 4>, 4> new_grid{};
+TetroGrid_t Active::getGridRotatedClockw() {
+    TetroGrid_t new_grid{};
     switch (m_type) {
     case 0: // I
         for (int row = 0; row < 4; row++) {
@@ -206,8 +205,8 @@ std::array<std::array<uint8_t, 4>, 4> Active::getGridRotatedClockw() {
     }
     return new_grid;
 }
-std::array<std::array<uint8_t, 4>, 4> Active::getGridRotatedCounterclockw() {
-    std::array<std::array<uint8_t, 4>, 4> new_grid{};
+TetroGrid_t Active::getGridRotatedCounterclockw() {
+    TetroGrid_t new_grid{};
     switch (m_type) {
     case 0: // I
         for (int row = 0; row < 4; row++) {
@@ -229,8 +228,7 @@ std::array<std::array<uint8_t, 4>, 4> Active::getGridRotatedCounterclockw() {
     return new_grid;
 }
 
-bool Active::doesGridConflict(const std::array<std::array<uint8_t, 4>, 4> &grid,
-                              Playfield *playfield) {
+bool Active::doesGridConflict(const TetroGrid_t &grid, Playfield *playfield) {
     // Return true if the given grid overlaps with the playfield at any point if
     // it were to replace the actual current grid
     for (int row = 0; row < 3; row++) {
@@ -246,7 +244,7 @@ bool Active::doesGridConflict(const std::array<std::array<uint8_t, 4>, 4> &grid,
 }
 
 bool Active::rotateClockw(Playfield *playfield) {
-    std::array<std::array<uint8_t, 4>, 4> new_grid = getGridRotatedClockw();
+    TetroGrid_t new_grid = getGridRotatedClockw();
     if (doesGridConflict(new_grid, playfield)) {
         // TODO: Do wall kicks!
         return false;
@@ -257,8 +255,7 @@ bool Active::rotateClockw(Playfield *playfield) {
 }
 
 bool Active::rotateCounterclockw(Playfield *playfield) {
-    std::array<std::array<uint8_t, 4>, 4> new_grid =
-        getGridRotatedCounterclockw();
+    TetroGrid_t new_grid = getGridRotatedCounterclockw();
     if (doesGridConflict(new_grid, playfield)) {
         // TODO: Do wall kicks!
         return false;

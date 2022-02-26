@@ -6,11 +6,12 @@
 inline const int STARTING_POSITION_X = 3;  // 3;
 inline const int STARTING_POSITION_Y = 28; // 20;
 
+using TetroGrid_t = std::array<std::array<uint8_t, 4>, 4>;
+
 class Active {
   public:
     int m_x, m_y; // Top left position of rectangle that contains the Tetromino
-    std::array<std::array<uint8_t, 4>, 4>
-        m_grid; // grid representation of the current Tetromino
+    TetroGrid_t m_grid; // grid representation of the current Tetromino
 
     uint8_t m_type; // Type of current Tetrmino (e.g. O)
 
@@ -18,10 +19,9 @@ class Active {
     void loadGrid();
     bool canMoveRight(Playfield *playfield);
     bool canMoveLeft(Playfield *playfield);
-    std::array<std::array<uint8_t, 4>, 4> getGridRotatedClockw();
-    std::array<std::array<uint8_t, 4>, 4> getGridRotatedCounterclockw();
-    bool doesGridConflict(const std::array<std::array<uint8_t, 4>, 4> &grid,
-                          Playfield *playfield);
+    TetroGrid_t getGridRotatedClockw();
+    TetroGrid_t getGridRotatedCounterclockw();
+    bool doesGridConflict(const TetroGrid_t &grid, Playfield *playfield);
 
   public:
     Active(uint8_t type);
