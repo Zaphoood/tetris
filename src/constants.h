@@ -15,6 +15,7 @@ inline const int FALL_DELAY_MS = 250;
 // Soft dropping is 20 times faster than normal falling, therefore the delay is
 // multiplied by 0.05
 inline const double SOFT_DROP_DELAY_MULT = 0.05;
+inline const int LOCK_DOWN_DELAY_MS = 500;
 
 // Playfield
 inline const int CELL_SIZE = 20;

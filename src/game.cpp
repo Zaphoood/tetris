@@ -11,29 +11,44 @@ Game::Game() {
 }
 
 void Game::init() {
-    // Schedule the first step down
-    std::chrono::steady_clock::time_point t_next_step_down;
-    incNextStepDown(std::chrono::steady_clock::now());
+    // Schedule the first fall
+    std::chrono::steady_clock::time_point t_next_fall;
+    resetFall();
 }
 
 void Game::update() {
-    if (soft_dropping && std::chrono::steady_clock::now() > t_next_soft_drop) {
-        performSoftDrop();
+    // Check if the falling Tetromino has made surface contact, if so schedule
+    // lock down timer
+    if (!active.canStepDown(&playfield)) {
+        if (!surface_contact) {
+            surface_contact = true;
+            scheduleLockDown();
+        }
     } else {
-        if (std::chrono::steady_clock::now() > t_next_step_down) {
-            /*
-            std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(
-                             t_next_step_down.time_since_epoch())
-                             .count()
-                      << "\n";
-                      */
-            incNextStepDown(t_next_step_down);
-            if (!active.stepDown(&playfield)) {
-                active.lockDownAndRespawn(randomTetrominoType(), &playfield);
-                // If possible, step down immediatly after spawning (this is
-                // according to the Tetris Guideline)
-                active.stepDown(&playfield);
-            }
+        if (surface_contact) {
+            // No more surface contact; resume falling / soft dropping
+            surface_contact = false;
+            // Reset all timers
+            resetFall();
+            resetSoftDrop();
+        }
+    }
+
+    if (surface_contact) {
+        if (std::chrono::steady_clock::now() > t_lock_down) {
+            // Making surface contact and lock down timer has run out
+            // Lock down Tetromino and spawn a new one
+            active.lockDownAndRespawn(randomTetrominoType(), &playfield);
+            // If possible, step down immediatly after respawning (this is
+            // according to the Tetris Guideline)
+            performFall();
+        }
+    } else {
+        if (soft_dropping &&
+            std::chrono::steady_clock::now() > t_next_soft_drop) {
+            performSoftDrop();
+        } else if (std::chrono::steady_clock::now() > t_next_fall) {
+            performFall();
         }
     }
 }
@@ -41,19 +56,24 @@ void Game::update() {
 void Game::startSoftDropping() {
     // Start soft dropping and immediatly perform first soft drop
     soft_dropping = true;
-    incNextSoftDrop(std::chrono::steady_clock::now());
+    resetSoftDrop();
     performSoftDrop();
 }
 
 void Game::stopSoftDropping() {
-    // Stop soft dropping and resume normal falling (i. e. stepDown()-ing)
+    // Stop soft dropping and resume normal falling
     soft_dropping = false;
-    incNextStepDown(std::chrono::steady_clock::now());
+    resetFall();
 }
 
-void Game::performSoftDrop() {
+bool Game::performSoftDrop() {
     incNextSoftDrop(t_next_soft_drop);
-    active.stepDown(&playfield);
+    return active.stepDown(&playfield);
+}
+
+void Game::resetSoftDrop() {
+    // Reset the soft drop timer. Should be called when soft dropping is started
+    incNextSoftDrop(std::chrono::steady_clock::now());
 }
 
 void Game::incNextSoftDrop(std::chrono::steady_clock::time_point last) {
@@ -62,9 +82,26 @@ void Game::incNextSoftDrop(std::chrono::steady_clock::time_point last) {
                                   (int)(FALL_DELAY_MS * SOFT_DROP_DELAY_MULT));
 }
 
-void Game::incNextStepDown(std::chrono::steady_clock::time_point last) {
-    // Schedule the next step down, as an offset from last
-    t_next_step_down = last + std::chrono::milliseconds(FALL_DELAY_MS);
+bool Game::performFall() {
+    // Move the Tetromino down by one cell and set the timer for the next fall
+    // move
+    incNextFall(t_next_fall);
+    return active.stepDown(&playfield);
+}
+
+void Game::resetFall() {
+    // Reset the fall timer. Should be called when Tetromino starts to fall
+    incNextFall(std::chrono::steady_clock::now());
+}
+
+void Game::incNextFall(std::chrono::steady_clock::time_point last) {
+    // Schedule the next fall, as an offset from last
+    t_next_fall = last + std::chrono::milliseconds(FALL_DELAY_MS);
+}
+
+void Game::scheduleLockDown() {
+    t_lock_down = std::chrono::steady_clock::now() +
+                  std::chrono::milliseconds(LOCK_DOWN_DELAY_MS);
 }
 
 void Game::handleEvent(const SDL_Event &e) {
@@ -75,18 +112,25 @@ void Game::handleEvent(const SDL_Event &e) {
             switch (e.key.keysym.sym) {
             case SDLK_RIGHT:
                 active.moveRight(&playfield);
+                // Reset Lock Down timer to give the player another 0.5
+                // seconds to move the Tetromino before it finally sets
+                // This happens for all sidewards movements and rotations
+                scheduleLockDown();
                 break;
             case SDLK_LEFT:
                 active.moveLeft(&playfield);
+                scheduleLockDown();
                 break;
             case SDLK_DOWN:
                 startSoftDropping();
                 break;
             case SDLK_UP:
                 active.rotateClockw(&playfield);
+                scheduleLockDown();
                 break;
             case SDLK_c:
                 active.rotateCounterclockw(&playfield);
+                scheduleLockDown();
                 break;
             case SDLK_SPACE:
                 active.hardDrop(&playfield);

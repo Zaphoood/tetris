@@ -230,8 +230,11 @@ bool Active::stepDown(Playfield *playfield) {
 }
 
 bool Active::canStepDown(Playfield *playfield) {
-    // Check if already at the bottom or if there would be any collision with a
-    // Mino on the Playfield
+    // Return true if the Tetromino could move down by one cell without
+    // colliding with anything
+
+    // Check if already at the bottom or if there would
+    // be any collision with a Mino on the Playfield
     for (uint8_t row = 0; row < 4; row++) {
         for (uint8_t col = 0; col < 4; col++) {
             if (m_grid[row][col]) {
