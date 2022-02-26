@@ -1,9 +1,9 @@
-#include "SDL.h"
 #include "chrono"
 #include "iostream"
 
-#include "active.h"
-#include "playfield.h"
+#include "SDL.h"
+
+#include "game.h"
 
 int main(int argc, char *argv[]) {
     // Initialize SDL and create window
@@ -15,12 +15,9 @@ int main(int argc, char *argv[]) {
         GRID_SIZE_VISIBLE_X * CELL_SIZE, GRID_SIZE_VISIBLE_Y * CELL_SIZE, 0);
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
 
-    Playfield playfield = Playfield();
-    uint8_t type = 0;
-    Active active = Active(type);
+    Game game = Game();
 
     bool isRunning = true;
-
     while (isRunning) {
         SDL_Event e;
         while (SDL_PollEvent(&e) != 0) {
@@ -28,35 +25,16 @@ int main(int argc, char *argv[]) {
             case SDL_QUIT:
                 isRunning = false;
                 break;
-            case SDL_KEYDOWN:
-                switch (e.key.keysym.sym) {
-                case SDLK_RIGHT:
-                    active.moveRight(&playfield);
-                    break;
-                case SDLK_LEFT:
-                    active.moveLeft(&playfield);
-                    break;
-                case SDLK_DOWN:
-                    active.stepDown(&playfield);
-                    break;
-                case SDLK_UP:
-                    active.rotateClockw(&playfield);
-                    break;
-                case SDLK_c:
-                    active.rotateCounterclockw(&playfield);
-                    break;
-                case SDLK_SPACE:
-                    type = (type + 1) % 7;
-                    active.respawn(type);
-                    break;
-                }
-                break;
+            default:
+                game.handleEvent(e);
             }
         }
+
+        game.update();
+
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderClear(renderer);
-        playfield.draw(renderer, 0, 0);
-        active.draw(renderer, &playfield);
+        game.draw(renderer);
         SDL_RenderPresent(renderer);
     }
 

@@ -98,6 +98,7 @@ inline const std::array<WallkickData_t, 4> WALLKICK_OTHER_CC =
 }};
 // clang-format on
 
+Active::Active() : m_type(-1) {}
 Active::Active(uint8_t type) {
     respawn(type);
 }

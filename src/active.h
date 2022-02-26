@@ -42,6 +42,7 @@ class Active {
                          Wallkick_t &success, Playfield *playfield);
 
   public:
+    Active();
     Active(uint8_t type);
 
     void respawn(uint8_t type);
