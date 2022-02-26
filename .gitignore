@@ -9,3 +9,6 @@ main.out
 
 # Swap files
 *.swp
+
+# Folder containing 2009 Tetris Guidelines
+2009-tetris-guideline
