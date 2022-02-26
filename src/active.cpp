@@ -123,7 +123,7 @@ void Active::respawn(uint8_t type) {
     m_y = STARTING_POSITION_Y;
 }
 
-void Active::setAndRespawn(uint8_t new_type, Playfield *playfield) {
+void Active::lockDownAndRespawn(uint8_t new_type, Playfield *playfield) {
     // 'Bake' the current Tetromino into the Playfield, afterwards respawn
     for (int x = 0; x < 4; x++) {
         for (int y = 0; y < 4; y++) {
@@ -135,15 +135,39 @@ void Active::setAndRespawn(uint8_t new_type, Playfield *playfield) {
     respawn(new_type);
 }
 
-void Active::draw(SDL_Renderer *renderer, Playfield *playfield) {
-    for (int x = 0; x < 4; x++) {
-        for (int y = 0; y < 4; y++) {
-            if (m_grid[y][x]) {
-                playfield->drawMino(renderer, m_x + x, m_y + y,
-                                    TETROMINO_COLORS[m_type]);
+int Active::getGhostY(Playfield *playfield) {
+    // Return the Y position of the Ghost Tetromino.
+
+    int ghost_y = GRID_SIZE_Y;
+    // Iterate over all columns of the Tetromino and see which has the least
+    // space below until the next Mino on the Playfield, calculate new position
+    // to be 1 cell above that
+    for (int col = 0; col < 4; col++) {
+        // Vertical position of the lowest Mino contained in the current column
+        // of the Tetromino, relative to the postition of the Tetromino
+        int lowest_mino_rel = -1;
+        for (int row = 0; row < 4; row++) {
+            if (m_grid[row][col]) {
+                lowest_mino_rel = row;
+            }
+        }
+        if (lowest_mino_rel == -1) {
+            // No Mino in current column -> skip
+            continue;
+        }
+        // Lowest position for each column: at the very bottom
+        ghost_y = std::min(ghost_y, GRID_SIZE_Y - lowest_mino_rel - 1);
+        // Check the corresponding Playfield column and get position of lowest
+        // free cell below.
+        // Absolute position of the lowest Mino in the current column
+        int lowest_mino = m_y + lowest_mino_rel;
+        for (int cell_y = lowest_mino + 1; cell_y < GRID_SIZE_Y; cell_y++) {
+            if (!(*playfield).isEmpty(m_x + col, cell_y)) {
+                ghost_y = std::min(ghost_y, cell_y - lowest_mino_rel - 1);
             }
         }
     }
+    return ghost_y;
 }
 
 bool Active::moveRight(Playfield *playfield) {
@@ -247,6 +271,7 @@ TetroGrid_t Active::getGridRotatedClockw() {
     }
     return new_grid;
 }
+
 TetroGrid_t Active::getGridRotatedCounterclockw() {
     // Return a new grid that is the same as the current one, but the contents
     // are rotated counterclockwise
@@ -398,4 +423,31 @@ bool Active::rotateCounterclockw(Playfield *playfield) {
     // 255. Adding 3 works just fine tho since 3 ≡ -1 (mod 4)
     m_orientation = (m_orientation + 3) % 4;
     return true;
+}
+
+void Active::draw(SDL_Renderer *renderer, Playfield *playfield) {
+    for (int row = 0; row < 4; row++) {
+        for (int col = 0; col < 4; col++) {
+            if (m_grid[row][col]) {
+                playfield->drawMino(renderer, m_x + col, m_y + row,
+                                    TETROMINO_COLORS[m_type]);
+            }
+        }
+    }
+}
+
+void Active::drawGhost(SDL_Renderer *renderer, Playfield *playfield) {
+    int ghost_y = getGhostY(playfield);
+    //  Don't draw the Ghost if it's at the same position as the actual
+    //  Tetromino
+    if (ghost_y > m_y) {
+        for (int row = 0; row < 4; row++) {
+            for (int col = 0; col < 4; col++) {
+                if (m_grid[row][col]) {
+                    playfield->drawGhostMino(renderer, m_x + col,
+                                             ghost_y + row);
+                }
+            }
+        }
+    }
 }

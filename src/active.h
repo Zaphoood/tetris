@@ -45,12 +45,16 @@ class Active {
     Active(uint8_t type);
 
     void respawn(uint8_t type);
-    void setAndRespawn(uint8_t type, Playfield *playfield);
-    void draw(SDL_Renderer *renderer, Playfield *playfield);
-    bool canStepDown(Playfield *playfield);
+    void lockDownAndRespawn(uint8_t type, Playfield *playfield);
+    int getGhostY(Playfield *playfield);
+
     bool moveRight(Playfield *playfield);
     bool moveLeft(Playfield *playfield);
     bool stepDown(Playfield *playfield);
+    bool canStepDown(Playfield *playfield);
     bool rotateClockw(Playfield *playfield);
     bool rotateCounterclockw(Playfield *playfield);
+
+    void draw(SDL_Renderer *renderer, Playfield *playfield);
+    void drawGhost(SDL_Renderer *renderer, Playfield *playfield);
 };

@@ -10,6 +10,7 @@
 Playfield::Playfield() {
     // Initialize all cells to 7, which represents an empty space
     // values 0~6 correspond to different Minos
+    std::cout << "Playfield initialized\n";
     for (int i = 0; i < GRID_SIZE_Y; i++) {
         for (int j = 0; j < GRID_SIZE_X; j++) {
             grid[i][j] = 7;
@@ -46,16 +47,28 @@ void Playfield::drawGrid(SDL_Renderer *renderer) {
     }
 }
 
+SDL_Rect Playfield::getMinoRect(int x, int y) {
+    // Compute rectangle according to cell size
+    return SDL_Rect{x * CELL_SIZE, (y - GRID_START_Y) * CELL_SIZE, CELL_SIZE,
+                    CELL_SIZE};
+}
+
 void Playfield::drawMino(SDL_Renderer *renderer, int x, int y,
                          const std::array<uint8_t, 3> &color) {
-    // Compute rectangle according to cell size
-    SDL_Rect rect{x * CELL_SIZE, (y - GRID_START_Y) * CELL_SIZE, CELL_SIZE,
-                  CELL_SIZE};
+    SDL_Rect rect = getMinoRect(x, y);
     // Draw a square with the color according to the current Mino
     SDL_SetRenderDrawColor(renderer, color[0], color[1], color[2], 255);
     SDL_RenderFillRect(renderer, &rect);
     // Draw a black outline
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderDrawRect(renderer, &rect);
+}
+
+void Playfield::drawGhostMino(SDL_Renderer *renderer, int x, int y) {
+    // Draw a grey outline
+    SDL_SetRenderDrawColor(renderer, GHOST_COLOR[0], GHOST_COLOR[1],
+                           GHOST_COLOR[2], 255);
+    SDL_Rect rect = getMinoRect(x, y);
     SDL_RenderDrawRect(renderer, &rect);
 }
 

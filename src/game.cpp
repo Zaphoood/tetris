@@ -20,9 +20,9 @@ void Game::update() {
         t_next_step_down = std::chrono::steady_clock::now() +
                            std::chrono::milliseconds(FALL_DELAY_MS);
         if (!active.stepDown(&playfield)) {
-            active.setAndRespawn(rand() % 7, &playfield);
-            // If possible, step down immediatly after spawning according to
-            // the Tetris Guideline
+            active.lockDownAndRespawn(randomTetrominoType(), &playfield);
+            // If possible, step down immediatly after spawning (this is
+            // according to the Tetris Guideline)
             active.stepDown(&playfield);
         }
     }
@@ -47,21 +47,16 @@ void Game::handleEvent(const SDL_Event &e) {
         case SDLK_c:
             active.rotateCounterclockw(&playfield);
             break;
-            /*
-            case SDLK_SPACE:
-                type = (type + 1) % 7;
-                active.respawn(type);
-                break;
-            */
         }
     }
 }
 
 void Game::draw(SDL_Renderer *renderer) {
     playfield.draw(renderer, 0, 0);
+    active.drawGhost(renderer, &playfield);
     active.draw(renderer, &playfield);
 }
 
 int Game::randomTetrominoType() {
-    return rand() % 7;
+    return rand() % N_TETROMINOS;
 }

@@ -29,6 +29,8 @@ inline const int WINDOW_Y = GRID_SIZE_Y * CELL_SIZE;
 using ColorRGB = std::array<uint8_t, 3>;
 inline const ColorRGB GRID_COLOR = {{200, 200, 200}};
 inline const ColorRGB BACKGROUND = {{255, 255, 255}};
+// inline const ColorRGB GHOST_COLOR = {{100, 100, 100}};
+inline const ColorRGB GHOST_COLOR = {{100, 100, 100}};
 inline const std::array<ColorRGB, 7> TETROMINO_COLORS = {{
     {{0, 255, 255}}, // I: Cyan
     {{255, 255, 0}}, // O: Yellow
