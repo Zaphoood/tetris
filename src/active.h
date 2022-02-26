@@ -3,8 +3,8 @@
 #include "playfield.h"
 #include "stdint.h"
 
-inline const int STARTING_POSITION_X = 3;  // 3;
-inline const int STARTING_POSITION_Y = 28; // 20;
+inline const int STARTING_POSITION_X = 3;
+inline const int STARTING_POSITION_Y = 18;
 
 using TetroGrid_t = std::array<std::array<uint8_t, 4>, 4>;
 // A single Wall Kick

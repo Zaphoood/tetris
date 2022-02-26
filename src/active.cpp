@@ -280,7 +280,9 @@ bool Active::doesOffsetGridConflict(const TetroGrid_t &grid, int dx, int dy,
     for (int row = 0; row < 4; row++) {
         for (int col = 0; col < 4; col++) {
             if (grid[row][col]) {
-                if (!playfield->isEmpty(m_x + col + dx, m_y + row + dy)) {
+                if (!playfield->isEmpty(m_x + col + dx, m_y + row + dy) ||
+                    m_x + col + dx < 0 || m_x + col + dx >= GRID_SIZE_X ||
+                    m_y + col + dy < 0 || m_y + col + dy >= GRID_SIZE_Y) {
                     return true;
                 }
             }
