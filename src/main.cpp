@@ -18,6 +18,7 @@ int main(int argc, char *argv[]) {
     Game game = Game();
 
     bool isRunning = true;
+    game.init();
     while (isRunning) {
         SDL_Event e;
         while (SDL_PollEvent(&e) != 0) {

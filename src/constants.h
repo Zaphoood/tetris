@@ -12,6 +12,9 @@ inline const int STARTING_POSITION_Y = 18;
 
 // Tetromino fall delay
 inline const int FALL_DELAY_MS = 250;
+// Soft dropping is 20 times faster than normal falling, therefore the delay is
+// multiplied by 0.05
+inline const double SOFT_DROP_DELAY_MULT = 0.05;
 
 // Playfield
 inline const int CELL_SIZE = 20;
