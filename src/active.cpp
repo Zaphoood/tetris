@@ -6,6 +6,7 @@
 #include "playfield.h"
 
 inline const uint8_t N_TETROMINOS = 7;
+
 // clang-format off
 inline const std::array<TetroGrid_t, N_TETROMINOS> TETROMINOS = {{
     // I
@@ -58,6 +59,43 @@ inline const std::array<TetroGrid_t, N_TETROMINOS> TETROMINOS = {{
         {0, 0, 0, 0},
     }},
 }};
+
+// Wallkick data
+// ... for clockwise rotation of I Tetromino
+inline const std::array<WallkickData_t, 4> WALLKICK_I_C =
+{{
+    {{{{ 0,   0}}, {{-2,  0}}, {{ 1,  0}}, {{-2, -1}}, {{ 1,  2}}}}, // Starting from orienation=0
+    {{{{ 0,   0}}, {{-1,  0}}, {{ 2,  0}}, {{-1, -2}}, {{ 2,  1}}}}, // Starting from orienation=1
+    {{{{ 0,   0}}, {{ 2,  0}}, {{-1,  0}}, {{ 2, -1}}, {{-1,  2}}}}, // Starting from orienation=2
+    {{{{ 0,   0}}, {{ 1,  0}}, {{-2,  0}}, {{ 1,  2}}, {{-2, -1}}}}, // Starting from orienation=3
+}};
+
+// ... for clockwise rotation of all other Tetromino types except O
+inline const std::array<WallkickData_t, 4> WALLKICK_OTHER_C = 
+{{
+    {{{{ 0,   0}}, {{-1,  0}}, {{-1, -1}}, {{ 0,  2}}, {{-1,  2}}}}, // Starting from orienation=0
+    {{{{ 0,   0}}, {{ 1,  0}}, {{ 1,  1}}, {{ 0, -2}}, {{ 1, -2}}}}, // Starting from orienation=1
+    {{{{ 0,   0}}, {{ 1,  0}}, {{ 1, -1}}, {{ 0,  2}}, {{ 1,  2}}}}, // Starting from orienation=2
+    {{{{ 0,   0}}, {{-1,  0}}, {{-1,  1}}, {{ 0, -2}}, {{-1, -2}}}}, // Starting from orienation=3
+}};
+
+// ... for counterclockwise rotation of I Tetromino
+inline const std::array<WallkickData_t, 4> WALLKICK_I_CC =
+{{
+    {{{{ 0,   0}}, {{-1,  0}}, {{ 2,  0}}, {{-1, -2}}, {{ 2,  1}}}}, // Starting from orienation=0
+    {{{{ 0,   0}}, {{ 2,  0}}, {{-1,  0}}, {{ 2, -1}}, {{-1,  2}}}}, // Starting from orienation=1
+    {{{{ 0,   0}}, {{ 1,  0}}, {{-2,  0}}, {{ 1,  2}}, {{-2, -1}}}}, // Starting from orienation=2
+    {{{{ 0,   0}}, {{-2,  0}}, {{ 1,  0}}, {{-2,  1}}, {{ 1, -2}}}}, // Starting from orienation=3
+}};
+
+// ... for counterclockwise rotation of all other Tetromino types types except O
+inline const std::array<WallkickData_t, 4> WALLKICK_OTHER_CC = 
+{{
+    {{{{ 0,   0}}, {{ 1,  0}}, {{ 1, -1}}, {{ 0,  2}}, {{ 1,  2}}}}, // Starting from orienation=0
+    {{{{ 0,   0}}, {{ 1,  0}}, {{ 1,  1}}, {{ 0, -2}}, {{ 1, -2}}}}, // Starting from orienation=1
+    {{{{ 0,   0}}, {{-1,  0}}, {{-1, -1}}, {{ 0,  2}}, {{-1,  2}}}}, // Starting from orienation=2
+    {{{{ 0,   0}}, {{-1,  0}}, {{-1,  1}}, {{ 0, -2}}, {{-1, -2}}}}, // Starting from orienation=3
+}};
 // clang-format on
 
 Active::Active(uint8_t type) {
@@ -70,12 +108,14 @@ void Active::loadGrid() {
 
 void Active::respawn(uint8_t type) {
     // Move the Tetromino to the top and load the new Tetromino
-    // into the grid
+    // into m_grid
     if (type < 0 || type >= N_TETROMINOS) {
         throw std::out_of_range("Tetromino type must be in range [0..6].");
     }
     // Set new Tetromino type
     m_type = type;
+    // Reset the orientation
+    m_orientation = 0;
     // Load corresponding Tetromino into grid
     loadGrid();
     // Set starting position
@@ -184,6 +224,8 @@ bool Active::canStepDown(Playfield *playfield) {
 }
 
 TetroGrid_t Active::getGridRotatedClockw() {
+    // Return a new grid that is the same as the current one, but the contents
+    // are rotated clockwise
     TetroGrid_t new_grid{};
     switch (m_type) {
     case 0: // I
@@ -206,6 +248,8 @@ TetroGrid_t Active::getGridRotatedClockw() {
     return new_grid;
 }
 TetroGrid_t Active::getGridRotatedCounterclockw() {
+    // Return a new grid that is the same as the current one, but the contents
+    // are rotated counterclockwise
     TetroGrid_t new_grid{};
     switch (m_type) {
     case 0: // I
@@ -228,13 +272,15 @@ TetroGrid_t Active::getGridRotatedCounterclockw() {
     return new_grid;
 }
 
-bool Active::doesGridConflict(const TetroGrid_t &grid, Playfield *playfield) {
-    // Return true if the given grid overlaps with the playfield at any point if
-    // it were to replace the actual current grid
-    for (int row = 0; row < 3; row++) {
-        for (int col = 0; col < 3; col++) {
+bool Active::doesOffsetGridConflict(const TetroGrid_t &grid, int dx, int dy,
+                                    Playfield *playfield) {
+    // Return true if the given grid overlaps with the playfield at any cell if
+    // it were to replace the actual current grid and be offset by the given
+    // amount
+    for (int row = 0; row < 4; row++) {
+        for (int col = 0; col < 4; col++) {
             if (grid[row][col]) {
-                if (!playfield->isEmpty(m_x + col, m_y + row)) {
+                if (!playfield->isEmpty(m_x + col + dx, m_y + row + dy)) {
                     return true;
                 }
             }
@@ -243,24 +289,111 @@ bool Active::doesGridConflict(const TetroGrid_t &grid, Playfield *playfield) {
     return false;
 }
 
-bool Active::rotateClockw(Playfield *playfield) {
-    TetroGrid_t new_grid = getGridRotatedClockw();
-    if (doesGridConflict(new_grid, playfield)) {
-        // TODO: Do wall kicks!
-        return false;
-    } else {
-        m_grid = new_grid;
+bool Active::doesGridConflict(const TetroGrid_t &grid, Playfield *playfield) {
+    // Return true if the given grid overlaps with the playfield at any cell if
+    // it were to replace the actual current grid
+    return doesOffsetGridConflict(grid, 0, 0, playfield);
+}
+
+bool Active::tryWallkicksC(const TetroGrid_t &new_grid, Wallkick_t &success,
+                           Playfield *playfield) {
+    // Try Wall Kicks for clockwise rotation
+    return tryWallkicks(new_grid, 1, success, playfield);
+}
+
+bool Active::tryWallkicksCC(const TetroGrid_t &new_grid, Wallkick_t &success,
+                            Playfield *playfield) {
+    // Try Wall Kicks for counterclockwise rotation
+    return tryWallkicks(new_grid, -1, success, playfield);
+}
+
+bool Active::tryWallkicks(const TetroGrid_t &new_grid, int8_t direction,
+                          Wallkick_t &success, Playfield *playfield) {
+    // Try all Wall Kicks for the given grid and direction of rotation. If a
+    // working Wall Kick is found, it is stored in &success and true is
+    // returned; otherwise false.
+
+    // O Tetromino; doesn't perform Wall Kicks
+    if (m_type == 3) {
+        success = Wallkick_t{0, 0};
         return true;
     }
+    // Load the right wallkick data depending on the Tetromino type and
+    // direction of rotation
+    const WallkickData_t *wallkick_data = nullptr;
+    if (direction > 0) {   // Clockwise rotation
+        if (m_type == 0) { // I Tetromino
+            wallkick_data = &WALLKICK_I_C[m_orientation];
+        } else { // All other Tetrominos
+            wallkick_data = &WALLKICK_OTHER_C[m_orientation];
+        }
+    } else {               // Counterclockwise rotation
+        if (m_type == 0) { // I Tetromino
+            wallkick_data = &WALLKICK_I_CC[m_orientation];
+        } else { // All other Tetrominos
+            wallkick_data = &WALLKICK_OTHER_CC[m_orientation];
+        }
+    }
+    // Try out all Wall Kicks
+    return tryWallkickData(new_grid, wallkick_data, success, playfield);
+}
+
+bool Active::tryWallkickData(const TetroGrid_t &new_grid,
+                             const WallkickData_t *wallkick_data,
+                             Wallkick_t &success, Playfield *playfield) {
+    // Iterate over all given Wall Kicks to see if one works
+    for (uint8_t i = 0; i < wallkick_data->size(); i++) {
+        // Check if there would be a conflict using the current Wall Kick
+        if (!doesOffsetGridConflict(new_grid, (*wallkick_data)[i][0],
+                                    (*wallkick_data)[i][1], playfield)) {
+            // Possible Wall Kick found
+            success = (*wallkick_data)[i];
+            return true;
+        }
+    }
+    // No Wall Kick found
+    return false;
+}
+
+bool Active::rotateClockw(Playfield *playfield) {
+    // If possible, perform a clockwise rotation
+
+    // Generate rotated grid
+    TetroGrid_t new_grid = getGridRotatedClockw();
+    // Try to perform Wall Kick. Note that no offset (i. e. [0, 0]) is the first
+    // Wall Kick that is tried first, therefore it isn't necesarry to
+    // exclusively check if the new grid fits without a wall kick.
+    Wallkick_t wallkick;
+    if (!tryWallkicksC(new_grid, wallkick, playfield)) {
+        // No Wall Kick found -> rotation is impossible
+        return false;
+    }
+    // Wall Kick found, apply it
+    m_x += wallkick[0];
+    m_y += wallkick[1];
+    // Replace old grid with new, rotated grid
+    m_grid = new_grid;
+    // Change rotation accordingly
+    m_orientation = (m_orientation + 1) % 4;
+    return true;
 }
 
 bool Active::rotateCounterclockw(Playfield *playfield) {
+    // If possible, perform a counterclockwise rotation
+
     TetroGrid_t new_grid = getGridRotatedCounterclockw();
-    if (doesGridConflict(new_grid, playfield)) {
-        // TODO: Do wall kicks!
+    Wallkick_t wallkick;
+    if (!tryWallkicksCC(new_grid, wallkick, playfield)) {
+        // No Wall Kick found -> rotation is impossible
         return false;
-    } else {
-        m_grid = new_grid;
-        return true;
     }
+    // Wall Kick found, apply it
+    m_x += wallkick[0];
+    m_y += wallkick[1];
+    // Replace old grid with new, rotated grid
+    m_grid = new_grid;
+    // We can't use (m_orientation - 1) here since that might overflow to
+    // 255. Adding 3 works just fine tho since 3 ≡ -1 (mod 4)
+    m_orientation = (m_orientation + 3) % 4;
+    return true;
 }
