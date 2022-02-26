@@ -247,9 +247,17 @@ bool Active::canStepDown(Playfield *playfield) {
     return true;
 }
 
+void Active::hardDrop(Playfield *playfield) {
+    // Hard drop the falling Tetromino, i. e. move it down as far as possible
+    // Note that this doesn't lock nor respawn the Tetromino!
+
+    m_y = getGhostY(playfield);
+}
+
 TetroGrid_t Active::getGridRotatedClockw() {
     // Return a new grid that is the same as the current one, but the contents
     // are rotated clockwise
+
     TetroGrid_t new_grid{};
     switch (m_type) {
     case 0: // I

@@ -47,6 +47,10 @@ void Game::handleEvent(const SDL_Event &e) {
         case SDLK_c:
             active.rotateCounterclockw(&playfield);
             break;
+        case SDLK_SPACE:
+            active.hardDrop(&playfield);
+            active.lockDownAndRespawn(randomTetrominoType(), &playfield);
+            break;
         }
     }
 }

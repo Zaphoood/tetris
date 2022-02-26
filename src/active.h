@@ -52,6 +52,7 @@ class Active {
     bool moveLeft(Playfield *playfield);
     bool stepDown(Playfield *playfield);
     bool canStepDown(Playfield *playfield);
+    void hardDrop(Playfield *playfield);
     bool rotateClockw(Playfield *playfield);
     bool rotateCounterclockw(Playfield *playfield);
 
