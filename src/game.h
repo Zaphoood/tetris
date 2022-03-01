@@ -24,13 +24,17 @@ class Game {
     void startSoftDropping();
     void stopSoftDropping();
     bool performSoftDrop();
-    void incNextSoftDrop(std::chrono::steady_clock::time_point last);
-    void resetSoftDrop();
+    void incSoftDropTimer(std::chrono::steady_clock::time_point last);
+    void resetSoftDropTimer();
+
     bool performFall();
-    void incNextFall(std::chrono::steady_clock::time_point last);
-    void resetFall();
+    void incFallTimer(std::chrono::steady_clock::time_point last);
+    void resetFallTimer();
+
     void scheduleLockDown();
     int randomTetrominoType();
+
+    void lockDownActive();
 
   public:
     Game();

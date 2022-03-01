@@ -11,9 +11,9 @@ Playfield::Playfield() {
     // Initialize all cells to 7, which represents an empty space
     // values 0~6 correspond to different Minos
     std::cout << "Playfield initialized\n";
-    for (int i = 0; i < GRID_SIZE_Y; i++) {
-        for (int j = 0; j < GRID_SIZE_X; j++) {
-            grid[i][j] = 7;
+    for (int row = 0; row < GRID_SIZE_Y; row++) {
+        for (int col = 0; col < GRID_SIZE_X; col++) {
+            grid[row][col] = 7;
         }
     }
 }
@@ -81,10 +81,71 @@ bool Playfield::isEmpty(int x, int y) {
 }
 
 bool Playfield::setAt(int x, int y, uint8_t mino_type) {
+    // Only set the cell if mino_type is valid
     if (mino_type < 0 || mino_type > 6) {
         return false;
     } else {
-        grid[y][x] = mino_type;
+        setAtHard(x, y, mino_type);
         return true;
+    }
+}
+
+void Playfield::setAtHard(int x, int y, uint8_t mino_type) {
+    grid[y][x] = mino_type;
+}
+
+void Playfield::clearAt(int x, int y) {
+    grid[y][x] = 7;
+}
+
+bool Playfield::isRowFilled(int row) {
+    for (int col = 0; col < GRID_SIZE_X; col++) {
+        if (isEmpty(col, row)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool Playfield::isRowEmpty(int row) {
+    for (int col = 0; col < GRID_SIZE_X; col++) {
+        if (!isEmpty(col, row)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void Playfield::copyRow(int from, int to) {
+    for (int col = 0; col < GRID_SIZE_X; col++) {
+        setAtHard(col, to, getAt(col, from));
+    }
+}
+
+void Playfield::clearEmptyLines() {
+    std::array<bool, GRID_SIZE_Y> cleared_lines{};
+    for (int row = GRID_SIZE_VISIBLE_Y; row < GRID_SIZE_Y; row++) {
+        if (isRowFilled(row)) {
+            for (int col = 0; col < GRID_SIZE_X; col++) {
+                clearAt(col, row);
+            }
+            cleared_lines[row] = 1;
+        }
+    }
+    // Iterate over the columns from bottom to top. Everytime we encounter a
+    // line that's just been cleared, copy down everything from above
+    // TODO: Should be GRID_SIZE_Y - GRID_SIZE_VISIBLE_Y instead of
+    // GRID_SIZE_VISIBLE_Y
+    for (int row = GRID_SIZE_Y - 1; row >= GRID_SIZE_VISIBLE_Y; row--) {
+        if (cleared_lines[row]) {
+            for (int row_i = row; row_i > GRID_SIZE_VISIBLE_Y; row_i--) {
+                // Copy row above into current row
+                copyRow(row_i - 1, row_i);
+                // Same for cleared lines
+                cleared_lines[row_i] = cleared_lines[row_i - 1];
+            }
+            // Check this row again in the next iteration
+            row++;
+        }
     }
 }
