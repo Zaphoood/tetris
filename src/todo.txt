@@ -1,0 +1,11 @@
+Next
+* Implement levels
+* Increase speed upon level-up
+* Use 7-bag system for generating random Tetrominos
+
+Near Future
+* Show upcoming Tetrominos next to Playfield
+* Show info (level, score, lines etc.) next to Playfield
+
+Distant Future
+* Animations
