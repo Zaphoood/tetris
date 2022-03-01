@@ -14,6 +14,8 @@ void Game::init() {
     // Schedule the first fall
     std::chrono::steady_clock::time_point t_next_fall;
     resetFallTimer();
+    // Initialize PRNG
+    srand(time(0));
 }
 
 void Game::update() {
