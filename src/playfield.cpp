@@ -7,7 +7,8 @@
 #include "active.h"
 #include "playfield.h"
 
-Playfield::Playfield() {
+Playfield::Playfield() : Playfield(0, 0) {}
+Playfield::Playfield(int draw_x, int draw_y) : draw_x(draw_x), draw_y(draw_y) {
     // Initialize all cells to 7, which represents an empty space
     // values 0~6 correspond to different Minos
     std::cout << "Playfield initialized\n";
@@ -18,10 +19,15 @@ Playfield::Playfield() {
     }
 }
 
-void Playfield::draw(SDL_Renderer *renderer, int pos_x, int pos_y) {
+void Playfield::draw(SDL_Renderer *renderer) {
     // TODO: Accept different drawing positions
     drawGrid(renderer);
     drawPlayfield(renderer);
+}
+
+void Playfield::setDrawPosition(int x, int y) {
+    draw_x = x;
+    draw_y = y;
 }
 
 void Playfield::drawPlayfield(SDL_Renderer *renderer) {
@@ -38,19 +44,31 @@ void Playfield::drawGrid(SDL_Renderer *renderer) {
     SDL_SetRenderDrawColor(renderer, GRID_COLOR[0], GRID_COLOR[1],
                            GRID_COLOR[2], 255);
     // Draw horizontal lines
-    for (int y = GRID_SIZE_VISIBLE_Y - 1; y > 0; y--) {
-        SDL_RenderDrawLine(renderer, 0, y * CELL_SIZE, WINDOW_X, y * CELL_SIZE);
+    for (int y = 0; y <= GRID_SIZE_VISIBLE_Y; y++) {
+        // clang-format off
+        SDL_RenderDrawLine(renderer,
+            draw_x + 0, draw_y + y * CELL_SIZE,
+            draw_x + PLAYFIELD_WIDTH, draw_y + y * CELL_SIZE);
+        // clang-format on
     }
     // Draw vertical lines
-    for (int x = GRID_SIZE_X - 1; x > 0; x--) {
-        SDL_RenderDrawLine(renderer, x * CELL_SIZE, 0, x * CELL_SIZE, WINDOW_Y);
+    for (int x = 0; x <= GRID_SIZE_X; x++) {
+        // clang-format off
+        SDL_RenderDrawLine(renderer,
+            draw_x + x * CELL_SIZE, draw_y,
+            draw_x + x * CELL_SIZE, draw_y + PLAYFIELD_HEIGHT);
+        // clang-format on
     }
 }
 
 SDL_Rect Playfield::getMinoRect(int x, int y) {
-    // Compute rectangle according to cell size
-    return SDL_Rect{x * CELL_SIZE, (y - GRID_START_Y) * CELL_SIZE, CELL_SIZE,
+    // Compute rectangle according to cell size and draw position
+    // clang-format off
+    return SDL_Rect{draw_x + x * CELL_SIZE,
+                    draw_y + (y - GRID_START_Y) * CELL_SIZE,
+                    CELL_SIZE,
                     CELL_SIZE};
+    // clang-format on
 }
 
 void Playfield::drawMino(SDL_Renderer *renderer, int x, int y,

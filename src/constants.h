@@ -24,10 +24,14 @@ inline const int GRID_SIZE_Y = 40;
 inline const int GRID_SIZE_VISIBLE_X = GRID_SIZE_X;
 inline const int GRID_SIZE_VISIBLE_Y = 20;
 inline const int GRID_START_Y = GRID_SIZE_Y - GRID_SIZE_VISIBLE_Y;
+inline const int PLAYFIELD_WIDTH = GRID_SIZE_X * CELL_SIZE;
+inline const int PLAYFIELD_HEIGHT = GRID_SIZE_VISIBLE_Y * CELL_SIZE;
+inline const int PLAYFIELD_DRAW_X = PLAYFIELD_WIDTH / 2;
+inline const int PLAYFIELD_DRAW_Y = 0;
 
 // Window
-inline const int WINDOW_X = GRID_SIZE_X * CELL_SIZE;
-inline const int WINDOW_Y = GRID_SIZE_Y * CELL_SIZE;
+inline const int WINDOW_X = PLAYFIELD_WIDTH * 2;
+inline const int WINDOW_Y = PLAYFIELD_HEIGHT;
 
 // Colors
 using ColorRGB = std::array<uint8_t, 3>;

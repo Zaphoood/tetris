@@ -10,9 +10,9 @@ int main(int argc, char *argv[]) {
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
         printf("error initializing SDL: %s\n", SDL_GetError());
     }
-    SDL_Window *window = SDL_CreateWindow(
-        "Tetris", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        GRID_SIZE_VISIBLE_X * CELL_SIZE, GRID_SIZE_VISIBLE_Y * CELL_SIZE, 0);
+    SDL_Window *window =
+        SDL_CreateWindow("Tetris", SDL_WINDOWPOS_CENTERED,
+                         SDL_WINDOWPOS_CENTERED, WINDOW_X, WINDOW_Y, 0);
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
 
     Game game = Game();
@@ -24,6 +24,8 @@ int main(int argc, char *argv[]) {
         while (SDL_PollEvent(&e) != 0) {
             switch (e.type) {
             case SDL_QUIT:
+                // TODO: What's up with that "stack smashing detected" error
+                // message when the window is closed?
                 isRunning = false;
                 break;
             default:

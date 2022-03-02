@@ -7,6 +7,7 @@
 
 class Playfield {
     uint8_t grid[GRID_SIZE_Y][GRID_SIZE_X];
+    int draw_x, draw_y; // Where to draw the p_playfield on the screen
     void drawGrid(SDL_Renderer *renderer);
     void drawPlayfield(SDL_Renderer *renderer);
     void drawActiveTetromino(SDL_Renderer *renderer);
@@ -17,6 +18,7 @@ class Playfield {
 
   public:
     Playfield();
+    Playfield(int draw_x, int draw_y);
 
     uint8_t getAt(int x, int y);
     bool isEmpty(int x, int y);
@@ -27,5 +29,6 @@ class Playfield {
     void drawMino(SDL_Renderer *renderer, int x, int y,
                   const std::array<uint8_t, 3> &color);
     void drawGhostMino(SDL_Renderer *renderer, int x, int y);
-    void draw(SDL_Renderer *renderer, int pos_x, int pos_y);
+    void draw(SDL_Renderer *renderer);
+    void setDrawPosition(int x, int y);
 };

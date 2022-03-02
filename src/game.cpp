@@ -6,7 +6,7 @@
 
 Game::Game() {
     // TODO: See why Playfield() is initialized twice
-    playfield = Playfield();
+    playfield = Playfield(PLAYFIELD_DRAW_X, PLAYFIELD_DRAW_Y);
     active = Active(randomTetrominoType(), &playfield);
 }
 
@@ -151,7 +151,7 @@ void Game::handleEvent(const SDL_Event &e) {
 }
 
 void Game::draw(SDL_Renderer *renderer) {
-    playfield.draw(renderer, 0, 0);
+    playfield.draw(renderer);
     active.drawGhost(renderer);
     active.draw(renderer);
 }
