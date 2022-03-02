@@ -1,5 +1,6 @@
 # Visual Studio Code project files
-.vscode/
+# -- Re-included despite this being considered 'bad practice' by some since this is just a private repo
+# .vscode/
 
 # Build files
 build/

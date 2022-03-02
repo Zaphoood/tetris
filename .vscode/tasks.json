@@ -1,0 +1,58 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "cppbuild",
+      "label": "C/C++: g++ build src/main.cpp",
+      "command": "/usr/bin/g++",
+      "args": [
+        "-std=c++17",
+        "-fdiagnostics-color=always",
+        "-g",
+        "${fileWorkspaceFolder}/src/*.cpp",
+        "-o",
+        "${fileWorkspaceFolder}/main.out",
+        "-lSDL2",
+        "-I${fileWorkspaceFolder}/libs/SDL2/include"
+      ],
+      "options": {
+        "cwd": "${fileWorkspaceFolder}/src/"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "detail": "compiler: /usr/bin/g++",
+      "presentation": {
+        "focus": true,
+        "showReuseMessage": false,
+        "clear": true
+      }
+    },
+    {
+      "type": "cppbuild",
+      "label": "C/C++: g++ build active file",
+      "command": "/usr/bin/g++",
+      "args": [
+        "-fdiagnostics-color=always",
+        "-g",
+        "${file}",
+        "-o",
+        "${fileDirname}/${fileBasenameNoExtension}",
+        "-lSDL2",
+        "-I${fileWorkspaceFolder}/libs/SDL2/include"
+      ],
+      "options": {
+        "cwd": "${fileDirname}"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": "build",
+      "detail": "compiler: /usr/bin/g++",
+    }
+  ]
+}
