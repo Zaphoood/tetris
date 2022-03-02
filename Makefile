@@ -9,11 +9,12 @@ build_dir=./build
 bin := main.out
 srcs := $(wildcard $(src_dir)/*.cpp)
 objs := $(patsubst $(src_dir)/%.cpp,$(build_dir)/%.o,$(srcs))
+headers := $(src_dir)/constants.h
 
 all: $(objs)
 	$(CXX) $(CXXFLAGS) -o $(bin) $^ $(LINK_FLAGS)
 
-$(build_dir)/%.o: $(src_dir)/%.cpp
+$(build_dir)/%.o: $(src_dir)/%.cpp $(headers)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
