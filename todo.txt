@@ -4,6 +4,7 @@ Next
 * Use 7-bag system for generating random Tetrominos
 
 Near Future
+* Hold functionality
 * Show upcoming Tetrominos next to Playfield
 * Show info (level, score, lines etc.) next to Playfield
 
