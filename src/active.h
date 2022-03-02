@@ -2,15 +2,8 @@
 #include "array"
 #include "stdint.h"
 
+#include "constants.h"
 #include "playfield.h"
-
-// Four-by-four Matrix containing the grid representation of a Tetromino
-using TetroGrid_t = std::array<std::array<uint8_t, 4>, 4>;
-// A single Wall Kick
-using Wallkick_t = std::array<int8_t, 2>;
-// Set of all 5 Wall Kicks to try for a combination of Tetromino type and
-// direction of rotation
-using WallkickData_t = std::array<Wallkick_t, 5>;
 
 class Active {
   public:
