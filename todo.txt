@@ -1,3 +1,6 @@
+Bugs:
+* Playfield is initialized twice
+
 Next
 * Implement levels
 * Increase speed upon level-up
