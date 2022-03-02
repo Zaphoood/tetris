@@ -5,6 +5,7 @@
 #include "active.h"
 #include "bag.h"
 #include "playfield.h"
+#include "tetrovis.h"
 
 class Game {
   private:
@@ -37,6 +38,9 @@ class Game {
     void lockDownActive();
 
     SevenBag bag;
+    std::array<TetroVisual, QUEUE_LEN> queue_visuals;
+    void initQueueVisuals();
+    void drawQueue(SDL_Renderer *renderer);
 
   public:
     Game();

@@ -37,13 +37,21 @@ inline const int CELL_SIZE = 20;
 // Size of the playfield on screen in pixels
 inline const int PLAYFIELD_WIDTH = GRID_SIZE_X * CELL_SIZE;
 inline const int PLAYFIELD_HEIGHT = GRID_SIZE_VISIBLE_Y * CELL_SIZE;
-// Position of the playfield on screen in pixels
-inline const int PLAYFIELD_DRAW_X = PLAYFIELD_WIDTH / 2;
-inline const int PLAYFIELD_DRAW_Y = 0;
 
 // Window
-inline const int WINDOW_X = PLAYFIELD_WIDTH * 2;
+// Include enough space to the right to show queue
+inline const int WINDOW_X = PLAYFIELD_WIDTH + 2 * (CELL_SIZE * 7);
 inline const int WINDOW_Y = PLAYFIELD_HEIGHT;
+
+// Position of the playfield on screen in pixels
+inline const int PLAYFIELD_DRAW_X = (WINDOW_X - PLAYFIELD_WIDTH) / 2;
+inline const int PLAYFIELD_DRAW_Y = 0;
+
+// Queue
+// TODO: Make this completely scalable
+inline const int QUEUE_X = PLAYFIELD_DRAW_X + PLAYFIELD_WIDTH + CELL_SIZE;
+inline const int QUEUE_Y = CELL_SIZE * 2 + 1;
+inline const int QUEUE_OFFSET_Y = CELL_SIZE * 5;
 
 // Colors
 using ColorRGB = std::array<uint8_t, 3>;
