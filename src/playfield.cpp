@@ -19,6 +19,11 @@ Playfield::Playfield(int draw_x, int draw_y) : draw_x(draw_x), draw_y(draw_y) {
     }
 }
 
+std::array<int, 2> Playfield::cellToPixelPosition(int cell_x, int cell_y) {
+    return std::array<int, 2>{draw_x + cell_x * CELL_SIZE,
+                              draw_y + (cell_y - GRID_START_Y) * CELL_SIZE};
+}
+
 void Playfield::draw(SDL_Renderer *renderer) {
     // TODO: Accept different drawing positions
     drawGrid(renderer);
@@ -31,10 +36,13 @@ void Playfield::setDrawPosition(int x, int y) {
 }
 
 void Playfield::drawPlayfield(SDL_Renderer *renderer) {
+    std::array<int, 2> pos;
     for (int row = GRID_START_Y; row < GRID_SIZE_Y; row++) {
         for (int col = 0; col < GRID_SIZE_X; col++) {
             if (grid[row][col] < 7) {
-                drawMino(renderer, col, row, TETROMINO_COLORS[grid[row][col]]);
+                pos = cellToPixelPosition(col, row);
+                drawMino(renderer, pos[0], pos[1],
+                         TETROMINO_COLORS[grid[row][col]]);
             }
         }
     }
@@ -61,20 +69,13 @@ void Playfield::drawGrid(SDL_Renderer *renderer) {
     }
 }
 
-SDL_Rect Playfield::getMinoRect(int x, int y) {
-    // Compute rectangle according to cell size and draw position
-    // clang-format off
-    return SDL_Rect{draw_x + x * CELL_SIZE,
-                    draw_y + (y - GRID_START_Y) * CELL_SIZE,
-                    CELL_SIZE,
-                    CELL_SIZE};
-    // clang-format on
-}
-
 void Playfield::drawMino(SDL_Renderer *renderer, int x, int y,
-                         const std::array<uint8_t, 3> &color) {
-    SDL_Rect rect = getMinoRect(x, y);
-    // Draw a square with the color according to the current Mino
+                         const ColorRGB &color) {
+    // Draw a Mino at the given pixel position
+
+    // Create destination rectangle
+    SDL_Rect rect{x, y, CELL_SIZE, CELL_SIZE};
+    // Draw a rectangle filled with the given color
     SDL_SetRenderDrawColor(renderer, color[0], color[1], color[2], 255);
     SDL_RenderFillRect(renderer, &rect);
     // Draw a black outline
@@ -83,10 +84,13 @@ void Playfield::drawMino(SDL_Renderer *renderer, int x, int y,
 }
 
 void Playfield::drawGhostMino(SDL_Renderer *renderer, int x, int y) {
+    // Draw a Mino representing a Ghost Piece at the given pixel position
+
+    // Create destination rectangle
+    SDL_Rect rect = {x, y, CELL_SIZE, CELL_SIZE};
     // Draw a grey outline
     SDL_SetRenderDrawColor(renderer, GHOST_COLOR[0], GHOST_COLOR[1],
                            GHOST_COLOR[2], 255);
-    SDL_Rect rect = getMinoRect(x, y);
     SDL_RenderDrawRect(renderer, &rect);
 }
 

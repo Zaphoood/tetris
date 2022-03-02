@@ -344,10 +344,12 @@ bool Active::rotateCounterclockw() {
 }
 
 void Active::draw(SDL_Renderer *renderer) {
+    std::array<int, 2> pos;
     for (int row = 0; row < 4; row++) {
         for (int col = 0; col < 4; col++) {
             if (m_grid[row][col]) {
-                p_playfield->drawMino(renderer, m_x + col, m_y + row,
+                pos = p_playfield->cellToPixelPosition(m_x + col, m_y + row);
+                p_playfield->drawMino(renderer, pos[0], pos[1],
                                       TETROMINO_COLORS[m_type]);
             }
         }
@@ -358,12 +360,17 @@ void Active::drawGhost(SDL_Renderer *renderer) {
     int ghost_y = getGhostY();
     //  Don't draw the Ghost if it's at the same position as the actual
     //  Tetromino
-    if (ghost_y > m_y) {
+    if (ghost_y == m_y) {
+        return;
+    }
+    std::array<int, 2> pos;
+    for (int row = 0; row < 4; row++) {
         for (int row = 0; row < 4; row++) {
             for (int col = 0; col < 4; col++) {
                 if (m_grid[row][col]) {
-                    p_playfield->drawGhostMino(renderer, m_x + col,
-                                               ghost_y + row);
+                    pos = p_playfield->cellToPixelPosition(m_x + col,
+                                                           ghost_y + row);
+                    p_playfield->drawGhostMino(renderer, pos[0], pos[1]);
                 }
             }
         }
