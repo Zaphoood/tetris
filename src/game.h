@@ -3,6 +3,7 @@
 #include "SDL.h"
 
 #include "active.h"
+#include "bag.h"
 #include "playfield.h"
 
 class Game {
@@ -32,9 +33,10 @@ class Game {
     void resetFallTimer();
 
     void scheduleLockDown();
-    int randomTetrominoType();
 
     void lockDownActive();
+
+    SevenBag bag;
 
   public:
     Game();

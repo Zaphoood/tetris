@@ -3,6 +3,9 @@
 #include "stdint.h"
 
 // Tetromino
+// Define a type that stores a kind of Tetromino, such as O or L
+using TetrominoKind_t = uint8_t;
+// TODO: Apply this type defintion everywhere
 // Number of different Tetrominos
 inline const uint8_t N_TETROMINOS = 7;
 
@@ -16,6 +19,9 @@ inline const int FALL_DELAY_MS = 250;
 // multiplied by 0.05
 inline const double SOFT_DROP_DELAY_MULT = 0.05;
 inline const int LOCK_DOWN_DELAY_MS = 500;
+
+// Tetromino generation
+inline const int QUEUE_LEN = 3;
 
 // Playfield
 inline const int GRID_SIZE_X = 10;

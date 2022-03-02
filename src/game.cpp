@@ -7,15 +7,13 @@
 Game::Game() {
     // TODO: See why Playfield() is initialized twice
     playfield = Playfield(PLAYFIELD_DRAW_X, PLAYFIELD_DRAW_Y);
-    active = Active(randomTetrominoType(), &playfield);
+    active = Active(bag.popQueue(), &playfield);
 }
 
 void Game::init() {
     // Schedule the first fall
     std::chrono::steady_clock::time_point t_next_fall;
     resetFallTimer();
-    // Initialize PRNG
-    srand(time(0));
 }
 
 void Game::update() {
@@ -156,13 +154,9 @@ void Game::draw(SDL_Renderer *renderer) {
     active.draw(renderer);
 }
 
-int Game::randomTetrominoType() {
-    return rand() % N_TETROMINOS;
-}
-
 void Game::lockDownActive() {
     // Lock down and respawn the falling Tetromino and clear empty lines on the
     // Playfield
-    active.lockDownAndRespawn(randomTetrominoType());
+    active.lockDownAndRespawn(bag.popQueue());
     playfield.clearEmptyLines();
 }
