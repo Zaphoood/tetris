@@ -2,6 +2,7 @@ Next
 * Implement levels
 * Increase speed upon level-up
 * Use 7-bag system for generating random Tetrominos
+* Prettier colors
 
 Near Future
 * Hold functionality
