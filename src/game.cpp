@@ -7,7 +7,7 @@
 Game::Game() {
     // TODO: See why Playfield() is initialized twice
     playfield = Playfield();
-    active = Active(randomTetrominoType());
+    active = Active(randomTetrominoType(), &playfield);
 }
 
 void Game::init() {
@@ -21,7 +21,7 @@ void Game::init() {
 void Game::update() {
     // Check if the falling Tetromino has made surface contact, if so schedule
     // lock down timer
-    if (!active.canStepDown(&playfield)) {
+    if (!active.canStepDown()) {
         if (!surface_contact) {
             surface_contact = true;
             scheduleLockDown();
@@ -70,7 +70,7 @@ void Game::stopSoftDropping() {
 
 bool Game::performSoftDrop() {
     incSoftDropTimer(t_next_soft_drop);
-    return active.stepDown(&playfield);
+    return active.stepDown();
 }
 
 void Game::resetSoftDropTimer() {
@@ -88,7 +88,7 @@ bool Game::performFall() {
     // Move the Tetromino down by one cell and set the timer for the next fall
     // move
     incFallTimer(t_next_fall);
-    return active.stepDown(&playfield);
+    return active.stepDown();
 }
 
 void Game::resetFallTimer() {
@@ -113,29 +113,29 @@ void Game::handleEvent(const SDL_Event &e) {
         if (!e.key.repeat) {
             switch (e.key.keysym.sym) {
             case SDLK_RIGHT:
-                active.moveRight(&playfield);
+                active.moveRight();
                 // Reset Lock Down timer to give the player another 0.5
                 // seconds to move the Tetromino before it finally sets
                 // This happens for all sidewards movements and rotations
                 scheduleLockDown();
                 break;
             case SDLK_LEFT:
-                active.moveLeft(&playfield);
+                active.moveLeft();
                 scheduleLockDown();
                 break;
             case SDLK_DOWN:
                 startSoftDropping();
                 break;
             case SDLK_UP:
-                active.rotateClockw(&playfield);
+                active.rotateClockw();
                 scheduleLockDown();
                 break;
             case SDLK_c:
-                active.rotateCounterclockw(&playfield);
+                active.rotateCounterclockw();
                 scheduleLockDown();
                 break;
             case SDLK_SPACE:
-                active.hardDrop(&playfield);
+                active.hardDrop();
                 lockDownActive();
                 break;
             }
@@ -152,8 +152,8 @@ void Game::handleEvent(const SDL_Event &e) {
 
 void Game::draw(SDL_Renderer *renderer) {
     playfield.draw(renderer, 0, 0);
-    active.drawGhost(renderer, &playfield);
-    active.draw(renderer, &playfield);
+    active.drawGhost(renderer);
+    active.draw(renderer);
 }
 
 int Game::randomTetrominoType() {
@@ -163,6 +163,6 @@ int Game::randomTetrominoType() {
 void Game::lockDownActive() {
     // Lock down and respawn the falling Tetromino and clear empty lines on the
     // Playfield
-    active.lockDownAndRespawn(randomTetrominoType(), &playfield);
+    active.lockDownAndRespawn(randomTetrominoType());
     playfield.clearEmptyLines();
 }

@@ -98,7 +98,8 @@ inline const std::array<WallkickData_t, 4> WALLKICK_OTHER_CC =
 // clang-format on
 
 Active::Active() : m_type(-1) {}
-Active::Active(uint8_t type) {
+Active::Active(uint8_t type, Playfield *p_playfield)
+    : p_playfield(p_playfield) {
     respawn(type);
 }
 
@@ -123,25 +124,25 @@ void Active::respawn(uint8_t type) {
     m_y = STARTING_POSITION_Y;
 }
 
-void Active::lockDownAndRespawn(uint8_t new_type, Playfield *playfield) {
-    // 'Bake' the current Tetromino into the Playfield, afterwards respawn
+void Active::lockDownAndRespawn(uint8_t new_type) {
+    // 'Bake' the current Tetromino into the playfield, afterwards respawn
     for (int x = 0; x < 4; x++) {
         for (int y = 0; y < 4; y++) {
             if (m_grid[y][x]) {
-                playfield->setAt(m_x + x, m_y + y, m_type);
+                p_playfield->setAt(m_x + x, m_y + y, m_type);
             }
         }
     }
     respawn(new_type);
 }
 
-int Active::getGhostY(Playfield *playfield) {
+int Active::getGhostY() {
     // Return the Y position of the Ghost Tetromino.
 
     int ghost_y = GRID_SIZE_Y;
     // Iterate over all columns of the Tetromino and see which has the least
-    // space below until the next Mino on the Playfield, calculate new position
-    // to be 1 cell above that
+    // space below until the next Mino on the playfield, calculate new
+    // position to be 1 cell above that
     for (int col = 0; col < 4; col++) {
         // Vertical position of the lowest Mino contained in the current column
         // of the Tetromino, relative to the postition of the Tetromino
@@ -157,12 +158,12 @@ int Active::getGhostY(Playfield *playfield) {
         }
         // Lowest position for each column: at the very bottom
         ghost_y = std::min(ghost_y, GRID_SIZE_Y - lowest_mino_rel - 1);
-        // Check the corresponding Playfield column and get position of lowest
+        // Check the corresponding playfield column and get position of lowest
         // free cell below.
         // Absolute position of the lowest Mino in the current column
         int lowest_mino = m_y + lowest_mino_rel;
         for (int cell_y = lowest_mino + 1; cell_y < GRID_SIZE_Y; cell_y++) {
-            if (!(*playfield).isEmpty(m_x + col, cell_y)) {
+            if (!(*p_playfield).isEmpty(m_x + col, cell_y)) {
                 ghost_y = std::min(ghost_y, cell_y - lowest_mino_rel - 1);
             }
         }
@@ -170,15 +171,15 @@ int Active::getGhostY(Playfield *playfield) {
     return ghost_y;
 }
 
-bool Active::moveRight(Playfield *playfield) {
-    bool can_move = canMoveRight(playfield);
+bool Active::moveRight() {
+    bool can_move = canMoveRight();
     if (can_move) {
         m_x++;
     }
     return can_move;
 }
 
-bool Active::canMoveRight(Playfield *playfield) {
+bool Active::canMoveRight() {
     // Get the offset of the rightmost Mino in the grid
     uint8_t rightmost = 0;
     for (uint8_t row = 0; row < 4; row++) {
@@ -187,7 +188,7 @@ bool Active::canMoveRight(Playfield *playfield) {
                 // At right border, can't move any further
                 if (m_x + col >= GRID_SIZE_X - 1 ||
                     // Spot to the right is filled
-                    !playfield->isEmpty(m_x + col + 1, m_y + row)) {
+                    !p_playfield->isEmpty(m_x + col + 1, m_y + row)) {
                     return false;
                 }
             }
@@ -196,22 +197,22 @@ bool Active::canMoveRight(Playfield *playfield) {
     return true;
 }
 
-bool Active::moveLeft(Playfield *playfield) {
-    bool can_move = canMoveLeft(playfield);
+bool Active::moveLeft() {
+    bool can_move = canMoveLeft();
     if (can_move) {
         m_x--;
     }
     return can_move;
 }
 
-bool Active::canMoveLeft(Playfield *playfield) {
+bool Active::canMoveLeft() {
     for (uint8_t row = 0; row < 4; row++) {
         for (uint8_t col = 0; col < 4; col++) {
             if (m_grid[row][col]) {
                 // At left border, can't move any further
                 if (m_x + col <= 0 ||
                     // Spot to the left is filled
-                    !playfield->isEmpty(m_x + col - 1, m_y + row)) {
+                    !p_playfield->isEmpty(m_x + col - 1, m_y + row)) {
                     return false;
                 }
             }
@@ -220,8 +221,8 @@ bool Active::canMoveLeft(Playfield *playfield) {
     return true;
 }
 
-bool Active::stepDown(Playfield *playfield) {
-    if (canStepDown(playfield)) {
+bool Active::stepDown() {
+    if (canStepDown()) {
         m_y++;
         return true;
     } else {
@@ -229,19 +230,19 @@ bool Active::stepDown(Playfield *playfield) {
     }
 }
 
-bool Active::canStepDown(Playfield *playfield) {
+bool Active::canStepDown() {
     // Return true if the Tetromino could move down by one cell without
     // colliding with anything
 
     // Check if already at the bottom or if there would
-    // be any collision with a Mino on the Playfield
+    // be any collision with a Mino on the p_playfield
     for (uint8_t row = 0; row < 4; row++) {
         for (uint8_t col = 0; col < 4; col++) {
             if (m_grid[row][col]) {
                 // At bottom, can't move any further down
                 if (m_y + row >= GRID_SIZE_Y - 1 ||
                     // Spot below is filled
-                    !playfield->isEmpty(m_x + col, m_y + row + 1)) {
+                    !p_playfield->isEmpty(m_x + col, m_y + row + 1)) {
                     return false;
                 }
             }
@@ -250,11 +251,11 @@ bool Active::canStepDown(Playfield *playfield) {
     return true;
 }
 
-void Active::hardDrop(Playfield *playfield) {
+void Active::hardDrop() {
     // Hard drop the falling Tetromino, i. e. move it down as far as possible
     // Note that this doesn't lock nor respawn the Tetromino!
 
-    m_y = getGhostY(playfield);
+    m_y = getGhostY();
 }
 
 TetroGrid_t Active::getGridRotatedClockw() {
@@ -308,15 +309,14 @@ TetroGrid_t Active::getGridRotatedCounterclockw() {
     return new_grid;
 }
 
-bool Active::doesOffsetGridConflict(const TetroGrid_t &grid, int dx, int dy,
-                                    Playfield *playfield) {
-    // Return true if the given grid overlaps with the playfield at any cell if
-    // it were to replace the actual current grid and be offset by the given
+bool Active::doesOffsetGridConflict(const TetroGrid_t &grid, int dx, int dy) {
+    // Return true if the given grid overlaps with the p_playfield at any cell
+    // if it were to replace the actual current grid and be offset by the given
     // amount
     for (int row = 0; row < 4; row++) {
         for (int col = 0; col < 4; col++) {
             if (grid[row][col]) {
-                if (!playfield->isEmpty(m_x + col + dx, m_y + row + dy) ||
+                if (!p_playfield->isEmpty(m_x + col + dx, m_y + row + dy) ||
                     m_x + col + dx < 0 || m_x + col + dx >= GRID_SIZE_X ||
                     m_y + col + dy < 0 || m_y + col + dy >= GRID_SIZE_Y) {
                     return true;
@@ -327,26 +327,24 @@ bool Active::doesOffsetGridConflict(const TetroGrid_t &grid, int dx, int dy,
     return false;
 }
 
-bool Active::doesGridConflict(const TetroGrid_t &grid, Playfield *playfield) {
-    // Return true if the given grid overlaps with the playfield at any cell if
-    // it were to replace the actual current grid
-    return doesOffsetGridConflict(grid, 0, 0, playfield);
+bool Active::doesGridConflict(const TetroGrid_t &grid) {
+    // Return true if the given grid overlaps with the p_playfield at any cell
+    // if it were to replace the actual current grid
+    return doesOffsetGridConflict(grid, 0, 0);
 }
 
-bool Active::tryWallkicksC(const TetroGrid_t &new_grid, Wallkick_t &success,
-                           Playfield *playfield) {
+bool Active::tryWallkicksC(const TetroGrid_t &new_grid, Wallkick_t &success) {
     // Try Wall Kicks for clockwise rotation
-    return tryWallkicks(new_grid, 1, success, playfield);
+    return tryWallkicks(new_grid, 1, success);
 }
 
-bool Active::tryWallkicksCC(const TetroGrid_t &new_grid, Wallkick_t &success,
-                            Playfield *playfield) {
+bool Active::tryWallkicksCC(const TetroGrid_t &new_grid, Wallkick_t &success) {
     // Try Wall Kicks for counterclockwise rotation
-    return tryWallkicks(new_grid, -1, success, playfield);
+    return tryWallkicks(new_grid, -1, success);
 }
 
 bool Active::tryWallkicks(const TetroGrid_t &new_grid, int8_t direction,
-                          Wallkick_t &success, Playfield *playfield) {
+                          Wallkick_t &success) {
     // Try all Wall Kicks for the given grid and direction of rotation. If a
     // working Wall Kick is found, it is stored in &success and true is
     // returned; otherwise false.
@@ -373,17 +371,17 @@ bool Active::tryWallkicks(const TetroGrid_t &new_grid, int8_t direction,
         }
     }
     // Try out all Wall Kicks
-    return tryWallkickData(new_grid, wallkick_data, success, playfield);
+    return tryWallkickData(new_grid, wallkick_data, success);
 }
 
 bool Active::tryWallkickData(const TetroGrid_t &new_grid,
                              const WallkickData_t *wallkick_data,
-                             Wallkick_t &success, Playfield *playfield) {
+                             Wallkick_t &success) {
     // Iterate over all given Wall Kicks to see if one works
     for (uint8_t i = 0; i < wallkick_data->size(); i++) {
         // Check if there would be a conflict using the current Wall Kick
         if (!doesOffsetGridConflict(new_grid, (*wallkick_data)[i][0],
-                                    (*wallkick_data)[i][1], playfield)) {
+                                    (*wallkick_data)[i][1])) {
             // Possible Wall Kick found
             success = (*wallkick_data)[i];
             return true;
@@ -393,7 +391,7 @@ bool Active::tryWallkickData(const TetroGrid_t &new_grid,
     return false;
 }
 
-bool Active::rotateClockw(Playfield *playfield) {
+bool Active::rotateClockw() {
     // If possible, perform a clockwise rotation
 
     // Generate rotated grid
@@ -402,7 +400,7 @@ bool Active::rotateClockw(Playfield *playfield) {
     // Wall Kick that is tried first, therefore it isn't necesarry to
     // exclusively check if the new grid fits without a wall kick.
     Wallkick_t wallkick;
-    if (!tryWallkicksC(new_grid, wallkick, playfield)) {
+    if (!tryWallkicksC(new_grid, wallkick)) {
         // No Wall Kick found -> rotation is impossible
         return false;
     }
@@ -416,12 +414,12 @@ bool Active::rotateClockw(Playfield *playfield) {
     return true;
 }
 
-bool Active::rotateCounterclockw(Playfield *playfield) {
+bool Active::rotateCounterclockw() {
     // If possible, perform a counterclockwise rotation
 
     TetroGrid_t new_grid = getGridRotatedCounterclockw();
     Wallkick_t wallkick;
-    if (!tryWallkicksCC(new_grid, wallkick, playfield)) {
+    if (!tryWallkicksCC(new_grid, wallkick)) {
         // No Wall Kick found -> rotation is impossible
         return false;
     }
@@ -436,27 +434,27 @@ bool Active::rotateCounterclockw(Playfield *playfield) {
     return true;
 }
 
-void Active::draw(SDL_Renderer *renderer, Playfield *playfield) {
+void Active::draw(SDL_Renderer *renderer) {
     for (int row = 0; row < 4; row++) {
         for (int col = 0; col < 4; col++) {
             if (m_grid[row][col]) {
-                playfield->drawMino(renderer, m_x + col, m_y + row,
-                                    TETROMINO_COLORS[m_type]);
+                p_playfield->drawMino(renderer, m_x + col, m_y + row,
+                                      TETROMINO_COLORS[m_type]);
             }
         }
     }
 }
 
-void Active::drawGhost(SDL_Renderer *renderer, Playfield *playfield) {
-    int ghost_y = getGhostY(playfield);
+void Active::drawGhost(SDL_Renderer *renderer) {
+    int ghost_y = getGhostY();
     //  Don't draw the Ghost if it's at the same position as the actual
     //  Tetromino
     if (ghost_y > m_y) {
         for (int row = 0; row < 4; row++) {
             for (int col = 0; col < 4; col++) {
                 if (m_grid[row][col]) {
-                    playfield->drawGhostMino(renderer, m_x + col,
-                                             ghost_y + row);
+                    p_playfield->drawGhostMino(renderer, m_x + col,
+                                               ghost_y + row);
                 }
             }
         }

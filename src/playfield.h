@@ -12,7 +12,6 @@ class Playfield {
     void drawActiveTetromino(SDL_Renderer *renderer);
     SDL_Rect getMinoRect(int x, int y);
     bool isRowFilled(int row);
-    bool isRowEmpty(int row);
     void copyRow(int from, int to);
     void setAtHard(int x, int y, uint8_t mino_type);
 

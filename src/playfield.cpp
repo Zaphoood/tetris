@@ -107,15 +107,6 @@ bool Playfield::isRowFilled(int row) {
     return true;
 }
 
-bool Playfield::isRowEmpty(int row) {
-    for (int col = 0; col < GRID_SIZE_X; col++) {
-        if (!isEmpty(col, row)) {
-            return false;
-        }
-    }
-    return true;
-}
-
 void Playfield::copyRow(int from, int to) {
     for (int col = 0; col < GRID_SIZE_X; col++) {
         setAtHard(col, to, getAt(col, from));
