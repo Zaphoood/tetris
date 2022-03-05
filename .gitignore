@@ -11,5 +11,9 @@ main.out
 # Swap files
 *.swp
 
+# Doxygen files
+.doxy.config*
+doxygen/
+
 # Folder containing 2009 Tetris Guidelines
 2009-tetris-guideline
