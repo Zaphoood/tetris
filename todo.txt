@@ -2,6 +2,8 @@ Bugs:
 * Playfield is initialized twice
 
 Next
+* Create class for drawing HUD (includes Queue, Hold, Level)
+* Seperate Playfield gameplay and Playfield drawing functionality
 * Implement levels
 * Increase speed upon level-up
 * Use 7-bag system for generating random Tetrominos
