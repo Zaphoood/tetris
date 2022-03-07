@@ -4,10 +4,10 @@
 #include "constants.h"
 #include "game.h"
 
-Game::Game() : queue_visuals{TetroVisual(0), TetroVisual(0), TetroVisual(0)} {
-    // TODO: See why Playfield() is initialized twice
-    playfield = Playfield(PLAYFIELD_DRAW_X, PLAYFIELD_DRAW_Y);
-    active = Active(bag.popQueue(), &playfield);
+Game::Game()
+    : queue_visuals{TetroVisual(0), TetroVisual(0), TetroVisual(0)},
+      playfield(Playfield(PLAYFIELD_DRAW_X, PLAYFIELD_DRAW_Y)),
+      active(Active(bag.popQueue(), &playfield)) {
     initQueueVisuals();
 }
 

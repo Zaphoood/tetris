@@ -1,6 +1,3 @@
-Bugs:
-* Playfield is initialized twice
-
 Next
 * Create class for drawing HUD (includes Queue, Hold, Level)
 * Seperate Playfield gameplay and Playfield drawing functionality

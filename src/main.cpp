@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
                          SDL_WINDOWPOS_CENTERED, WINDOW_X, WINDOW_Y, 0);
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
 
-    Game game = Game();
+    Game game;
 
     bool isRunning = true;
     game.init();
@@ -24,8 +24,6 @@ int main(int argc, char *argv[]) {
         while (SDL_PollEvent(&e) != 0) {
             switch (e.type) {
             case SDL_QUIT:
-                // TODO: What's up with that "stack smashing detected" error
-                // message when the window is closed?
                 isRunning = false;
                 break;
             default:
