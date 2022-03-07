@@ -16,24 +16,30 @@ void Active::loadGrid() {
     m_grid = TETROMINOS[m_type];
 }
 
-void Active::respawn(uint8_t type) {
-    // Move the Tetromino to the top and load the new Tetromino
-    // into m_grid
+bool Active::respawn(uint8_t type) {
+    // Load new Tetromino into the grid and move it to the respawn position;
+    // return false if unsuccessfull
+
     if (type < 0 || type >= N_TETROMINOS) {
         throw std::out_of_range("Tetromino type must be in range [0..6].");
     }
     // Set new Tetromino type
     m_type = type;
-    // Reset the orientation
+    // Reset orientation
     m_orientation = 0;
     // Load corresponding Tetromino into grid
     loadGrid();
+    // Check if respawn position is obstructed
+    if (gridConflict(m_grid, STARTING_POSITION_X, STARTING_POSITION_Y)) {
+        return false;
+    }
     // Set starting position
     m_x = STARTING_POSITION_X;
     m_y = STARTING_POSITION_Y;
+    return true;
 }
 
-void Active::lockDownAndRespawn(uint8_t new_type) {
+bool Active::lockDownAndRespawn(uint8_t new_type) {
     // 'Bake' the current Tetromino into the playfield, afterwards respawn
     for (int x = 0; x < 4; x++) {
         for (int y = 0; y < 4; y++) {
@@ -42,7 +48,7 @@ void Active::lockDownAndRespawn(uint8_t new_type) {
             }
         }
     }
-    respawn(new_type);
+    return respawn(new_type);
 }
 
 int Active::getGhostY() {
@@ -145,6 +151,7 @@ bool Active::canStepDown() {
 
     // Check if already at the bottom or if there would
     // be any collision with a Mino on the p_playfield
+    // TODO: Use gridConflict() for this check
     for (uint8_t row = 0; row < 4; row++) {
         for (uint8_t col = 0; col < 4; col++) {
             if (m_grid[row][col]) {
@@ -218,28 +225,21 @@ TetroGrid_t Active::getGridRotatedCounterclockw() {
     return new_grid;
 }
 
-bool Active::doesOffsetGridConflict(const TetroGrid_t &grid, int dx, int dy) {
-    // Return true if the given grid overlaps with the p_playfield at any cell
-    // if it were to replace the actual current grid and be offset by the given
-    // amount
+bool Active::gridConflict(const TetroGrid_t &grid, int x, int y) {
+    // Return true if the given grid, placed at the given location, overlaps
+    // with any Mino on the Playfield
     for (int row = 0; row < 4; row++) {
         for (int col = 0; col < 4; col++) {
             if (grid[row][col]) {
-                if (!p_playfield->isEmpty(m_x + col + dx, m_y + row + dy) ||
-                    m_x + col + dx < 0 || m_x + col + dx >= GRID_SIZE_X ||
-                    m_y + col + dy < 0 || m_y + col + dy >= GRID_SIZE_Y) {
+                if (!p_playfield->isEmpty(x + col, y + row) || x + col < 0 ||
+                    x + col >= GRID_SIZE_X || y + col < 0 ||
+                    y + col >= GRID_SIZE_Y) {
                     return true;
                 }
             }
         }
     }
     return false;
-}
-
-bool Active::doesGridConflict(const TetroGrid_t &grid) {
-    // Return true if the given grid overlaps with the p_playfield at any cell
-    // if it were to replace the actual current grid
-    return doesOffsetGridConflict(grid, 0, 0);
 }
 
 bool Active::tryWallkicksC(const TetroGrid_t &new_grid, Wallkick_t &success) {
@@ -289,8 +289,8 @@ bool Active::tryWallkickData(const TetroGrid_t &new_grid,
     // Iterate over all given Wall Kicks to see if one works
     for (uint8_t i = 0; i < wallkick_data->size(); i++) {
         // Check if there would be a conflict using the current Wall Kick
-        if (!doesOffsetGridConflict(new_grid, (*wallkick_data)[i][0],
-                                    (*wallkick_data)[i][1])) {
+        if (!gridConflict(new_grid, m_x + (*wallkick_data)[i][0],
+                          m_y + (*wallkick_data)[i][1])) {
             // Possible Wall Kick found
             success = (*wallkick_data)[i];
             return true;
@@ -305,8 +305,8 @@ bool Active::rotateClockw() {
 
     // Generate rotated grid
     TetroGrid_t new_grid = getGridRotatedClockw();
-    // Try to perform Wall Kick. Note that no offset (i. e. [0, 0]) is the first
-    // Wall Kick that is tried first, therefore it isn't necesarry to
+    // Try to perform Wall Kick. Note that no offset (i. e. [0, 0]) is the
+    // first Wall Kick that is tried first, therefore it isn't necesarry to
     // exclusively check if the new grid fits without a wall kick.
     Wallkick_t wallkick;
     if (!tryWallkicksC(new_grid, wallkick)) {

@@ -21,8 +21,7 @@ class Active {
     bool canMoveLeft();
     TetroGrid_t getGridRotatedClockw();
     TetroGrid_t getGridRotatedCounterclockw();
-    bool doesGridConflict(const TetroGrid_t &grid);
-    bool doesOffsetGridConflict(const TetroGrid_t &grid, int dx, int dy);
+    bool gridConflict(const TetroGrid_t &grid, int x, int y);
     bool tryWallkicksC(const TetroGrid_t &new_grid, Wallkick_t &success);
     bool tryWallkicksCC(const TetroGrid_t &new_grid, Wallkick_t &success);
     bool tryWallkicks(const TetroGrid_t &new_grid, int8_t direction,
@@ -35,8 +34,8 @@ class Active {
     Active();
     Active(uint8_t type, Playfield *p_playfield);
 
-    void respawn(uint8_t type);
-    void lockDownAndRespawn(uint8_t type);
+    bool respawn(uint8_t type);
+    bool lockDownAndRespawn(uint8_t type);
     int getGhostY();
 
     bool moveRight();

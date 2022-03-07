@@ -15,11 +15,15 @@ void Game::init() {
     // Schedule the first fall
     std::chrono::steady_clock::time_point t_next_fall;
     resetFallTimer();
+    state = GameState::Running;
 }
 
 void Game::update() {
     // Check if the falling Tetromino has made surface contact, if so schedule
     // lock down timer
+    if (state != GameState::Running) {
+        return;
+    }
     if (!active.canStepDown()) {
         if (!surface_contact) {
             surface_contact = true;
@@ -52,6 +56,10 @@ void Game::update() {
             performFall();
         }
     }
+}
+
+GameState Game::getState() {
+    return state;
 }
 
 void Game::startSoftDropping() {
@@ -112,30 +120,42 @@ void Game::handleEvent(const SDL_Event &e) {
         if (!e.key.repeat) {
             switch (e.key.keysym.sym) {
             case SDLK_RIGHT:
-                active.moveRight();
-                // Reset Lock Down timer to give the player another 0.5
-                // seconds to move the Tetromino before it finally sets
-                // This happens for all sidewards movements and rotations
-                scheduleLockDown();
+                if (state == GameState::Running) {
+                    active.moveRight();
+                    // Reset Lock Down timer to give the player another 0.5
+                    // seconds to move the Tetromino before it finally sets
+                    // This happens for all sidewards movements and rotations
+                    scheduleLockDown();
+                }
                 break;
             case SDLK_LEFT:
-                active.moveLeft();
-                scheduleLockDown();
+                if (state == GameState::Running) {
+                    active.moveLeft();
+                    scheduleLockDown();
+                }
                 break;
             case SDLK_DOWN:
-                startSoftDropping();
+                if (state == GameState::Running) {
+                    startSoftDropping();
+                }
                 break;
             case SDLK_UP:
-                active.rotateClockw();
-                scheduleLockDown();
+                if (state == GameState::Running) {
+                    active.rotateClockw();
+                    scheduleLockDown();
+                }
                 break;
             case SDLK_c:
-                active.rotateCounterclockw();
-                scheduleLockDown();
+                if (state == GameState::Running) {
+                    active.rotateCounterclockw();
+                    scheduleLockDown();
+                }
                 break;
             case SDLK_SPACE:
-                active.hardDrop();
-                lockDownActive();
+                if (state == GameState::Running) {
+                    active.hardDrop();
+                    lockDownActive();
+                }
                 break;
             }
         }
@@ -177,6 +197,10 @@ void Game::drawQueue(SDL_Renderer *renderer) {
 void Game::lockDownActive() {
     // Lock down and respawn the falling Tetromino and clear empty lines on the
     // Playfield
-    active.lockDownAndRespawn(bag.popQueue());
+    if (!active.lockDownAndRespawn(bag.popQueue())) {
+        // Block Out
+        state = GameState::GameOver;
+        std::cout << "Game Over!\n";
+    }
     playfield.clearEmptyLines();
 }

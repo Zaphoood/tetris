@@ -7,8 +7,12 @@
 #include "playfield.h"
 #include "tetrovis.h"
 
+enum class GameState { PreInit, Running, GameOver };
+
 class Game {
   private:
+    // Current state of the game
+    GameState state = GameState::PreInit;
     // When to perform the next step down
     std::chrono::steady_clock::time_point t_next_fall;
     // When to perform the next soft drop; A single Soft Drop refers to
@@ -50,6 +54,7 @@ class Game {
 
     void init();
     void update();
+    GameState getState();
     void handleEvent(const SDL_Event &e);
     void draw(SDL_Renderer *renderer);
 };
