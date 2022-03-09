@@ -146,7 +146,8 @@ void Game::handleEvent(const SDL_Event &e) {
                     scheduleLockDown();
                 }
                 break;
-            case SDLK_c:
+            case SDLK_LCTRL:
+            case SDLK_RCTRL:
                 if (state == GameState::Running) {
                     active.rotateCounterclockw();
                     scheduleLockDown();
