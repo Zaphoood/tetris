@@ -2,6 +2,9 @@
 # -- Re-included despite this being considered 'bad practice' by some since this is just a private repo
 # .vscode/
 
+# To-do list
+todo.txt
+
 # Build files
 build/
 

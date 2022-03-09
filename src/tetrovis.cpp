@@ -29,20 +29,10 @@ void TetroVisual::draw(SDL_Renderer *renderer, int x, int y) {
     }
 }
 
-<<<<<<< HEAD
-void TetroVisual::drawMino(SDL_Renderer *renderer, Playfield *p_playfield,
-                           int x, int y) {
-    Playfield::drawMino(renderer, x, y, m_color);
-}
-
-void TetroGhostVisual::drawMino(SDL_Renderer *renderer, Playfield *p_playfield,
-                                int x, int y) {
-=======
 void TetroVisual::drawMino(SDL_Renderer *renderer, int x, int y) {
     Playfield::drawMino(renderer, x, y, m_color);
 }
 
 void TetroGhostVisual::drawMino(SDL_Renderer *renderer, int x, int y) {
->>>>>>> Handle drawing of hud in separate class HUD
     Playfield::drawGhostMino(renderer, x, y);
 }
