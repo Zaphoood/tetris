@@ -32,10 +32,10 @@ void TetroVisual::draw(SDL_Renderer *renderer, Playfield *p_playfield, int x,
 
 void TetroVisual::drawMino(SDL_Renderer *renderer, Playfield *p_playfield,
                            int x, int y) {
-    p_playfield->drawMino(renderer, x, y, m_color);
+    Playfield::drawMino(renderer, x, y, m_color);
 }
 
 void TetroGhostVisual::drawMino(SDL_Renderer *renderer, Playfield *p_playfield,
                                 int x, int y) {
-    p_playfield->drawGhostMino(renderer, x, y);
+    Playfield::drawGhostMino(renderer, x, y);
 }

@@ -349,8 +349,8 @@ void Active::draw(SDL_Renderer *renderer) {
         for (int col = 0; col < 4; col++) {
             if (m_grid[row][col]) {
                 pos = p_playfield->cellToPixelPosition(m_x + col, m_y + row);
-                p_playfield->drawMino(renderer, pos[0], pos[1],
-                                      TETROMINO_COLORS[m_type]);
+                Playfield::drawMino(renderer, pos[0], pos[1],
+                                    TETROMINO_COLORS[m_type]);
             }
         }
     }
@@ -370,7 +370,7 @@ void Active::drawGhost(SDL_Renderer *renderer) {
                 if (m_grid[row][col]) {
                     pos = p_playfield->cellToPixelPosition(m_x + col,
                                                            ghost_y + row);
-                    p_playfield->drawGhostMino(renderer, pos[0], pos[1]);
+                    Playfield::drawGhostMino(renderer, pos[0], pos[1]);
                 }
             }
         }

@@ -26,10 +26,11 @@ class Playfield {
     void clearAt(int x, int y);
     void clearEmptyLines();
 
-    std::array<int, 2> cellToPixelPosition(int cell_x, int cell_y);
-    void drawMino(SDL_Renderer *renderer, int x, int y,
-                  const std::array<uint8_t, 3> &color);
-    void drawGhostMino(SDL_Renderer *renderer, int x, int y);
     void draw(SDL_Renderer *renderer);
     void setDrawPosition(int x, int y);
+
+    std::array<int, 2> cellToPixelPosition(int cell_x, int cell_y);
+    static void drawMino(SDL_Renderer *renderer, int x, int y,
+                         const std::array<uint8_t, 3> &color);
+    static void drawGhostMino(SDL_Renderer *renderer, int x, int y);
 };
