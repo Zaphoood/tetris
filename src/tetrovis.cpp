@@ -1,6 +1,6 @@
 #include "tetrovis.h"
 
-TetroVisual::TetroVisual() : m_kind(-1) {}
+TetroVisual::TetroVisual() : m_kind(255) {}
 TetroVisual::TetroVisual(TetrominoKind_t kind) {
     setKind(kind);
 }
@@ -20,6 +20,10 @@ TetrominoKind_t TetroVisual::getKind() {
 }
 
 void TetroVisual::draw(SDL_Renderer *renderer, int x, int y) {
+    // No kind set; exit
+    if (m_kind == 255) {
+        return;
+    }
     for (int row = 0; row < 4; row++) {
         for (int col = 0; col < 4; col++) {
             if (m_grid[row][col]) {

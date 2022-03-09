@@ -48,10 +48,13 @@ inline const int PLAYFIELD_DRAW_X = (WINDOW_X - PLAYFIELD_WIDTH) / 2;
 inline const int PLAYFIELD_DRAW_Y = 0;
 
 // Queue
-// TODO: Make this completely scalable
 inline const int QUEUE_X = PLAYFIELD_DRAW_X + PLAYFIELD_WIDTH + CELL_SIZE;
-inline const int QUEUE_Y = CELL_SIZE * 2 + 1;
+inline const int QUEUE_Y = CELL_SIZE * 2;
 inline const int QUEUE_OFFSET_Y = CELL_SIZE * 5;
+
+// Hold Tetromino
+inline const int HOLD_X = PLAYFIELD_DRAW_X - (int)(CELL_SIZE * 5.5);
+inline const int HOLD_Y = QUEUE_Y;
 
 // Colors
 using ColorRGB = std::array<uint8_t, 3>;

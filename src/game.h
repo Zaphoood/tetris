@@ -39,8 +39,13 @@ class Game {
     void resetFallTimer();
 
     void scheduleLockDown();
+    void lockDownAndRespawnActive();
+    bool respawnActive();
+    bool respawnActiveWithKind(TetrominoKind_t kind);
 
-    void lockDownActive();
+    void hold();
+    TetrominoKind_t held = -1;
+    bool can_hold = true;
 
     SevenBag bag;
     HUD hud;

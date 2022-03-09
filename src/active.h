@@ -35,7 +35,7 @@ class Active {
     Active(uint8_t type, Playfield *p_playfield);
 
     bool respawn(uint8_t type);
-    bool lockDownAndRespawn(uint8_t type);
+    void lockDown();
     int getGhostY();
 
     bool moveRight();

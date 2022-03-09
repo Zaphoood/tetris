@@ -39,8 +39,8 @@ bool Active::respawn(uint8_t type) {
     return true;
 }
 
-bool Active::lockDownAndRespawn(uint8_t new_type) {
-    // 'Bake' the current Tetromino into the playfield, afterwards respawn
+void Active::lockDown() {
+    // 'Bake' the current Tetromino into the playfield
     for (int x = 0; x < 4; x++) {
         for (int y = 0; y < 4; y++) {
             if (m_grid[y][x]) {
@@ -48,7 +48,6 @@ bool Active::lockDownAndRespawn(uint8_t new_type) {
             }
         }
     }
-    return respawn(new_type);
 }
 
 int Active::getGhostY() {

@@ -44,7 +44,7 @@ void Game::update() {
         if (std::chrono::steady_clock::now() > t_lock_down) {
             // Making surface contact and lock down timer has run out
             // Lock down Tetromino and spawn a new one
-            lockDownActive();
+            lockDownAndRespawnActive();
             // If possible, step down immediatly after respawning (this is
             // according to the Tetris Guideline)
             performFall();
@@ -156,7 +156,12 @@ void Game::handleEvent(const SDL_Event &e) {
             case SDLK_SPACE:
                 if (state == GameState::Running) {
                     active.hardDrop();
-                    lockDownActive();
+                    lockDownAndRespawnActive();
+                }
+                break;
+            case SDLK_c:
+                if (state == GameState::Running) {
+                    hold();
                 }
                 break;
             }
@@ -171,6 +176,27 @@ void Game::handleEvent(const SDL_Event &e) {
     }
 }
 
+void Game::hold() {
+    if (can_hold) {
+        // Disable hold until next piece is set
+        can_hold = false;
+        if (held == (TetrominoKind_t)-1) {
+            // Set kind of held Tetromino to be the old active Tetrominos kind
+            held = active.m_type;
+            // Respawn Tetromino as new random kind
+            respawnActive();
+        } else {
+            // Store intermediate value
+            TetrominoKind_t active_kind = active.m_type;
+            // Set kind of respawned Tetromino to `held`
+            respawnActiveWithKind(held);
+            // Set kind of held Tetromino to be the old active Tetrominos kind
+            held = active_kind;
+        }
+        hud.setHold(held);
+    }
+}
+
 void Game::draw(SDL_Renderer *renderer) {
     playfield.draw(renderer);
     active.drawGhost(renderer);
@@ -178,14 +204,30 @@ void Game::draw(SDL_Renderer *renderer) {
     hud.draw(renderer);
 }
 
-void Game::lockDownActive() {
-    // Lock down and respawn the falling Tetromino and clear empty lines on the
-    // Playfield
-    if (!active.lockDownAndRespawn(bag.popQueue())) {
+void Game::lockDownAndRespawnActive() {
+    // Lock down the falling Tetromino, then respawn
+    // If respawn was successfull, clear empty lines on the Playfield
+    active.lockDown();
+    if (respawnActive()) {
+        playfield.clearEmptyLines();
+    }
+    // Re-enable hold
+    can_hold = true;
+}
+
+bool Game::respawnActive() {
+    // Respawn the active Tetromino, setting its kind to the next value from the
+    // queue
+    return Game::respawnActiveWithKind(bag.popQueue());
+}
+
+bool Game::respawnActiveWithKind(TetrominoKind_t kind) {
+    // Respawn the active Tetromino, settings its kind to the given value
+    if (!active.respawn(kind)) {
         // Block Out
         state = GameState::GameOver;
-        std::cout << "Game Over!\n";
+        return false;
     }
-    playfield.clearEmptyLines();
     hud.setQueue(bag.getQueue());
+    return true;
 }
