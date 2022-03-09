@@ -5,10 +5,11 @@
 #include "game.h"
 
 Game::Game()
-    : queue_visuals{TetroVisual(0), TetroVisual(0), TetroVisual(0)},
-      playfield(Playfield(PLAYFIELD_DRAW_X, PLAYFIELD_DRAW_Y)),
-      active(Active(bag.popQueue(), &playfield)) {
-    initQueueVisuals();
+    : playfield(PLAYFIELD_DRAW_X, PLAYFIELD_DRAW_Y),
+      active(bag.popQueue(), &playfield) {
+    // Don't set hud's queue in initializer list since the order of
+    // initialization is not guaranteed
+    hud.setQueue(bag.getQueue());
 }
 
 void Game::init() {
@@ -168,30 +169,12 @@ void Game::handleEvent(const SDL_Event &e) {
         }
     }
 }
-void Game::initQueueVisuals() {
-    std::array<TetrominoKind_t, QUEUE_LEN> queue = bag.getQueue();
-    for (int i = 0; i < QUEUE_LEN; i++) {
-        queue_visuals[i].setKind(queue[i]);
-    }
-}
 
 void Game::draw(SDL_Renderer *renderer) {
     playfield.draw(renderer);
     active.drawGhost(renderer);
     active.draw(renderer);
-    drawQueue(renderer);
-}
-
-void Game::drawQueue(SDL_Renderer *renderer) {
-    // TODO: Consider moving this to its own class
-    std::array<TetrominoKind_t, QUEUE_LEN> queue = bag.getQueue();
-    for (int i = 0; i < QUEUE_LEN; i++) {
-        if (queue_visuals[i].getKind() != queue[i]) {
-            queue_visuals[i].setKind(queue[i]);
-        }
-        queue_visuals[i].draw(renderer, &playfield, QUEUE_X,
-                              QUEUE_Y + i * QUEUE_OFFSET_Y);
-    }
+    hud.draw(renderer);
 }
 
 void Game::lockDownActive() {
@@ -203,4 +186,5 @@ void Game::lockDownActive() {
         std::cout << "Game Over!\n";
     }
     playfield.clearEmptyLines();
+    hud.setQueue(bag.getQueue());
 }

@@ -4,6 +4,7 @@
 
 #include "active.h"
 #include "bag.h"
+#include "hud.h"
 #include "playfield.h"
 #include "tetrovis.h"
 
@@ -42,9 +43,7 @@ class Game {
     void lockDownActive();
 
     SevenBag bag;
-    std::array<TetroVisual, QUEUE_LEN> queue_visuals;
-    void initQueueVisuals();
-    void drawQueue(SDL_Renderer *renderer);
+    HUD hud;
 
   public:
     Game();
