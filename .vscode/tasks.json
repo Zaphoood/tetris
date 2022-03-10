@@ -13,7 +13,9 @@
         "-o",
         "${fileWorkspaceFolder}/main.out",
         "-lSDL2",
-        "-I${fileWorkspaceFolder}/libs/SDL2/include"
+        "-lSDL2_ttf",
+        "-L/usr/include/SDL2",
+        "-I/usr/local/include/SDL2"
       ],
       "options": {
         "cwd": "${fileWorkspaceFolder}/src/"
