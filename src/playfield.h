@@ -24,7 +24,7 @@ class Playfield {
     bool isEmpty(int x, int y);
     bool setAt(int x, int y, uint8_t mino_type);
     void clearAt(int x, int y);
-    void clearEmptyLines();
+    int clearEmptyLines();
 
     void draw(SDL_Renderer *renderer);
     void setDrawPosition(int x, int y);

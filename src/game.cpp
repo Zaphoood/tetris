@@ -88,8 +88,9 @@ void Game::resetSoftDropTimer() {
 
 void Game::incSoftDropTimer(std::chrono::steady_clock::time_point last) {
     // Schedule the next soft drop, as an offset from last
-    t_next_soft_drop = last + std::chrono::milliseconds(
-                                  (int)(FALL_DELAY_MS * SOFT_DROP_DELAY_MULT));
+    t_next_soft_drop =
+        last + std::chrono::milliseconds(
+                   (int)(scoring.getFallSpeedMs() * SOFT_DROP_DELAY_MULT));
 }
 
 bool Game::performFall() {
@@ -106,7 +107,7 @@ void Game::resetFallTimer() {
 
 void Game::incFallTimer(std::chrono::steady_clock::time_point last) {
     // Schedule the next fall, as an offset from last
-    t_next_fall = last + std::chrono::milliseconds(FALL_DELAY_MS);
+    t_next_fall = last + std::chrono::milliseconds(scoring.getFallSpeedMs());
 }
 
 void Game::scheduleLockDown() {
@@ -180,7 +181,8 @@ void Game::hold() {
     if (can_hold) {
         // Disable hold until next piece is set
         can_hold = false;
-        if (held == (TetrominoKind_t)-1) {
+        // 255 corrsponds to no value set
+        if (held == 255) {
             // Set kind of held Tetromino to be the old active Tetrominos kind
             held = active.m_type;
             // Respawn Tetromino as new random kind
@@ -209,10 +211,18 @@ void Game::lockDownAndRespawnActive() {
     // If respawn was successfull, clear empty lines on the Playfield
     active.lockDown();
     if (respawnActive()) {
-        playfield.clearEmptyLines();
+        int cleared = playfield.clearEmptyLines();
+        scoring.onLinesCleared(cleared);
+        resetFallTimer();
     }
     // Re-enable hold
     can_hold = true;
+
+    // Debug
+    std::cout << "===\n";
+    std::cout << "level: " << scoring.getLevel() << "\n";
+    std::cout << "goal: " << scoring.getGoal() << "\n";
+    std::cout << "fall_speed: " << scoring.getFallSpeedMs() << "\n";
 }
 
 bool Game::respawnActive() {

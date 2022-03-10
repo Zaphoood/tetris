@@ -71,6 +71,9 @@ inline const std::array<ColorRGB, 7> TETROMINO_COLORS = {{
     {{255, 165, 0}}  // L: Orange
 }};
 
+// Scoring
+inline const int LINES_PER_LEVEL = 10;
+
 // Four-by-four Matrix containing the grid representation of a Tetromino
 using TetroGrid_t = std::array<std::array<uint8_t, 4>, 4>;
 // A single Wall Kick

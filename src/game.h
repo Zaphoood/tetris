@@ -6,6 +6,7 @@
 #include "bag.h"
 #include "hud.h"
 #include "playfield.h"
+#include "scoring.h"
 #include "tetrovis.h"
 
 enum class GameState { PreInit, Running, GameOver };
@@ -14,11 +15,9 @@ class Game {
   private:
     // Current state of the game
     GameState state = GameState::PreInit;
-    // When to perform the next step down
+    // When to perform the next fall step
     std::chrono::steady_clock::time_point t_next_fall;
-    // When to perform the next soft drop; A single Soft Drop refers to
-    // stepping down one cell at an increased speed as the Down Arrow key is
-    // held
+    // When to perform the next soft drop step
     std::chrono::steady_clock::time_point t_next_soft_drop;
     // Whether the Tetromino is currently Soft Dropping, i. e. the Down Arrow
     // key is held
@@ -49,6 +48,7 @@ class Game {
 
     SevenBag bag;
     HUD hud;
+    FixedGoalScoring scoring = FixedGoalScoring(1);
 
   public:
     Game();

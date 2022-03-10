@@ -135,16 +135,24 @@ void Playfield::copyRow(int from, int to) {
     }
 }
 
-void Playfield::clearEmptyLines() {
+int Playfield::clearEmptyLines() {
+    /**
+     * Clear empty lines from the playfield
+     *
+     * @return the number of removed lines
+     */
+
     // Only store cleared lines for the visible portion of the grid (which
     // causes all those 'GRID_START_Y + ...' offsets)
     std::array<bool, GRID_SIZE_VISIBLE_Y> cleared_lines{};
+    int n_cleared = 0;
     for (int row = 0; row < GRID_SIZE_VISIBLE_Y; row++) {
         if (isRowFilled(GRID_START_Y + row)) {
             for (int col = 0; col < GRID_SIZE_X; col++) {
                 clearAt(col, GRID_START_Y + row);
             }
             cleared_lines[row] = 1;
+            n_cleared++;
         }
     }
     // Iterate over the columns from bottom to top. Everytime we encounter a
@@ -161,4 +169,5 @@ void Playfield::clearEmptyLines() {
             row++;
         }
     }
+    return n_cleared;
 }
