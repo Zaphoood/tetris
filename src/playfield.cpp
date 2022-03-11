@@ -11,7 +11,6 @@ Playfield::Playfield() : Playfield(0, 0) {}
 Playfield::Playfield(int draw_x, int draw_y) : draw_x(draw_x), draw_y(draw_y) {
     // Initialize all cells to 7, which represents an empty space
     // values 0~6 correspond to different Minos
-    std::cout << "Playfield initialized\n";
     for (int row = 0; row < GRID_SIZE_Y; row++) {
         for (int col = 0; col < GRID_SIZE_X; col++) {
             grid[row][col] = 7;

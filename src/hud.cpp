@@ -22,7 +22,6 @@ HUD::HUD(const ScoringSystem *p_scoring,
 HUD::~HUD() {
     TTF_CloseFont(m_font);
     m_font = NULL;
-    std::cout << "Destroyed font\n";
 }
 
 void HUD::setQueue(const std::array<TetrominoKind_t, QUEUE_LEN> &queue) {
