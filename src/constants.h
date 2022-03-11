@@ -4,6 +4,10 @@
 
 #include "SDL.h"
 
+// Input
+inline const int KEY_INIT_DELAY_MS = 500;
+inline const int KEY_REPEAT_DELAY_MS = 50;
+
 // Tetromino
 // Define a type that stores a kind of Tetromino, such as O or L
 using TetrominoKind_t = uint8_t;

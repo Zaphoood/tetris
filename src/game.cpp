@@ -24,6 +24,20 @@ void Game::update() {
     if (state != GameState::Running) {
         return;
     }
+
+    std::chrono::steady_clock::time_point now =
+        std::chrono::steady_clock::now();
+    if (moving_right) {
+        if (now > t_next_mv_right) {
+            moveRight();
+        }
+    }
+    if (moving_left) {
+        if (now > t_next_mv_left) {
+            moveLeft();
+        }
+    }
+
     if (!active.canStepDown()) {
         if (!surface_contact) {
             surface_contact = true;
@@ -40,7 +54,7 @@ void Game::update() {
     }
 
     if (surface_contact) {
-        if (std::chrono::steady_clock::now() > t_lock_down) {
+        if (now > t_lock_down) {
             // Making surface contact and lock down timer has run out
             // Lock down Tetromino and spawn a new one
             lockDownAndRespawnActive();
@@ -49,10 +63,9 @@ void Game::update() {
             performFall();
         }
     } else {
-        if (soft_dropping &&
-            std::chrono::steady_clock::now() > t_next_soft_drop) {
+        if (soft_dropping && now > t_next_soft_drop) {
             performSoftDrop();
-        } else if (std::chrono::steady_clock::now() > t_next_fall) {
+        } else if (now > t_next_fall) {
             performFall();
         }
     }
@@ -81,7 +94,8 @@ bool Game::performSoftDrop() {
 }
 
 void Game::resetSoftDropTimer() {
-    // Reset the soft drop timer. Should be called when soft dropping is started
+    // Reset the soft drop timer. Should be called when soft dropping is
+    // started
     incSoftDropTimer(std::chrono::steady_clock::now());
 }
 
@@ -93,8 +107,8 @@ void Game::incSoftDropTimer(std::chrono::steady_clock::time_point last) {
 }
 
 bool Game::performFall() {
-    // Move the Tetromino down by one cell and set the timer for the next fall
-    // move
+    // Move the Tetromino down by one cell and set the timer for the next
+    // fall move
     incFallTimer(t_next_fall);
     return active.stepDown();
 }
@@ -122,17 +136,12 @@ void Game::handleEvent(const SDL_Event &e) {
             switch (e.key.keysym.sym) {
             case SDLK_RIGHT:
                 if (state == GameState::Running) {
-                    active.moveRight();
-                    // Reset Lock Down timer to give the player another 0.5
-                    // seconds to move the Tetromino before it finally sets
-                    // This happens for all sidewards movements and rotations
-                    scheduleLockDown();
+                    initMoveRight();
                 }
                 break;
             case SDLK_LEFT:
                 if (state == GameState::Running) {
-                    active.moveLeft();
-                    scheduleLockDown();
+                    initMoveLeft();
                 }
                 break;
             case SDLK_DOWN:
@@ -169,11 +178,72 @@ void Game::handleEvent(const SDL_Event &e) {
         break;
     case SDL_KEYUP:
         switch (e.key.keysym.sym) {
+        case SDLK_RIGHT:
+            stopMoveRight();
+            break;
+        case SDLK_LEFT:
+            stopMoveLeft();
+            break;
         case SDLK_DOWN:
             soft_dropping = false;
             break;
         }
     }
+}
+
+void Game::initMoveRight() {
+    if (!moving_right) {
+        moving_right = true;
+        moving_left = false;
+        moveRight();
+        // Override the timer for the next right move set by moveRight
+        // Instead, set initial delay
+        t_next_mv_right = std::chrono::steady_clock::now() +
+                          std::chrono::milliseconds(KEY_INIT_DELAY_MS);
+    }
+}
+
+void Game::stopMoveRight() {
+    moving_right = false;
+    keystate = SDL_GetKeyboardState(NULL);
+    if (keystate[SDL_SCANCODE_LEFT]) {
+        initMoveLeft();
+    }
+}
+
+void Game::moveRight() {
+    active.moveRight();
+    t_next_mv_right += std::chrono::milliseconds(KEY_REPEAT_DELAY_MS);
+    // Reset Lock Down timer to give the player another 0.5
+    // seconds to move the Tetromino before it finally sets.
+    // (This happens for all sidewards movements and rotations)
+    scheduleLockDown();
+}
+
+void Game::initMoveLeft() {
+    if (!moving_left) {
+        moving_left = true;
+        moving_right = false;
+        moveLeft();
+        // Override the timer for the next left move set by moveLeft
+        // Instead, set initial delay
+        t_next_mv_left = std::chrono::steady_clock::now() +
+                         std::chrono::milliseconds(KEY_INIT_DELAY_MS);
+    }
+}
+
+void Game::stopMoveLeft() {
+    moving_left = false;
+    keystate = SDL_GetKeyboardState(NULL);
+    if (keystate[SDL_SCANCODE_RIGHT]) {
+        initMoveRight();
+    }
+}
+
+void Game::moveLeft() {
+    active.moveLeft();
+    t_next_mv_left += std::chrono::milliseconds(KEY_REPEAT_DELAY_MS);
+    scheduleLockDown();
 }
 
 void Game::hold() {
@@ -182,7 +252,8 @@ void Game::hold() {
         can_hold = false;
         // 255 corrsponds to no value set
         if (held == 255) {
-            // Set kind of held Tetromino to be the old active Tetrominos kind
+            // Set kind of held Tetromino to be the old active Tetrominos
+            // kind
             held = active.m_type;
             // Respawn Tetromino as new random kind
             respawnActive();
@@ -191,7 +262,8 @@ void Game::hold() {
             TetrominoKind_t active_kind = active.m_type;
             // Set kind of respawned Tetromino to `held`
             respawnActiveWithKind(held);
-            // Set kind of held Tetromino to be the old active Tetrominos kind
+            // Set kind of held Tetromino to be the old active Tetrominos
+            // kind
             held = active_kind;
         }
         hud.setHold(held);
@@ -219,8 +291,8 @@ void Game::lockDownAndRespawnActive() {
 }
 
 bool Game::respawnActive() {
-    // Respawn the active Tetromino, setting its kind to the next value from the
-    // queue
+    // Respawn the active Tetromino, setting its kind to the next value from
+    // the queue
     return Game::respawnActiveWithKind(bag.popQueue());
 }
 
@@ -231,8 +303,8 @@ bool Game::respawnActiveWithKind(TetrominoKind_t kind) {
         state = GameState::GameOver;
         return false;
     }
-    // Move down own cell immediatly after respawning; this is according to the
-    // Tetromino Guideline
+    // Move down own cell immediatly after respawning; this is according to
+    // the Tetromino Guideline
     active.stepDown();
     hud.setQueue(bag.getQueue());
     return true;

@@ -15,6 +15,8 @@ class Game {
   private:
     // Current state of the game
     GameState state = GameState::PreInit;
+
+    // ### Controls ###
     // When to perform the next fall step
     std::chrono::steady_clock::time_point t_next_fall;
     // When to perform the next soft drop step
@@ -41,6 +43,19 @@ class Game {
     void lockDownAndRespawnActive();
     bool respawnActive();
     bool respawnActiveWithKind(TetrominoKind_t kind);
+
+    // Horizontal movement
+    const Uint8 *keystate;
+    bool moving_right = false;
+    bool moving_left = false;
+    std::chrono::steady_clock::time_point t_next_mv_right;
+    std::chrono::steady_clock::time_point t_next_mv_left;
+    void initMoveLeft();
+    void stopMoveLeft();
+    void moveLeft();
+    void initMoveRight();
+    void stopMoveRight();
+    void moveRight();
 
     void hold();
     TetrominoKind_t held = -1;
