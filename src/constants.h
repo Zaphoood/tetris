@@ -73,6 +73,13 @@ inline const std::array<ColorRGB, 7> TETROMINO_COLORS = {{
     {{255, 165, 0}}  // L: Orange
 }};
 
+// Text
+inline const int INFO_TEXT_X = 10;
+inline const int LEVEL_TEXT_X = INFO_TEXT_X;
+inline const int LEVEL_TEXT_Y = 105;
+inline const int GOAL_TEXT_X = INFO_TEXT_X;
+inline const int GOAL_TEXT_Y = 145;
+
 // Scoring
 inline const int LINES_PER_LEVEL = 10;
 

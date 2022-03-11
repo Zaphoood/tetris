@@ -1,20 +1,15 @@
 #include "scoring.h"
 #include "constants.h"
 
-int ScoringSystem::getLevel() {
+int ScoringSystem::getLevel() const {
     return m_level;
 }
 
-// TODO: Return all of this as ptrs so we don't have double methods
-int *ScoringSystem::getLevelPtr() {
-    return &m_level;
-}
-
-int ScoringSystem::getGoal() {
+int ScoringSystem::getGoal() const {
     return m_goal;
 }
 
-int ScoringSystem::getFallSpeedMs() {
+int ScoringSystem::getFallSpeedMs() const {
     return m_fall_speed_ms;
 }
 
