@@ -61,7 +61,7 @@ void HUD::renderLevel(SDL_Renderer *renderer) {
     // TODO: Maybe make this faster (e. g. by using C++20's std::format)
     std::string text = "Level: " + std::to_string(level);
     renderText(renderer, LEVEL_TEXT_X, LEVEL_TEXT_Y, text.c_str(), m_font,
-               &m_level_texture, &m_level_rect, m_text_color);
+               &m_level_texture, &m_level_rect, TEXT_COLOR);
 }
 
 void HUD::renderGoal(SDL_Renderer *renderer) {
@@ -78,7 +78,7 @@ void HUD::renderGoal(SDL_Renderer *renderer) {
     // TODO: Maybe make this faster (e. g. by using C++20's std::format)
     std::string text = "Goal: " + std::to_string(goal);
     renderText(renderer, GOAL_TEXT_X, GOAL_TEXT_Y, text.c_str(), m_font,
-               &m_goal_texture, &m_goal_rect, m_text_color);
+               &m_goal_texture, &m_goal_rect, TEXT_COLOR);
 }
 
 void HUD::renderAll(SDL_Renderer *renderer) {

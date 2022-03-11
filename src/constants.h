@@ -59,18 +59,18 @@ inline const int HOLD_X = PLAYFIELD_DRAW_X - (int)(CELL_SIZE * 5.5);
 inline const int HOLD_Y = QUEUE_Y;
 
 // Colors
-using ColorRGB = std::array<uint8_t, 3>;
-inline const ColorRGB GRID_COLOR = {{200, 200, 200}};
-inline const ColorRGB BACKGROUND = {{255, 255, 255}};
-inline const ColorRGB GHOST_COLOR = {{100, 100, 100}};
-inline const std::array<ColorRGB, 7> TETROMINO_COLORS = {{
-    {{0, 255, 255}}, // I: Cyan
-    {{255, 255, 0}}, // O: Yellow
-    {{139, 0, 139}}, // T: Purple
-    {{0, 255, 0}},   // S: Green
-    {{255, 0, 0}},   // Z: Red
-    {{0, 0, 255}},   // J: Blue
-    {{255, 165, 0}}  // L: Orange
+inline const SDL_Color GRID_COLOR{200, 200, 200, 0};
+inline const SDL_Color BACKGROUND{255, 255, 255, 0};
+inline const SDL_Color TEXT_COLOR{0, 0, 0, 0};
+inline const SDL_Color GHOST_COLOR{100, 100, 100, 0};
+inline const std::array<SDL_Color, 7> TETROMINO_COLORS = {{
+    {0, 255, 255, 0}, // I: Cyan
+    {255, 255, 0, 0}, // O: Yellow
+    {139, 0, 139, 0}, // T: Purple
+    {0, 255, 0, 0},   // S: Green
+    {255, 0, 0, 0},   // Z: Red
+    {0, 0, 255, 0},   // J: Blue
+    {255, 165, 0, 0}  // L: Orange
 }};
 
 // Text

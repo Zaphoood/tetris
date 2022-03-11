@@ -31,6 +31,6 @@ class Playfield {
 
     std::array<int, 2> cellToPixelPosition(int cell_x, int cell_y);
     static void drawMino(SDL_Renderer *renderer, int x, int y,
-                         const std::array<uint8_t, 3> &color);
+                         const SDL_Color &color);
     static void drawGhostMino(SDL_Renderer *renderer, int x, int y);
 };

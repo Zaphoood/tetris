@@ -48,8 +48,8 @@ void Playfield::drawPlayfield(SDL_Renderer *renderer) {
 }
 
 void Playfield::drawGrid(SDL_Renderer *renderer) {
-    SDL_SetRenderDrawColor(renderer, GRID_COLOR[0], GRID_COLOR[1],
-                           GRID_COLOR[2], 255);
+    SDL_SetRenderDrawColor(renderer, GRID_COLOR.r, GRID_COLOR.g, GRID_COLOR.b,
+                           GRID_COLOR.a);
     // Draw horizontal lines
     for (int y = 0; y <= GRID_SIZE_VISIBLE_Y; y++) {
         // clang-format off
@@ -69,13 +69,13 @@ void Playfield::drawGrid(SDL_Renderer *renderer) {
 }
 
 void Playfield::drawMino(SDL_Renderer *renderer, int x, int y,
-                         const ColorRGB &color) {
+                         const SDL_Color &color) {
     // Draw a Mino at the given pixel position
 
     // Create destination rectangle
     SDL_Rect rect{x, y, CELL_SIZE, CELL_SIZE};
     // Draw a rectangle filled with the given color
-    SDL_SetRenderDrawColor(renderer, color[0], color[1], color[2], 255);
+    SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.b);
     SDL_RenderFillRect(renderer, &rect);
     // Draw a black outline
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -88,8 +88,8 @@ void Playfield::drawGhostMino(SDL_Renderer *renderer, int x, int y) {
     // Create destination rectangle
     SDL_Rect rect = {x, y, CELL_SIZE, CELL_SIZE};
     // Draw a grey outline
-    SDL_SetRenderDrawColor(renderer, GHOST_COLOR[0], GHOST_COLOR[1],
-                           GHOST_COLOR[2], 255);
+    SDL_SetRenderDrawColor(renderer, GHOST_COLOR.r, GHOST_COLOR.g,
+                           GHOST_COLOR.b, GHOST_COLOR.a);
     SDL_RenderDrawRect(renderer, &rect);
 }
 

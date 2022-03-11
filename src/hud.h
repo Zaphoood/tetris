@@ -18,7 +18,6 @@ class HUD {
 
     // Font
     TTF_Font *m_font;
-    SDL_Color m_text_color{0, 0, 0, 0};
     // Store last value of level so that we know when to re-render
     int m_last_level;
     SDL_Texture *m_level_texture;

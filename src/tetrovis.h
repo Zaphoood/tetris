@@ -8,7 +8,7 @@ class TetroVisual {
   private:
     TetrominoKind_t m_kind;
     TetroGrid_t m_grid;
-    ColorRGB m_color;
+    SDL_Color m_color;
     void drawMino(SDL_Renderer *renderer, int x, int y);
     void loadGrid();
 
