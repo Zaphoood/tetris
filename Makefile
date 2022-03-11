@@ -21,6 +21,6 @@ $(build_dir)/%.o: $(src_dir)/%.cpp $(headers)
 
 clean:
 	rm -f build/*.o
-	rm $(bin)
+	rm -f $(bin)
 
 .phony: all clean
