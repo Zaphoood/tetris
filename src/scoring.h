@@ -9,6 +9,7 @@ class ScoringSystem {
 
   public:
     int getLevel();
+    int *getLevelPtr();
     int getGoal();
     int getFallSpeedMs();
     virtual void onLinesCleared(int n_lines) = 0;

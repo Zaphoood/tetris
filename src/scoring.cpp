@@ -5,6 +5,11 @@ int ScoringSystem::getLevel() {
     return m_level;
 }
 
+// TODO: Return all of this as ptrs so we don't have double methods
+int *ScoringSystem::getLevelPtr() {
+    return &m_level;
+}
+
 int ScoringSystem::getGoal() {
     return m_goal;
 }
@@ -69,7 +74,7 @@ FixedGoalScoring::FixedGoalScoring(int starting_level) {
     m_level = starting_level;
     // When starting on a level higher than one, the first goal is equal to the
     // sum of all the goals up to the current one
-    m_goal = starting_level * LINES_PER_LEVEL;
+    m_goal = 5; // starting_level * LINES_PER_LEVEL;
     updateFallSpeed();
 }
 

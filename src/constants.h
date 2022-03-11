@@ -2,6 +2,8 @@
 #include "array"
 #include "stdint.h"
 
+#include "SDL.h"
+
 // Tetromino
 // Define a type that stores a kind of Tetromino, such as O or L
 using TetrominoKind_t = uint8_t;

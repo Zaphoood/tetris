@@ -6,7 +6,7 @@
 
 Game::Game()
     : playfield(PLAYFIELD_DRAW_X, PLAYFIELD_DRAW_Y),
-      active(bag.popQueue(), &playfield) {
+      active(bag.popQueue(), &playfield), hud(scoring.getLevelPtr()) {
     // Don't set hud's queue in initializer list since the order of
     // initialization is not guaranteed
     hud.setQueue(bag.getQueue());
@@ -217,12 +217,6 @@ void Game::lockDownAndRespawnActive() {
     }
     // Re-enable hold
     can_hold = true;
-
-    // Debug
-    std::cout << "===\n";
-    std::cout << "level: " << scoring.getLevel() << "\n";
-    std::cout << "goal: " << scoring.getGoal() << "\n";
-    std::cout << "fall_speed: " << scoring.getFallSpeedMs() << "\n";
 }
 
 bool Game::respawnActive() {
