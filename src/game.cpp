@@ -14,7 +14,6 @@ Game::Game()
 
 void Game::init() {
     // Schedule the first fall
-    std::chrono::steady_clock::time_point t_next_fall;
     resetFallTimer();
     state = GameState::Running;
 }
@@ -238,6 +237,9 @@ bool Game::respawnActiveWithKind(TetrominoKind_t kind) {
         state = GameState::GameOver;
         return false;
     }
+    // Move down own cell immediatly after respawning; this is according to the
+    // Tetromino Guideline
+    active.stepDown();
     hud.setQueue(bag.getQueue());
     return true;
 }
