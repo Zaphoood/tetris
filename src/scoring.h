@@ -8,9 +8,9 @@ class ScoringSystem {
     void updateFallSpeed();
 
   public:
-    int getLevel();
-    int getGoal();
-    int getFallSpeedMs();
+    int getLevel() const;
+    int getGoal() const;
+    int getFallSpeedMs() const;
     virtual void onLinesCleared(int n_lines) = 0;
 };
 

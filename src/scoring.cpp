@@ -1,15 +1,15 @@
 #include "scoring.h"
 #include "constants.h"
 
-int ScoringSystem::getLevel() {
+int ScoringSystem::getLevel() const {
     return m_level;
 }
 
-int ScoringSystem::getGoal() {
+int ScoringSystem::getGoal() const {
     return m_goal;
 }
 
-int ScoringSystem::getFallSpeedMs() {
+int ScoringSystem::getFallSpeedMs() const {
     return m_fall_speed_ms;
 }
 
@@ -69,7 +69,7 @@ FixedGoalScoring::FixedGoalScoring(int starting_level) {
     m_level = starting_level;
     // When starting on a level higher than one, the first goal is equal to the
     // sum of all the goals up to the current one
-    m_goal = starting_level * LINES_PER_LEVEL;
+    m_goal = 5; // starting_level * LINES_PER_LEVEL;
     updateFallSpeed();
 }
 
