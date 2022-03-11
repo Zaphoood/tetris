@@ -9,7 +9,7 @@ Game::Game()
       active(bag.popQueue(), &playfield), hud(&scoring) {
     // Don't set hud's queue in initializer list since the order of
     // initialization is not guaranteed
-    hud.setQueue(bag.getQueue());
+    respawnActive();
 }
 
 void Game::init() {
