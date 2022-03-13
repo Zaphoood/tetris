@@ -77,7 +77,7 @@ int Active::getGhostY() {
         // Absolute position of the lowest Mino in the current column
         int lowest_mino = m_y + lowest_mino_rel;
         for (int cell_y = lowest_mino + 1; cell_y < GRID_SIZE_Y; cell_y++) {
-            if (!(*p_playfield).isEmpty(m_x + col, cell_y)) {
+            if ((*p_playfield).isObstructed(m_x + col, cell_y)) {
                 ghost_y = std::min(ghost_y, cell_y - lowest_mino_rel - 1);
             }
         }
@@ -99,10 +99,8 @@ bool Active::canMoveRight() {
     for (uint8_t row = 0; row < 4; row++) {
         for (uint8_t col = 0; col < 4; col++) {
             if (m_grid[row][col]) {
-                // At right border, can't move any further
-                if (m_x + col >= GRID_SIZE_X - 1 ||
-                    // Spot to the right is filled
-                    !p_playfield->isEmpty(m_x + col + 1, m_y + row)) {
+                // Spot to the right is filled or lies outside the playfield
+                if (p_playfield->isObstructed(m_x + col + 1, m_y + row)) {
                     return false;
                 }
             }
@@ -123,10 +121,8 @@ bool Active::canMoveLeft() {
     for (uint8_t row = 0; row < 4; row++) {
         for (uint8_t col = 0; col < 4; col++) {
             if (m_grid[row][col]) {
-                // At left border, can't move any further
-                if (m_x + col <= 0 ||
-                    // Spot to the left is filled
-                    !p_playfield->isEmpty(m_x + col - 1, m_y + row)) {
+                // Spot to the left is filled or lies outside playfield
+                if (p_playfield->isObstructed(m_x + col - 1, m_y + row)) {
                     return false;
                 }
             }
@@ -154,10 +150,8 @@ bool Active::canStepDown() {
     for (uint8_t row = 0; row < 4; row++) {
         for (uint8_t col = 0; col < 4; col++) {
             if (m_grid[row][col]) {
-                // At bottom, can't move any further down
-                if (m_y + row >= GRID_SIZE_Y - 1 ||
-                    // Spot below is filled
-                    !p_playfield->isEmpty(m_x + col, m_y + row + 1)) {
+                // Spot below is filled or lies outside playfield
+                if (p_playfield->isObstructed(m_x + col, m_y + row + 1)) {
                     return false;
                 }
             }
@@ -234,8 +228,8 @@ bool Active::gridConflict(const TetroGrid_t &grid, int x, int y) {
     for (int row = 0; row < 4; row++) {
         for (int col = 0; col < 4; col++) {
             if (grid[row][col]) {
-                if (!p_playfield->isEmpty(x + col, y + row) || x + col < 0 ||
-                    x + col >= GRID_SIZE_X || y + col < 0 ||
+                if (p_playfield->isObstructed(x + col, y + row) ||
+                    x + col < 0 || x + col >= GRID_SIZE_X || y + col < 0 ||
                     y + col >= GRID_SIZE_Y) {
                     return true;
                 }

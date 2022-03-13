@@ -97,8 +97,12 @@ uint8_t Playfield::getAt(int x, int y) {
     return grid[y][x];
 }
 
-bool Playfield::isEmpty(int x, int y) {
-    return getAt(x, y) > 6;
+bool Playfield::isObstructed(int x, int y) {
+    if (x < 0 || x >= GRID_SIZE_X || y < 0 || y >= GRID_SIZE_Y) {
+        return true;
+    }
+    TetrominoKind_t val = getAt(x, y);
+    return 0 <= val && val < 7;
 }
 
 bool Playfield::setAt(int x, int y, uint8_t mino_type) {
@@ -121,7 +125,7 @@ void Playfield::clearAt(int x, int y) {
 
 bool Playfield::isRowFilled(int row) {
     for (int col = 0; col < GRID_SIZE_X; col++) {
-        if (isEmpty(col, row)) {
+        if (!isObstructed(col, row)) {
             return false;
         }
     }
