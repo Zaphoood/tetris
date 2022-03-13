@@ -166,11 +166,15 @@ bool Active::canStepDown() {
     return true;
 }
 
-void Active::hardDrop() {
+int Active::hardDrop() {
     // Hard drop the falling Tetromino, i. e. move it down as far as possible
     // Note that this doesn't lock nor respawn the Tetromino!
+    // Returns the number of lines the Tetromino was dropped
 
-    m_y = getGhostY();
+    int ghost_y = getGhostY();
+    int diff = ghost_y - m_y;
+    m_y = ghost_y;
+    return diff;
 }
 
 TetroGrid_t Active::getGridRotatedClockw() {

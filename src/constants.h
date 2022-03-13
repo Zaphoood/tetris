@@ -82,10 +82,13 @@ inline const int INFO_TEXT_X = 10;
 inline const int LEVEL_TEXT_X = INFO_TEXT_X;
 inline const int LEVEL_TEXT_Y = 105;
 inline const int GOAL_TEXT_X = INFO_TEXT_X;
-inline const int GOAL_TEXT_Y = 145;
+inline const int GOAL_TEXT_Y = LEVEL_TEXT_Y + 40;
+inline const int SCORE_TEXT_X = INFO_TEXT_X;
+inline const int SCORE_TEXT_Y = GOAL_TEXT_Y + 40;
 
 // Scoring
 inline const int LINES_PER_LEVEL = 10;
+inline const std::array<int, 4> LINE_CLEAR_REWARD = {{100, 300, 500, 800}};
 
 // Four-by-four Matrix containing the grid representation of a Tetromino
 using TetroGrid_t = std::array<std::array<uint8_t, 4>, 4>;

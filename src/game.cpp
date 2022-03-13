@@ -90,6 +90,7 @@ void Game::stopSoftDropping() {
 
 bool Game::performSoftDrop() {
     incSoftDropTimer(t_next_soft_drop);
+    scoring.onSoftDrop();
     return active.stepDown();
 }
 
@@ -164,7 +165,7 @@ void Game::handleEvent(const SDL_Event &e) {
                 break;
             case SDLK_SPACE:
                 if (state == GameState::Running) {
-                    active.hardDrop();
+                    scoring.onHardDrop(active.hardDrop());
                     lockDownAndRespawnActive();
                 }
                 break;

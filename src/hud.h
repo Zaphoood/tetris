@@ -23,11 +23,16 @@ class HUD {
     SDL_Texture *m_level_texture;
     SDL_Rect m_level_rect;
     void renderLevel(SDL_Renderer *renderer);
-    // Same as m_last_level
+    // Same as above
     int m_last_goal;
     SDL_Texture *m_goal_texture;
     SDL_Rect m_goal_rect;
     void renderGoal(SDL_Renderer *renderer);
+    // Same as above
+    int m_last_score;
+    SDL_Texture *m_score_texture;
+    SDL_Rect m_score_rect;
+    void renderScore(SDL_Renderer *renderer);
     void renderAll(SDL_Renderer *renderer);
     void renderText(SDL_Renderer *renderer, int x, int y, const char *text,
                     TTF_Font *font, SDL_Texture **texture, SDL_Rect *rect,

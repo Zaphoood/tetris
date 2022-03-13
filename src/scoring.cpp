@@ -1,5 +1,7 @@
-#include "scoring.h"
+#include <iostream>
+
 #include "constants.h"
+#include "scoring.h"
 
 int ScoringSystem::getLevel() const {
     return m_level;
@@ -7,6 +9,10 @@ int ScoringSystem::getLevel() const {
 
 int ScoringSystem::getGoal() const {
     return m_goal;
+}
+
+int ScoringSystem::getScore() const {
+    return m_score;
 }
 
 int ScoringSystem::getFallSpeedMs() const {
@@ -63,6 +69,14 @@ void ScoringSystem::updateFallSpeed() {
     }
 }
 
+void ScoringSystem::onSoftDrop() {
+    m_score++;
+}
+
+void ScoringSystem::onHardDrop(int n_lines) {
+    m_score += n_lines * 2;
+}
+
 FixedGoalScoring::FixedGoalScoring() : FixedGoalScoring(1){};
 
 FixedGoalScoring::FixedGoalScoring(int starting_level) {
@@ -70,6 +84,7 @@ FixedGoalScoring::FixedGoalScoring(int starting_level) {
     // When starting on a level higher than one, the first goal is equal to the
     // sum of all the goals up to the current one
     m_goal = 5; // starting_level * LINES_PER_LEVEL;
+    m_score = 0;
     updateFallSpeed();
 }
 
@@ -90,4 +105,11 @@ void FixedGoalScoring::onLinesCleared(int n_lines) {
     }
 
     updateFallSpeed();
+    if (n_lines > 4) {
+        std::cout << "Unreachable: More than four lines cleared\n";
+        exit(1);
+    }
+    if (n_lines > 0) {
+        m_score += LINE_CLEAR_REWARD[n_lines - 1];
+    }
 }

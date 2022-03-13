@@ -42,7 +42,7 @@ class Active {
     bool moveLeft();
     bool stepDown();
     bool canStepDown();
-    void hardDrop();
+    int hardDrop();
     bool rotateClockw();
     bool rotateCounterclockw();
 

@@ -11,6 +11,9 @@ HUD::HUD(const ScoringSystem *p_scoring) : mp_scoring(p_scoring) {
         std::cout << "ERROR: Could not load font.\n";
         exit(1);
     }
+    m_last_level = -1;
+    m_last_goal = -1;
+    m_last_score = -1;
 }
 
 HUD::HUD(const ScoringSystem *p_scoring,
@@ -81,9 +84,27 @@ void HUD::renderGoal(SDL_Renderer *renderer) {
                &m_goal_texture, &m_goal_rect, TEXT_COLOR);
 }
 
+void HUD::renderScore(SDL_Renderer *renderer) {
+    /**
+     * Re-render the Surface containing the score info if needed.
+     * (Same as renderLevel())
+     */
+
+    int score = mp_scoring->getScore();
+    if (score == m_last_score) {
+        return;
+    }
+    m_last_score = score;
+    // TODO: Maybe make this faster (e. g. by using C++20's std::format)
+    std::string text = "Score: " + std::to_string(score);
+    renderText(renderer, SCORE_TEXT_X, SCORE_TEXT_Y, text.c_str(), m_font,
+               &m_score_texture, &m_score_rect, TEXT_COLOR);
+}
+
 void HUD::renderAll(SDL_Renderer *renderer) {
     renderLevel(renderer);
     renderGoal(renderer);
+    renderScore(renderer);
 }
 
 void HUD::renderText(SDL_Renderer *renderer, int x, int y, const char *text,
@@ -108,4 +129,5 @@ void HUD::renderText(SDL_Renderer *renderer, int x, int y, const char *text,
 void HUD::displayAll(SDL_Renderer *renderer) {
     SDL_RenderCopy(renderer, m_level_texture, 0, &m_level_rect);
     SDL_RenderCopy(renderer, m_goal_texture, 0, &m_goal_rect);
+    SDL_RenderCopy(renderer, m_score_texture, 0, &m_score_rect);
 }
