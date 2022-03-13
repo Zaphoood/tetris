@@ -22,13 +22,15 @@ class Active {
     TetroGrid_t getGridRotatedClockw();
     TetroGrid_t getGridRotatedCounterclockw();
     bool gridConflict(const TetroGrid_t &grid, int x, int y);
-    bool tryWallkicksC(const TetroGrid_t &new_grid, Wallkick_t &success);
-    bool tryWallkicksCC(const TetroGrid_t &new_grid, Wallkick_t &success);
+    bool tryWallkicksC(const TetroGrid_t &new_grid, Wallkick_t &success,
+                       int *rotation_point);
+    bool tryWallkicksCC(const TetroGrid_t &new_grid, Wallkick_t &success,
+                        int *rotation_point);
     bool tryWallkicks(const TetroGrid_t &new_grid, int8_t direction,
-                      Wallkick_t &success);
+                      Wallkick_t &success, int *rotation_point);
     bool tryWallkickData(const TetroGrid_t &new_grid,
                          const WallkickData_t *wallkick_data,
-                         Wallkick_t &success);
+                         Wallkick_t &success, int *rotation_point);
 
   public:
     Active();
@@ -43,8 +45,8 @@ class Active {
     bool stepDown();
     bool canStepDown();
     int hardDrop();
-    bool rotateClockw();
-    bool rotateCounterclockw();
+    bool rotateClockw(int *rotation_point);
+    bool rotateCounterclockw(int *rotation_point);
 
     void draw(SDL_Renderer *renderer);
     void drawGhost(SDL_Renderer *renderer);

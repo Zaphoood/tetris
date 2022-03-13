@@ -17,6 +17,8 @@ class ScoringSystem {
     int getFallSpeedMs() const;
     void onSoftDrop();
     void onHardDrop(int n_lines);
+    void onTSpin(int n_lines_cleared);
+    void onMiniTSpin(int n_lines_cleared);
     // This is dependent on the specific scoring system, so subclasses must
     // define it
     virtual void onLinesCleared(int n_lines) = 0;

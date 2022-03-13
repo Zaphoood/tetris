@@ -245,18 +245,20 @@ bool Active::gridConflict(const TetroGrid_t &grid, int x, int y) {
     return false;
 }
 
-bool Active::tryWallkicksC(const TetroGrid_t &new_grid, Wallkick_t &success) {
+bool Active::tryWallkicksC(const TetroGrid_t &new_grid, Wallkick_t &success,
+                           int *rotation_point) {
     // Try Wall Kicks for clockwise rotation
-    return tryWallkicks(new_grid, 1, success);
+    return tryWallkicks(new_grid, 1, success, rotation_point);
 }
 
-bool Active::tryWallkicksCC(const TetroGrid_t &new_grid, Wallkick_t &success) {
+bool Active::tryWallkicksCC(const TetroGrid_t &new_grid, Wallkick_t &success,
+                            int *rotation_point) {
     // Try Wall Kicks for counterclockwise rotation
-    return tryWallkicks(new_grid, -1, success);
+    return tryWallkicks(new_grid, -1, success, rotation_point);
 }
 
 bool Active::tryWallkicks(const TetroGrid_t &new_grid, int8_t direction,
-                          Wallkick_t &success) {
+                          Wallkick_t &success, int *rotation_point) {
     // Try all Wall Kicks for the given grid and direction of rotation. If a
     // working Wall Kick is found, it is stored in &success and true is
     // returned; otherwise false.
@@ -283,12 +285,12 @@ bool Active::tryWallkicks(const TetroGrid_t &new_grid, int8_t direction,
         }
     }
     // Try out all Wall Kicks
-    return tryWallkickData(new_grid, wallkick_data, success);
+    return tryWallkickData(new_grid, wallkick_data, success, rotation_point);
 }
 
 bool Active::tryWallkickData(const TetroGrid_t &new_grid,
                              const WallkickData_t *wallkick_data,
-                             Wallkick_t &success) {
+                             Wallkick_t &success, int *rotation_point) {
     // Iterate over all given Wall Kicks to see if one works
     for (uint8_t i = 0; i < wallkick_data->size(); i++) {
         // Check if there would be a conflict using the current Wall Kick
@@ -296,6 +298,9 @@ bool Active::tryWallkickData(const TetroGrid_t &new_grid,
                           m_y + (*wallkick_data)[i][1])) {
             // Possible Wall Kick found
             success = (*wallkick_data)[i];
+            if (rotation_point) {
+                *rotation_point = i + 1;
+            }
             return true;
         }
     }
@@ -303,7 +308,7 @@ bool Active::tryWallkickData(const TetroGrid_t &new_grid,
     return false;
 }
 
-bool Active::rotateClockw() {
+bool Active::rotateClockw(int *rotation_point) {
     // If possible, perform a clockwise rotation
 
     // Generate rotated grid
@@ -312,7 +317,7 @@ bool Active::rotateClockw() {
     // first Wall Kick that is tried first, therefore it isn't necesarry to
     // exclusively check if the new grid fits without a wall kick.
     Wallkick_t wallkick;
-    if (!tryWallkicksC(new_grid, wallkick)) {
+    if (!tryWallkicksC(new_grid, wallkick, rotation_point)) {
         // No Wall Kick found -> rotation is impossible
         return false;
     }
@@ -326,12 +331,12 @@ bool Active::rotateClockw() {
     return true;
 }
 
-bool Active::rotateCounterclockw() {
+bool Active::rotateCounterclockw(int *rotation_point) {
     // If possible, perform a counterclockwise rotation
 
     TetroGrid_t new_grid = getGridRotatedCounterclockw();
     Wallkick_t wallkick;
-    if (!tryWallkicksCC(new_grid, wallkick)) {
+    if (!tryWallkicksCC(new_grid, wallkick, rotation_point)) {
         // No Wall Kick found -> rotation is impossible
         return false;
     }

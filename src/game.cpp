@@ -130,6 +130,7 @@ void Game::scheduleLockDown() {
 }
 
 void Game::handleEvent(const SDL_Event &e) {
+    last_spin = false;
     switch (e.type) {
     case SDL_KEYDOWN:
         // Ignore repeated keys, we implement our own repeated inputs
@@ -138,11 +139,13 @@ void Game::handleEvent(const SDL_Event &e) {
             case SDLK_RIGHT:
                 if (state == GameState::Running) {
                     initMoveRight();
+                    last_spin = true;
                 }
                 break;
             case SDLK_LEFT:
                 if (state == GameState::Running) {
                     initMoveLeft();
+                    last_spin = true;
                 }
                 break;
             case SDLK_DOWN:
@@ -152,14 +155,15 @@ void Game::handleEvent(const SDL_Event &e) {
                 break;
             case SDLK_UP:
                 if (state == GameState::Running) {
-                    active.rotateClockw();
+                    active.rotateClockw(&rotation_point);
                     scheduleLockDown();
                 }
                 break;
             case SDLK_LCTRL:
             case SDLK_RCTRL:
                 if (state == GameState::Running) {
-                    active.rotateCounterclockw();
+                    int rotation_point;
+                    active.rotateCounterclockw(&rotation_point);
                     scheduleLockDown();
                 }
                 break;
@@ -278,13 +282,100 @@ void Game::draw(SDL_Renderer *renderer) {
     hud.draw(renderer);
 }
 
+int Game::checkTSpin() {
+    if (active.m_type != 5) {
+        // Not a type T Tetromino
+        return 0;
+    }
+    // Check whether the last rotation was a T-Spin. Must be called right before
+    // lock down occurs
+    if (inTSlot() || rotation_point == 5) {
+        // T-Spin
+        return 2;
+    } else if (inMiniTSlot()) {
+        // Mini T-Spin
+        return 1;
+    }
+    return 0;
+}
+
+void Game::getCorners(bool *tl, bool *tr, bool *bl, bool *br) {
+    // TODO: Maybe use bitmasks instead of bools
+    // clang-format off
+    *tl = !playfield.isEmpty(active.m_x,     active.m_y);
+    *tr = !playfield.isEmpty(active.m_x + 2, active.m_y);
+    *bl = !playfield.isEmpty(active.m_x,     active.m_y + 2);
+    *br = !playfield.isEmpty(active.m_x + 2, active.m_y + 2);
+    // clang-format on
+}
+
+bool Game::inTSlot() {
+    bool tl, tr, bl, br;
+    getCorners(&tl, &tr, &bl, &br);
+
+    switch (active.m_orientation) {
+    case 0: // Facing north
+        return tl && tr && (bl || br);
+        break;
+    case 1: // Facing east
+        return tr && br && (tl || bl);
+        break;
+    case 2: // Facing south
+        return br && bl && (tr || tl);
+        break;
+    case 3: // Facing west
+        return bl && tl && (br || tr);
+        break;
+    default:
+        std::cout << "Unreachable: Rotation not in [0..3]\n";
+        exit(1);
+    }
+}
+
+bool Game::inMiniTSlot() {
+    bool tl, tr, bl, br;
+    getCorners(&tl, &tr, &bl, &br);
+
+    switch (active.m_orientation) {
+    case 0: // Facing north
+        return (tl || tr) && bl && br;
+        break;
+    case 1: // Facing east
+        return (tr || br) && tl && bl;
+        break;
+    case 2: // Facing south
+        return (br || bl) && tr && tl;
+        break;
+    case 3: // Facing west
+        return (bl || tl) && br && tr;
+        break;
+    default:
+        std::cout << "Unreachable: Rotation not in [0..3]\n";
+        exit(1);
+    }
+}
+
 void Game::lockDownAndRespawnActive() {
     // Lock down the falling Tetromino, then respawn
     // If respawn was successfull, clear empty lines on the Playfield
+
+    int t_spin = checkTSpin();
     active.lockDown();
     if (respawnActive()) {
         int cleared = playfield.clearEmptyLines();
-        scoring.onLinesCleared(cleared);
+        switch (t_spin) {
+        case 0:
+            scoring.onLinesCleared(cleared);
+            break;
+        case 1:
+            std::cout << "Mini T-Spin, clearing " << cleared << " lines!\n";
+            scoring.onMiniTSpin(cleared);
+            break;
+        case 2:
+            std::cout << "T-Spin, clearing " << cleared << " lines!\n";
+            scoring.onTSpin(cleared);
+            break;
+        }
         resetFallTimer();
     }
     // Re-enable hold

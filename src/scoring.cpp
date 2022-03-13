@@ -77,6 +77,14 @@ void ScoringSystem::onHardDrop(int n_lines) {
     m_score += n_lines * 2;
 }
 
+void ScoringSystem::onTSpin(int n_lines_cleared) {
+    awardAction(T_SPIN_REWARD[n_lines_cleared]);
+}
+
+void ScoringSystem::onMiniTSpin(int n_lines_cleared) {
+    awardAction(MINI_T_SPIN_REWARD[n_lines_cleared]);
+}
+
 void ScoringSystem::awardAction(int points) {
     /**
      * Award points depending on whether a back-to-back sequence is active
@@ -93,8 +101,8 @@ FixedGoalScoring::FixedGoalScoring() : FixedGoalScoring(1){};
 
 FixedGoalScoring::FixedGoalScoring(int starting_level) {
     m_level = starting_level;
-    // When starting on a level higher than one, the first goal is equal to the
-    // sum of all the goals up to the current one
+    // When starting on a level higher than one, the first goal is equal to
+    // the sum of all the goals up to the current one
     m_goal = 5; // starting_level * LINES_PER_LEVEL;
     m_score = 0;
     updateFallSpeed();
@@ -116,8 +124,8 @@ void FixedGoalScoring::onLinesCleared(int n_lines) {
         exit(1);
     }
 
-    // If the amount of cleared lines is bigger than the current goal, subtract
-    // the 'overhead' from the subsequent goal
+    // If the amount of cleared lines is bigger than the current goal,
+    // subtract the 'overhead' from the subsequent goal
     int overhead = n_lines - m_goal;
     // Subtract cleared lines from current goal
     m_goal = std::max(m_goal - n_lines, 0);

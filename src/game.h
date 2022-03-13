@@ -57,6 +57,19 @@ class Game {
     void stopMoveRight();
     void moveRight();
 
+    // T-Spins
+    // Store the last rotation point (a value in the range [0, 4] determined by
+    // what rotation was used by SRS)
+    int rotation_point;
+    // Whether the last action was a spin
+    bool last_spin = false;
+    // Check if the last action was a T-Spin or a Mini T-Spin and award points
+    // accordingly
+    int checkTSpin();
+    void getCorners(bool *tl, bool *tr, bool *bl, bool *br);
+    bool inTSlot();
+    bool inMiniTSlot();
+
     void hold();
     TetrominoKind_t held = -1;
     bool can_hold = true;
