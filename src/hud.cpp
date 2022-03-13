@@ -11,6 +11,7 @@ HUD::HUD(const ScoringSystem *p_scoring) : mp_scoring(p_scoring) {
         std::cout << "ERROR: Could not load font.\n";
         exit(1);
     }
+    // Force re-render on first frame by settings impossible values
     m_last_level = -1;
     m_last_goal = -1;
     m_last_score = -1;

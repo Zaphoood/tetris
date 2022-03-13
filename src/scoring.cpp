@@ -77,6 +77,18 @@ void ScoringSystem::onHardDrop(int n_lines) {
     m_score += n_lines * 2;
 }
 
+void ScoringSystem::awardAction(int points) {
+    /**
+     * Award points depending on whether a back-to-back sequence is active
+     *
+     */
+
+    if (m_b2b) {
+        points = (int)(points * 1.5);
+    }
+    m_score += points;
+}
+
 FixedGoalScoring::FixedGoalScoring() : FixedGoalScoring(1){};
 
 FixedGoalScoring::FixedGoalScoring(int starting_level) {
@@ -89,6 +101,21 @@ FixedGoalScoring::FixedGoalScoring(int starting_level) {
 }
 
 void FixedGoalScoring::onLinesCleared(int n_lines) {
+    // Award points for line clear
+    if (n_lines > 0) {
+        if (n_lines == 4) {
+            m_b2b = true;
+        } else {
+            // A line clear that doesn't clear 4 lines at once end's a
+            // back-to-back sequence
+            m_b2b = false;
+        }
+        awardAction(LINE_CLEAR_REWARD[n_lines - 1] * m_level);
+    } else if (n_lines > 4) {
+        std::cout << "Unreachable: More than four lines cleared\n";
+        exit(1);
+    }
+
     // If the amount of cleared lines is bigger than the current goal, subtract
     // the 'overhead' from the subsequent goal
     int overhead = n_lines - m_goal;
@@ -105,11 +132,4 @@ void FixedGoalScoring::onLinesCleared(int n_lines) {
     }
 
     updateFallSpeed();
-    if (n_lines > 4) {
-        std::cout << "Unreachable: More than four lines cleared\n";
-        exit(1);
-    }
-    if (n_lines > 0) {
-        m_score += LINE_CLEAR_REWARD[n_lines - 1];
-    }
 }

@@ -5,8 +5,10 @@ class ScoringSystem {
     int m_level;
     int m_goal;
     int m_score;
+    bool m_b2b = false; // Whether a back-to-back sequence is currently active
     int m_fall_speed_ms;
     void updateFallSpeed();
+    void awardAction(int points);
 
   public:
     int getLevel() const;
