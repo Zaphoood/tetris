@@ -130,7 +130,6 @@ void Game::scheduleLockDown() {
 }
 
 void Game::handleEvent(const SDL_Event &e) {
-    last_spin = false;
     switch (e.type) {
     case SDL_KEYDOWN:
         // Ignore repeated keys, we implement our own repeated inputs
@@ -139,23 +138,25 @@ void Game::handleEvent(const SDL_Event &e) {
             case SDLK_RIGHT:
                 if (state == GameState::Running) {
                     initMoveRight();
-                    last_spin = true;
+                    last_spin = false;
                 }
                 break;
             case SDLK_LEFT:
                 if (state == GameState::Running) {
                     initMoveLeft();
-                    last_spin = true;
+                    last_spin = false;
                 }
                 break;
             case SDLK_DOWN:
                 if (state == GameState::Running) {
                     startSoftDropping();
+                    last_spin = false;
                 }
                 break;
             case SDLK_UP:
                 if (state == GameState::Running) {
                     active.rotateClockw(&rotation_point);
+                    last_spin = true;
                     scheduleLockDown();
                 }
                 break;
@@ -164,6 +165,7 @@ void Game::handleEvent(const SDL_Event &e) {
                 if (state == GameState::Running) {
                     int rotation_point;
                     active.rotateCounterclockw(&rotation_point);
+                    last_spin = true;
                     scheduleLockDown();
                 }
                 break;
@@ -171,11 +173,13 @@ void Game::handleEvent(const SDL_Event &e) {
                 if (state == GameState::Running) {
                     scoring.onHardDrop(active.hardDrop());
                     lockDownAndRespawnActive();
+                    last_spin = false;
                 }
                 break;
             case SDLK_c:
                 if (state == GameState::Running) {
                     hold();
+                    last_spin = false;
                 }
                 break;
             }
@@ -283,10 +287,12 @@ void Game::draw(SDL_Renderer *renderer) {
 }
 
 int Game::checkTSpin() {
-    if (active.m_type != 5) {
-        // Not a type T Tetromino
+    // Assert that the current Tetromino is a type T one and that the last input
+    // was a rotation
+    if (active.m_type != 5 || !last_spin) {
         return 0;
     }
+
     // Check whether the last rotation was a T-Spin. Must be called right before
     // lock down occurs
     if (inTSlot() || rotation_point == 5) {
