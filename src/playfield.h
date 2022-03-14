@@ -21,7 +21,7 @@ class Playfield {
     Playfield(int draw_x, int draw_y);
 
     uint8_t getAt(int x, int y);
-    bool isEmpty(int x, int y);
+    bool isObstructed(int x, int y);
     bool setAt(int x, int y, uint8_t mino_type);
     void clearAt(int x, int y);
     int clearEmptyLines();
