@@ -302,10 +302,10 @@ int Game::checkTSpin() {
 void Game::getCorners(bool *tl, bool *tr, bool *bl, bool *br) {
     // TODO: Maybe use bitmasks instead of bools
     // clang-format off
-    *tl = !playfield.isEmpty(active.m_x,     active.m_y);
-    *tr = !playfield.isEmpty(active.m_x + 2, active.m_y);
-    *bl = !playfield.isEmpty(active.m_x,     active.m_y + 2);
-    *br = !playfield.isEmpty(active.m_x + 2, active.m_y + 2);
+    *tl = playfield.isObstructed(active.m_x,     active.m_y);
+    *tr = playfield.isObstructed(active.m_x + 2, active.m_y);
+    *bl = playfield.isObstructed(active.m_x,     active.m_y + 2);
+    *br = playfield.isObstructed(active.m_x + 2, active.m_y + 2);
     // clang-format on
 }
 
