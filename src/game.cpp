@@ -221,12 +221,14 @@ void Game::stopMoveRight() {
 }
 
 void Game::moveRight() {
-    active.moveRight();
+    if (active.moveRight()) {
+        // If the move was successfull, reset Lock Down timer to give the
+        // player another 0.5 seconds to move the Tetromino before it finally
+        // sets. (This happens for all sidewards movements and rotations) Only
+        // reset lockdown timer if the move was successfull
+        scheduleLockDown();
+    }
     t_next_mv_right += std::chrono::milliseconds(KEY_REPEAT_DELAY_MS);
-    // Reset Lock Down timer to give the player another 0.5
-    // seconds to move the Tetromino before it finally sets.
-    // (This happens for all sidewards movements and rotations)
-    scheduleLockDown();
 }
 
 void Game::initMoveLeft() {
@@ -250,9 +252,11 @@ void Game::stopMoveLeft() {
 }
 
 void Game::moveLeft() {
-    active.moveLeft();
+    if (active.moveLeft()) {
+        // Only reset lockdown timer if the move was successfull
+        scheduleLockDown();
+    }
     t_next_mv_left += std::chrono::milliseconds(KEY_REPEAT_DELAY_MS);
-    scheduleLockDown();
 }
 
 void Game::hold() {

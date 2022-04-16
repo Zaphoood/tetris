@@ -11,6 +11,9 @@
 
 enum class GameState { PreInit, Running, GameOver };
 
+/*
+ * Handles the main game mechanics.
+ */
 class Game {
   private:
     // Current state of the game
