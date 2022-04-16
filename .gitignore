@@ -1,8 +1,12 @@
 # To-do list
 todo.txt
 
-# Build files
+# CMake
 build/
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
 
 # Main executable
 main.out
