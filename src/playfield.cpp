@@ -138,13 +138,12 @@ void Playfield::copyRow(int from, int to) {
     }
 }
 
+/**
+ * Clear empty lines from the playfield
+ *
+ * @return the number of removed lines
+ */
 int Playfield::clearEmptyLines() {
-    /**
-     * Clear empty lines from the playfield
-     *
-     * @return the number of removed lines
-     */
-
     // Only store cleared lines for the visible portion of the grid (which
     // causes all those 'GRID_START_Y + ...' offsets)
     std::array<bool, GRID_SIZE_VISIBLE_Y> cleared_lines{};
@@ -158,11 +157,12 @@ int Playfield::clearEmptyLines() {
             n_cleared++;
         }
     }
+
     // Iterate over the columns from bottom to top. Everytime we encounter a
     // line that's just been cleared, copy down everything from above
-    for (int row = GRID_SIZE_VISIBLE_Y - 1; row > 0; row--) {
+    for (int row = GRID_SIZE_VISIBLE_Y - 1; row >= 0; row--) {
         if (cleared_lines[row]) {
-            for (int row_i = row; row_i > 0; row_i--) {
+            for (int row_i = row; row_i >= 0; row_i--) {
                 // Copy row above into current row
                 copyRow(GRID_START_Y + row_i - 1, GRID_START_Y + row_i);
                 // Same for cleared lines
