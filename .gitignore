@@ -7,9 +7,10 @@ CMakeCache.txt
 CMakeFiles/
 Makefile
 cmake_install.cmake
+compile_commands.json
 
-# Main executable
-main.out
+# clangd
+.cache/
 
 # Swap files
 *.swp
