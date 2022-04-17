@@ -155,7 +155,7 @@ void Game::handleEvent(const SDL_Event &e) {
                 break;
             case SDLK_UP:
                 if (state == GameState::Running) {
-                    active.rotateClockw(&rotation_point);
+                    active.rotateClockw(rotation_point);
                     last_spin = true;
                     scheduleLockDown();
                 }
@@ -163,8 +163,7 @@ void Game::handleEvent(const SDL_Event &e) {
             case SDLK_LCTRL:
             case SDLK_RCTRL:
                 if (state == GameState::Running) {
-                    int rotation_point;
-                    active.rotateCounterclockw(&rotation_point);
+                    active.rotateCounterclockw(rotation_point);
                     last_spin = true;
                     scheduleLockDown();
                 }
