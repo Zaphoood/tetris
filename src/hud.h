@@ -13,8 +13,8 @@ class HUD {
     // Visual representation of hold Tetromino
     TetroVisual m_hold_visual;
 
-    // Pointers to Game's gameplay info
-    const ScoringSystem *mp_scoring;
+    // Game classes's gameplay info
+    const ScoringSystem& m_scoring;
 
     // Font
     TTF_Font *m_font;
@@ -40,8 +40,8 @@ class HUD {
     void displayAll(SDL_Renderer *renderer);
 
   public:
-    HUD(const std::string& assets_path, const ScoringSystem *p_scoring);
-    HUD(const std::string& assets_path, const ScoringSystem *p_scoring,
+    HUD(const std::string& assets_path, const ScoringSystem& p_scoring);
+    HUD(const std::string& assets_path, const ScoringSystem& p_scoring,
         const std::array<TetrominoKind_t, QUEUE_LEN> &queue);
     ~HUD();
 

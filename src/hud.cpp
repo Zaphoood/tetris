@@ -4,7 +4,7 @@
 
 #include "hud.h"
 
-HUD::HUD(const std::string& assets_path, const ScoringSystem *p_scoring) : mp_scoring(p_scoring) {
+HUD::HUD(const std::string& assets_path, const ScoringSystem& p_scoring) : m_scoring(p_scoring) {
     TTF_Init();
     std::string font_path = assets_path + "/futura-medium.ttf"; 
     m_font = TTF_OpenFont(font_path.c_str(), 20);
@@ -18,9 +18,9 @@ HUD::HUD(const std::string& assets_path, const ScoringSystem *p_scoring) : mp_sc
     m_last_score = -1;
 }
 
-HUD::HUD(const std::string& assets_path, const ScoringSystem *p_scoring,
+HUD::HUD(const std::string& assets_path, const ScoringSystem& scoring,
          const std::array<TetrominoKind_t, QUEUE_LEN> &queue)
-    : HUD(assets_path, p_scoring) {
+    : HUD(assets_path, scoring) {
     setQueue(queue);
 }
 
@@ -58,7 +58,7 @@ void HUD::renderLevel(SDL_Renderer *renderer) {
      * Re-render the Surface containing the level info *only* if it is needed,
      * that is if the level has changed since the last render.
      */
-    int level = mp_scoring->getLevel();
+    int level = m_scoring.getLevel();
     if (level == m_last_level) {
         return;
     }
@@ -75,7 +75,7 @@ void HUD::renderGoal(SDL_Renderer *renderer) {
      * (Same as renderLevel())
      */
 
-    int goal = mp_scoring->getGoal();
+    int goal = m_scoring.getGoal();
     if (goal == m_last_goal) {
         return;
     }
@@ -92,7 +92,7 @@ void HUD::renderScore(SDL_Renderer *renderer) {
      * (Same as renderLevel())
      */
 
-    int score = mp_scoring->getScore();
+    int score = m_scoring.getScore();
     if (score == m_last_score) {
         return;
     }
