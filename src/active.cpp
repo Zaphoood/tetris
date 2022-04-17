@@ -6,9 +6,8 @@
 #include "constants.h"
 #include "playfield.h"
 
-Active::Active() : m_type(-1) {}
-Active::Active(uint8_t type, Playfield *p_playfield)
-    : p_playfield(p_playfield) {
+Active::Active(uint8_t type, Playfield& _p_playfield) 
+    : p_playfield(_p_playfield) {
     respawn(type);
 }
 
@@ -44,7 +43,7 @@ void Active::lockDown() {
     for (int x = 0; x < 4; x++) {
         for (int y = 0; y < 4; y++) {
             if (m_grid[y][x]) {
-                p_playfield->setAt(m_x + x, m_y + y, m_type);
+                p_playfield.setAt(m_x + x, m_y + y, m_type);
             }
         }
     }
@@ -77,7 +76,7 @@ int Active::getGhostY() {
         // Absolute position of the lowest Mino in the current column
         int lowest_mino = m_y + lowest_mino_rel;
         for (int cell_y = lowest_mino + 1; cell_y < GRID_SIZE_Y; cell_y++) {
-            if ((*p_playfield).isObstructed(m_x + col, cell_y)) {
+            if (p_playfield.isObstructed(m_x + col, cell_y)) {
                 ghost_y = std::min(ghost_y, cell_y - lowest_mino_rel - 1);
             }
         }
@@ -100,7 +99,7 @@ bool Active::canMoveRight() {
         for (uint8_t col = 0; col < 4; col++) {
             if (m_grid[row][col]) {
                 // Spot to the right is filled or lies outside the playfield
-                if (p_playfield->isObstructed(m_x + col + 1, m_y + row)) {
+                if (p_playfield.isObstructed(m_x + col + 1, m_y + row)) {
                     return false;
                 }
             }
@@ -122,7 +121,7 @@ bool Active::canMoveLeft() {
         for (uint8_t col = 0; col < 4; col++) {
             if (m_grid[row][col]) {
                 // Spot to the left is filled or lies outside playfield
-                if (p_playfield->isObstructed(m_x + col - 1, m_y + row)) {
+                if (p_playfield.isObstructed(m_x + col - 1, m_y + row)) {
                     return false;
                 }
             }
@@ -151,7 +150,7 @@ bool Active::canStepDown() {
         for (uint8_t col = 0; col < 4; col++) {
             if (m_grid[row][col]) {
                 // Spot below is filled or lies outside playfield
-                if (p_playfield->isObstructed(m_x + col, m_y + row + 1)) {
+                if (p_playfield.isObstructed(m_x + col, m_y + row + 1)) {
                     return false;
                 }
             }
@@ -228,7 +227,7 @@ bool Active::gridConflict(const TetroGrid_t &grid, int x, int y) {
     for (int row = 0; row < 4; row++) {
         for (int col = 0; col < 4; col++) {
             if (grid[row][col]) {
-                if (p_playfield->isObstructed(x + col, y + row) ||
+                if (p_playfield.isObstructed(x + col, y + row) ||
                     x + col < 0 || x + col >= GRID_SIZE_X || y + col < 0 ||
                     y + col >= GRID_SIZE_Y) {
                     return true;
@@ -350,7 +349,7 @@ void Active::draw(SDL_Renderer *renderer) {
     for (int row = 0; row < 4; row++) {
         for (int col = 0; col < 4; col++) {
             if (m_grid[row][col]) {
-                pos = p_playfield->cellToPixelPosition(m_x + col, m_y + row);
+                pos = p_playfield.cellToPixelPosition(m_x + col, m_y + row);
                 Playfield::drawMino(renderer, pos[0], pos[1],
                                     TETROMINO_COLORS[m_type]);
             }
@@ -370,7 +369,7 @@ void Active::drawGhost(SDL_Renderer *renderer) {
         for (int row = 0; row < 4; row++) {
             for (int col = 0; col < 4; col++) {
                 if (m_grid[row][col]) {
-                    pos = p_playfield->cellToPixelPosition(m_x + col,
+                    pos = p_playfield.cellToPixelPosition(m_x + col,
                                                            ghost_y + row);
                     Playfield::drawGhostMino(renderer, pos[0], pos[1]);
                 }

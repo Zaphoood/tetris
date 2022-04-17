@@ -7,7 +7,7 @@
 
 class Active {
   public:
-    Playfield *p_playfield;
+    Playfield& p_playfield;
     int m_x, m_y; // Top left position of rectangle that contains the Tetromino
     uint8_t m_orientation; // A clockwise rotation increases the orientation by
                            // one, counter-clockwise decreases by one
@@ -33,8 +33,7 @@ class Active {
                          Wallkick_t &success, int *rotation_point);
 
   public:
-    Active();
-    Active(uint8_t type, Playfield *p_playfield);
+    Active(uint8_t type, Playfield& p_playfield);
 
     bool respawn(uint8_t type);
     void lockDown();
