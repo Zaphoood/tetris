@@ -4,9 +4,9 @@
 #include "constants.h"
 #include "game.h"
 
-Game::Game()
+Game::Game(const std::string& assets_path)
     : playfield(PLAYFIELD_DRAW_X, PLAYFIELD_DRAW_Y),
-      active(bag.popQueue(), &playfield), hud(&scoring) {
+      active(bag.popQueue(), &playfield), hud(assets_path, &scoring) {
     // Don't set hud's queue in initializer list since the order of
     // initialization is not guaranteed
     respawnActive();

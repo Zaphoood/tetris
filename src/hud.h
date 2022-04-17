@@ -40,8 +40,8 @@ class HUD {
     void displayAll(SDL_Renderer *renderer);
 
   public:
-    HUD(const ScoringSystem *p_scoring);
-    HUD(const ScoringSystem *p_scoring,
+    HUD(const std::string& assets_path, const ScoringSystem *p_scoring);
+    HUD(const std::string& assets_path, const ScoringSystem *p_scoring,
         const std::array<TetrominoKind_t, QUEUE_LEN> &queue);
     ~HUD();
 

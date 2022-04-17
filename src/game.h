@@ -82,7 +82,7 @@ class Game {
     FixedGoalScoring scoring = FixedGoalScoring(1);
 
   public:
-    Game();
+    Game(const std::string& assets_path);
 
     Playfield playfield;
     Active active;

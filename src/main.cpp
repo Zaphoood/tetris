@@ -1,9 +1,11 @@
-#include "chrono"
-#include "iostream"
+#include <chrono>
+#include <iostream>
+#include <filesystem>
 
 #include "SDL.h"
 
 #include "game.h"
+#include "file.h"
 
 int main(int argc, char *argv[]) {
     // Initialize SDL and create window
@@ -15,16 +17,18 @@ int main(int argc, char *argv[]) {
                          SDL_WINDOWPOS_CENTERED, WINDOW_X, WINDOW_Y, 0);
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
 
-    Game game;
+    std::string program_name = absolute_path_to_exec(std::string{argv[0]});
+    std::string assets_path = std::filesystem::weakly_canonical(program_name + "/../../assets/");
+    Game game(assets_path);
 
-    bool isRunning = true;
+    bool is_running = true;
     game.init();
-    while (isRunning) {
+    while (is_running) {
         SDL_Event e;
         while (SDL_PollEvent(&e) != 0) {
             switch (e.type) {
             case SDL_QUIT:
-                isRunning = false;
+                is_running = false;
                 break;
             default:
                 game.handleEvent(e);

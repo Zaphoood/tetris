@@ -4,9 +4,10 @@
 
 #include "hud.h"
 
-HUD::HUD(const ScoringSystem *p_scoring) : mp_scoring(p_scoring) {
+HUD::HUD(const std::string& assets_path, const ScoringSystem *p_scoring) : mp_scoring(p_scoring) {
     TTF_Init();
-    m_font = TTF_OpenFont("./assets/futura-medium.ttf", 20);
+    std::string font_path = assets_path + "/futura-medium.ttf"; 
+    m_font = TTF_OpenFont(font_path.c_str(), 20);
     if (!m_font) {
         std::cout << "ERROR: Could not load font.\n";
         exit(1);
@@ -17,9 +18,9 @@ HUD::HUD(const ScoringSystem *p_scoring) : mp_scoring(p_scoring) {
     m_last_score = -1;
 }
 
-HUD::HUD(const ScoringSystem *p_scoring,
+HUD::HUD(const std::string& assets_path, const ScoringSystem *p_scoring,
          const std::array<TetrominoKind_t, QUEUE_LEN> &queue)
-    : HUD(p_scoring) {
+    : HUD(assets_path, p_scoring) {
     setQueue(queue);
 }
 

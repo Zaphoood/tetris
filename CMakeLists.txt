@@ -16,12 +16,11 @@ add_executable(tetris
     src/playfield.cpp
     src/scoring.cpp
     src/tetrovis.cpp
+    src/file.cpp
 )
-
 
 target_link_libraries(tetris PUBLIC SDL2 SDL2_ttf)
 target_include_directories(tetris PRIVATE
     src
-    include
     /usr/local/include/SDL2
 )
