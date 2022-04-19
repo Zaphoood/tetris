@@ -23,7 +23,7 @@ void Game::init() {
 void Game::update() {
     // Check if the falling Tetromino has made surface contact, if so schedule
     // lock down timer
-    if (state != GameState::Running) {
+    if (state != GameState::Running || paused) {
         return;
     }
 
@@ -193,6 +193,10 @@ void Game::handleEvent(const SDL_Event &e) {
                     hold();
                     last_spin = false;
                 }
+                break;
+            case SDLK_p:
+                // TODO: Pause timers
+                paused = !paused;
                 break;
             }
         }
