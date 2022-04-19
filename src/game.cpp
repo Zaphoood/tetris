@@ -308,19 +308,19 @@ int Game::checkTSpin() {
     return 0;
 }
 
-void Game::getCorners(bool *tl, bool *tr, bool *bl, bool *br) {
+void Game::getCorners(bool& tl, bool& tr, bool& bl, bool& br) {
     // TODO: Maybe use bitmasks instead of bools
     // clang-format off
-    *tl = playfield.isObstructed(active.m_x,     active.m_y);
-    *tr = playfield.isObstructed(active.m_x + 2, active.m_y);
-    *bl = playfield.isObstructed(active.m_x,     active.m_y + 2);
-    *br = playfield.isObstructed(active.m_x + 2, active.m_y + 2);
+    tl = playfield.isObstructed(active.m_x,     active.m_y);
+    tr = playfield.isObstructed(active.m_x + 2, active.m_y);
+    bl = playfield.isObstructed(active.m_x,     active.m_y + 2);
+    br = playfield.isObstructed(active.m_x + 2, active.m_y + 2);
     // clang-format on
 }
 
 bool Game::inTSlot() {
     bool tl, tr, bl, br;
-    getCorners(&tl, &tr, &bl, &br);
+    getCorners(tl, tr, bl, br);
 
     switch (active.m_orientation) {
     case 0: // Facing north
@@ -343,7 +343,7 @@ bool Game::inTSlot() {
 
 bool Game::inMiniTSlot() {
     bool tl, tr, bl, br;
-    getCorners(&tl, &tr, &bl, &br);
+    getCorners(tl, tr, bl, br);
 
     switch (active.m_orientation) {
     case 0: // Facing north

@@ -69,7 +69,7 @@ class Game {
     // Check if the last action was a T-Spin or a Mini T-Spin and award points
     // accordingly
     int checkTSpin();
-    void getCorners(bool *tl, bool *tr, bool *bl, bool *br);
+    void getCorners(bool& tl, bool& tr, bool& bl, bool& br);
     bool inTSlot();
     bool inMiniTSlot();
 
