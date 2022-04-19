@@ -4,6 +4,8 @@
 #include "constants.h"
 #include "game.h"
 
+using cl = std::chrono::steady_clock;
+
 Game::Game(const std::string& assets_path)
     : playfield(PLAYFIELD_DRAW_X, PLAYFIELD_DRAW_Y),
       active(bag.popQueue(), playfield), hud(assets_path, scoring) {
@@ -25,8 +27,8 @@ void Game::update() {
         return;
     }
 
-    std::chrono::steady_clock::time_point now =
-        std::chrono::steady_clock::now();
+    cl::time_point now =
+        cl::now();
     if (moving_right) {
         if (now > t_next_mv_right) {
             moveRight();
@@ -54,7 +56,7 @@ void Game::update() {
     }
 
     if (surface_contact) {
-        if (now > t_lock_down) {
+        if (lock_down < now) {
             // Making surface contact and lock down timer has run out
             // Lock down Tetromino and spawn a new one
             lockDownAndRespawnActive();
@@ -63,9 +65,9 @@ void Game::update() {
             performFall();
         }
     } else {
-        if (soft_dropping && now > t_next_soft_drop) {
+        if (soft_dropping && next_soft_drop < now) {
             performSoftDrop();
-        } else if (now > t_next_fall) {
+        } else if (next_fall < now) {
             performFall();
         }
     }
@@ -75,58 +77,69 @@ GameState Game::getState() {
     return state;
 }
 
+/**
+ * Start soft dropping and immediately perform first soft drop
+ */
 void Game::startSoftDropping() {
-    // Start soft dropping and immediatly perform first soft drop
     soft_dropping = true;
     resetSoftDropTimer();
     performSoftDrop();
 }
 
+/**
+ * Stop soft dropping and resume normal falling
+ */
 void Game::stopSoftDropping() {
-    // Stop soft dropping and resume normal falling
     soft_dropping = false;
     resetFallTimer();
 }
 
 bool Game::performSoftDrop() {
-    incSoftDropTimer(t_next_soft_drop);
+    incSoftDropTimer();
     scoring.onSoftDrop();
     return active.stepDown();
 }
 
+/**
+ * Reset the soft drop timer
+ */
 void Game::resetSoftDropTimer() {
-    // Reset the soft drop timer. Should be called when soft dropping is
-    // started
-    incSoftDropTimer(std::chrono::steady_clock::now());
+    next_soft_drop = cl::now() +
+        std::chrono::milliseconds((int) (scoring.getFallSpeedMs() * SOFT_DROP_DELAY_MULT));
 }
 
-void Game::incSoftDropTimer(std::chrono::steady_clock::time_point last) {
-    // Schedule the next soft drop, as an offset from last
-    t_next_soft_drop =
-        last + std::chrono::milliseconds(
-                   (int)(scoring.getFallSpeedMs() * SOFT_DROP_DELAY_MULT));
+/**
+ * Schedule the next soft drop
+ */
+void Game::incSoftDropTimer() {
+    next_soft_drop = next_soft_drop +
+        std::chrono::milliseconds((int) (scoring.getFallSpeedMs() * SOFT_DROP_DELAY_MULT));
 }
 
+/**
+ * Move the Tetromino down by one cell and set the timer for the next fall move
+ */
 bool Game::performFall() {
-    // Move the Tetromino down by one cell and set the timer for the next
-    // fall move
-    incFallTimer(t_next_fall);
+    incFallTimer();
     return active.stepDown();
 }
 
+/**
+ * Reset the fall timer.
+ */
 void Game::resetFallTimer() {
-    // Reset the fall timer. Should be called when Tetromino starts to fall
-    incFallTimer(std::chrono::steady_clock::now());
+    next_fall = cl::now() + std::chrono::milliseconds(scoring.getFallSpeedMs());
 }
 
-void Game::incFallTimer(std::chrono::steady_clock::time_point last) {
-    // Schedule the next fall, as an offset from last
-    t_next_fall = last + std::chrono::milliseconds(scoring.getFallSpeedMs());
+/**
+ * Schedule the next fall
+ */
+void Game::incFallTimer() {
+    next_fall = next_fall + std::chrono::milliseconds(scoring.getFallSpeedMs());
 }
 
 void Game::scheduleLockDown() {
-    t_lock_down = std::chrono::steady_clock::now() +
-                  std::chrono::milliseconds(LOCK_DOWN_DELAY_MS);
+    lock_down = cl::now() + std::chrono::milliseconds(LOCK_DOWN_DELAY_MS);
 }
 
 void Game::handleEvent(const SDL_Event &e) {
@@ -206,7 +219,7 @@ void Game::initMoveRight() {
         moveRight();
         // Override the timer for the next right move set by moveRight
         // Instead, set initial delay
-        t_next_mv_right = std::chrono::steady_clock::now() +
+        t_next_mv_right = cl::now() +
                           std::chrono::milliseconds(KEY_INIT_DELAY_MS);
     }
 }
@@ -237,7 +250,7 @@ void Game::initMoveLeft() {
         moveLeft();
         // Override the timer for the next left move set by moveLeft
         // Instead, set initial delay
-        t_next_mv_left = std::chrono::steady_clock::now() +
+        t_next_mv_left = cl::now() +
                          std::chrono::milliseconds(KEY_INIT_DELAY_MS);
     }
 }

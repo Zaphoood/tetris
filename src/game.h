@@ -8,6 +8,7 @@
 #include "playfield.h"
 #include "scoring.h"
 #include "tetrovis.h"
+#include "timer.h"
 
 enum class GameState { PreInit, Running, GameOver };
 
@@ -21,25 +22,28 @@ class Game {
 
     // ### Controls ###
     // When to perform the next fall step
-    std::chrono::steady_clock::time_point t_next_fall;
+    //std::chrono::steady_clock::time_point t_next_fall;
+    Timer next_fall;
     // When to perform the next soft drop step
-    std::chrono::steady_clock::time_point t_next_soft_drop;
+    //std::chrono::steady_clock::time_point t_next_soft_drop;
+    Timer next_soft_drop;
     // Whether the Tetromino is currently Soft Dropping, i. e. the Down Arrow
     // key is held
     bool soft_dropping = false;
     // When to lock down the falling Tetromino
-    std::chrono::steady_clock::time_point t_lock_down;
+    //std::chrono::steady_clock::time_point t_lock_down;
+    Timer lock_down;
     // Whether the falling Tetromino is currently in contact with a Mino on the
     // Playfield; used in combination with t_lock_down
     bool surface_contact = false;
     void startSoftDropping();
     void stopSoftDropping();
     bool performSoftDrop();
-    void incSoftDropTimer(std::chrono::steady_clock::time_point last);
+    void incSoftDropTimer();
     void resetSoftDropTimer();
 
     bool performFall();
-    void incFallTimer(std::chrono::steady_clock::time_point last);
+    void incFallTimer();
     void resetFallTimer();
 
     void scheduleLockDown();
