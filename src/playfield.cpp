@@ -51,13 +51,20 @@ void Playfield::drawPlayfield(SDL_Renderer *renderer) {
 void Playfield::drawOutline(SDL_Renderer *renderer) {
     SDL_SetRenderDrawColor(renderer, GRID_COLOR.r, GRID_COLOR.g, GRID_COLOR.b,
                            GRID_COLOR.a);
-    // Draw vertical lines
     // clang-format off
+    // Draw vertical lines
     SDL_RenderDrawLine(renderer,
-        draw_x, draw_y,
-        draw_x, draw_y + PLAYFIELD_HEIGHT);
+        draw_x,                   draw_y,
+        draw_x,                   draw_y + PLAYFIELD_HEIGHT);
     SDL_RenderDrawLine(renderer,
         draw_x + PLAYFIELD_WIDTH, draw_y,
+        draw_x + PLAYFIELD_WIDTH, draw_y + PLAYFIELD_HEIGHT);
+    // Draw horizontal lines
+    SDL_RenderDrawLine(renderer,
+        draw_x,                   draw_y,
+        draw_x + PLAYFIELD_WIDTH, draw_y);
+    SDL_RenderDrawLine(renderer,
+        draw_x,                   draw_y + PLAYFIELD_HEIGHT,
         draw_x + PLAYFIELD_WIDTH, draw_y + PLAYFIELD_HEIGHT);
     // clang-format on
 }

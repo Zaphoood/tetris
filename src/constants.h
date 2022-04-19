@@ -47,7 +47,7 @@ inline const int PLAYFIELD_HEIGHT = GRID_SIZE_VISIBLE_Y * CELL_SIZE;
 // Window
 // Include enough space to the right to show queue
 inline const int WINDOW_X = PLAYFIELD_WIDTH + 2 * (CELL_SIZE * 7);
-inline const int WINDOW_Y = PLAYFIELD_HEIGHT;
+inline const int WINDOW_Y = PLAYFIELD_HEIGHT + 1;
 
 // Position of the playfield on screen in pixels
 inline const int PLAYFIELD_DRAW_X = (WINDOW_X - PLAYFIELD_WIDTH) / 2;
