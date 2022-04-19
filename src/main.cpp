@@ -6,6 +6,7 @@
 
 #include "game.h"
 #include "file.h"
+#include "constants.h"
 
 int main(int argc, char *argv[]) {
     // Initialize SDL and create window
@@ -37,7 +38,7 @@ int main(int argc, char *argv[]) {
 
         game.update();
 
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        SDL_SetRenderDrawColor(renderer, BACKGROUND.r, BACKGROUND.g, BACKGROUND.b, BACKGROUND.a);
         SDL_RenderClear(renderer);
         game.draw(renderer);
         SDL_RenderPresent(renderer);
