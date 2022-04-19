@@ -108,6 +108,7 @@ FixedGoalScoring::FixedGoalScoring(int starting_level) {
     m_level = starting_level;
     // When starting on a level higher than one, the first goal is equal to
     // the sum of all the goals up to the current one
+    // TODO: Implement this (i.e. uncomment that second part)
     m_goal = 5; // starting_level * LINES_PER_LEVEL;
     m_score = 0;
     updateFallSpeed();

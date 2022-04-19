@@ -52,9 +52,9 @@ void HUD::draw(SDL_Renderer *renderer) {
     }
     // Draw hold
     m_hold_visual.draw(renderer, HOLD_X, HOLD_Y);
-
-    // Draw info
+    // Render info strings onto surfaces
     renderAll(renderer);
+    // Draw info
     displayAll(renderer);
 }
 
@@ -131,7 +131,7 @@ void HUD::renderText(SDL_Renderer *renderer, int x, int y, const char *text,
     /**
      * Render text onto a texture and set the bounding rect.
      */
-    SDL_Surface *surface = TTF_RenderText_Solid(font, text, text_color);
+    SDL_Surface *surface = TTF_RenderText_Shaded(font, text, text_color, BACKGROUND);
     if (!surface) {
         std::cout << "ERROR: Couldn't create surface\n";
         exit(1);

@@ -8,7 +8,7 @@ using cl = std::chrono::steady_clock;
 
 Game::Game(const std::string& assets_path)
     : playfield(PLAYFIELD_DRAW_X, PLAYFIELD_DRAW_Y),
-      active(bag.popQueue(), playfield), hud(assets_path, scoring) {
+      active(bag.popQueue(), playfield), hud(assets_path, scoring), scoring() {
     // Don't set hud's queue in initializer list since the order of
     // initialization is not guaranteed
     respawnActive();
