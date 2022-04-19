@@ -1,4 +1,5 @@
 #include "array"
+#include "constants.h"
 #include "iostream"
 #include "stdint.h"
 
@@ -25,7 +26,7 @@ std::array<int, 2> Playfield::cellToPixelPosition(int cell_x, int cell_y) {
 
 void Playfield::draw(SDL_Renderer *renderer) {
     // TODO: Accept different drawing positions
-    drawGrid(renderer);
+    drawOutline(renderer);
     drawPlayfield(renderer);
 }
 
@@ -47,25 +48,18 @@ void Playfield::drawPlayfield(SDL_Renderer *renderer) {
     }
 }
 
-void Playfield::drawGrid(SDL_Renderer *renderer) {
+void Playfield::drawOutline(SDL_Renderer *renderer) {
     SDL_SetRenderDrawColor(renderer, GRID_COLOR.r, GRID_COLOR.g, GRID_COLOR.b,
                            GRID_COLOR.a);
-    // Draw horizontal lines
-    for (int y = 0; y <= GRID_SIZE_VISIBLE_Y; y++) {
-        // clang-format off
-        SDL_RenderDrawLine(renderer,
-            draw_x + 0, draw_y + y * CELL_SIZE,
-            draw_x + PLAYFIELD_WIDTH, draw_y + y * CELL_SIZE);
-        // clang-format on
-    }
     // Draw vertical lines
-    for (int x = 0; x <= GRID_SIZE_X; x++) {
-        // clang-format off
-        SDL_RenderDrawLine(renderer,
-            draw_x + x * CELL_SIZE, draw_y,
-            draw_x + x * CELL_SIZE, draw_y + PLAYFIELD_HEIGHT);
-        // clang-format on
-    }
+    // clang-format off
+    SDL_RenderDrawLine(renderer,
+        draw_x, draw_y,
+        draw_x, draw_y + PLAYFIELD_HEIGHT);
+    SDL_RenderDrawLine(renderer,
+        draw_x + PLAYFIELD_WIDTH, draw_y,
+        draw_x + PLAYFIELD_WIDTH, draw_y + PLAYFIELD_HEIGHT);
+    // clang-format on
 }
 
 void Playfield::drawMino(SDL_Renderer *renderer, int x, int y,

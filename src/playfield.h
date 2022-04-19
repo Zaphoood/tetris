@@ -8,7 +8,7 @@
 class Playfield {
     uint8_t grid[GRID_SIZE_Y][GRID_SIZE_X];
     int draw_x, draw_y; // Where to draw the p_playfield on the screen
-    void drawGrid(SDL_Renderer *renderer);
+    void drawOutline(SDL_Renderer *renderer);
     void drawPlayfield(SDL_Renderer *renderer);
     void drawActiveTetromino(SDL_Renderer *renderer);
     SDL_Rect getMinoRect(int x, int y);
