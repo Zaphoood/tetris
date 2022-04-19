@@ -27,6 +27,10 @@ HUD::HUD(const std::string& assets_path, const ScoringSystem& scoring,
 
 HUD::~HUD() {
     TTF_CloseFont(m_font);
+    SDL_DestroyTexture(m_score_texture);
+    SDL_DestroyTexture(m_level_texture);
+    SDL_DestroyTexture(m_goal_texture);
+    SDL_DestroyTexture(m_lines_texture);
     m_font = NULL;
 }
 
