@@ -18,21 +18,27 @@ class HUD {
 
     // Font
     TTF_Font *m_font;
-    // Store last value of level so that we know when to re-render
+    // Store last value of level, goal etc. so that we know when to re-render
     int m_last_level;
     SDL_Texture *m_level_texture;
     SDL_Rect m_level_rect;
     void renderLevel(SDL_Renderer *renderer);
-    // Same as above
+
     int m_last_goal;
     SDL_Texture *m_goal_texture;
     SDL_Rect m_goal_rect;
     void renderGoal(SDL_Renderer *renderer);
-    // Same as above
+
+    int m_last_lines;
+    SDL_Texture *m_lines_texture;
+    SDL_Rect m_lines_rect;
+    void renderLines(SDL_Renderer *renderer);
+
     int m_last_score;
     SDL_Texture *m_score_texture;
     SDL_Rect m_score_rect;
     void renderScore(SDL_Renderer *renderer);
+
     void renderAll(SDL_Renderer *renderer);
     void renderText(SDL_Renderer *renderer, int x, int y, const char *text,
                     TTF_Font *font, SDL_Texture **texture, SDL_Rect *rect,

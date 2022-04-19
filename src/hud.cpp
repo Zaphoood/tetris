@@ -15,6 +15,7 @@ HUD::HUD(const std::string& assets_path, const ScoringSystem& p_scoring) : m_sco
     // Force re-render on first frame by settings impossible values
     m_last_level = -1;
     m_last_goal = -1;
+    m_last_lines = -1;
     m_last_score = -1;
 }
 
@@ -53,11 +54,11 @@ void HUD::draw(SDL_Renderer *renderer) {
     displayAll(renderer);
 }
 
+/**
+ * Re-render the Surface containing the level info if it is needed,
+ * that is if the level has changed since the last render.
+ */
 void HUD::renderLevel(SDL_Renderer *renderer) {
-    /**
-     * Re-render the Surface containing the level info *only* if it is needed,
-     * that is if the level has changed since the last render.
-     */
     int level = m_scoring.getLevel();
     if (level == m_last_level) {
         return;
@@ -69,18 +70,15 @@ void HUD::renderLevel(SDL_Renderer *renderer) {
                &m_level_texture, &m_level_rect, TEXT_COLOR);
 }
 
+/**
+ * Re-render the Surface containing the goal info if needed.
+ */
 void HUD::renderGoal(SDL_Renderer *renderer) {
-    /**
-     * Re-render the Surface containing the goal info if needed.
-     * (Same as renderLevel())
-     */
-
     int goal = m_scoring.getGoal();
     if (goal == m_last_goal) {
         return;
     }
     m_last_goal = goal;
-    // TODO: Maybe make this faster (e. g. by using C++20's std::format)
     std::string text = "Goal: " + std::to_string(goal);
     renderText(renderer, GOAL_TEXT_X, GOAL_TEXT_Y, text.c_str(), m_font,
                &m_goal_texture, &m_goal_rect, TEXT_COLOR);
@@ -89,7 +87,6 @@ void HUD::renderGoal(SDL_Renderer *renderer) {
 void HUD::renderScore(SDL_Renderer *renderer) {
     /**
      * Re-render the Surface containing the score info if needed.
-     * (Same as renderLevel())
      */
 
     int score = m_scoring.getScore();
@@ -97,16 +94,31 @@ void HUD::renderScore(SDL_Renderer *renderer) {
         return;
     }
     m_last_score = score;
-    // TODO: Maybe make this faster (e. g. by using C++20's std::format)
     std::string text = "Score: " + std::to_string(score);
     renderText(renderer, SCORE_TEXT_X, SCORE_TEXT_Y, text.c_str(), m_font,
                &m_score_texture, &m_score_rect, TEXT_COLOR);
+}
+
+void HUD::renderLines(SDL_Renderer *renderer) {
+    /**
+     * Re-render the Surface containing the lines info if needed.
+     */
+
+    int lines = m_scoring.getLines();
+    if (lines == m_last_lines) {
+        return;
+    }
+    m_last_lines = lines;
+    std::string text = "Lines: " + std::to_string(lines);
+    renderText(renderer, LINES_TEXT_X, LINES_TEXT_Y, text.c_str(), m_font,
+               &m_lines_texture, &m_lines_rect, TEXT_COLOR);
 }
 
 void HUD::renderAll(SDL_Renderer *renderer) {
     renderLevel(renderer);
     renderGoal(renderer);
     renderScore(renderer);
+    renderLines(renderer);
 }
 
 void HUD::renderText(SDL_Renderer *renderer, int x, int y, const char *text,
@@ -132,4 +144,5 @@ void HUD::displayAll(SDL_Renderer *renderer) {
     SDL_RenderCopy(renderer, m_level_texture, 0, &m_level_rect);
     SDL_RenderCopy(renderer, m_goal_texture, 0, &m_goal_rect);
     SDL_RenderCopy(renderer, m_score_texture, 0, &m_score_rect);
+    SDL_RenderCopy(renderer, m_lines_texture, 0, &m_lines_rect);
 }

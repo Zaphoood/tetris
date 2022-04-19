@@ -15,6 +15,10 @@ int ScoringSystem::getScore() const {
     return m_score;
 }
 
+int ScoringSystem::getLines() const {
+    return m_lines;
+}
+
 int ScoringSystem::getFallSpeedMs() const {
     return m_fall_speed_ms;
 }
@@ -97,7 +101,8 @@ void ScoringSystem::awardAction(int points) {
     m_score += points;
 }
 
-FixedGoalScoring::FixedGoalScoring() : FixedGoalScoring(1){};
+FixedGoalScoring::FixedGoalScoring()
+    : FixedGoalScoring(1) {};
 
 FixedGoalScoring::FixedGoalScoring(int starting_level) {
     m_level = starting_level;
@@ -139,5 +144,6 @@ void FixedGoalScoring::onLinesCleared(int n_lines) {
         m_goal -= overhead;
     }
 
+    m_lines += n_lines;
     updateFallSpeed();
 }

@@ -5,6 +5,7 @@ class ScoringSystem {
     int m_level;
     int m_goal;
     int m_score;
+    int m_lines;
     bool m_b2b = false; // Whether a back-to-back sequence is currently active
     int m_fall_speed_ms;
     void updateFallSpeed();
@@ -14,6 +15,7 @@ class ScoringSystem {
     int getLevel() const;
     int getGoal() const;
     int getScore() const;
+    int getLines() const;
     int getFallSpeedMs() const;
     void onSoftDrop();
     void onHardDrop(int n_lines);

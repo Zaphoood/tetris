@@ -79,12 +79,16 @@ inline const std::array<SDL_Color, 7> TETROMINO_COLORS = {{
 
 // Text
 inline const int INFO_TEXT_X = 10;
-inline const int LEVEL_TEXT_X = INFO_TEXT_X;
-inline const int LEVEL_TEXT_Y = 105;
-inline const int GOAL_TEXT_X = INFO_TEXT_X;
-inline const int GOAL_TEXT_Y = LEVEL_TEXT_Y + 40;
+
 inline const int SCORE_TEXT_X = INFO_TEXT_X;
-inline const int SCORE_TEXT_Y = GOAL_TEXT_Y + 40;
+inline const int SCORE_TEXT_Y = 80;
+
+inline const int LEVEL_TEXT_X = INFO_TEXT_X;
+inline const int LEVEL_TEXT_Y = SCORE_TEXT_Y + 60;
+inline const int GOAL_TEXT_X = INFO_TEXT_X;
+inline const int GOAL_TEXT_Y = LEVEL_TEXT_Y + 30;
+inline const int LINES_TEXT_X = INFO_TEXT_X;
+inline const int LINES_TEXT_Y = GOAL_TEXT_Y + 30;
 
 // Scoring
 inline const int LINES_PER_LEVEL = 10;
