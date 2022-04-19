@@ -9,10 +9,16 @@ class Timer {
         cl::duration m_delta;
 
     public:
+        Timer();
         Timer(cl::duration delta);
 
-        cl::time_point getNext();
-        void next();
+        cl::time_point get() const;
+        void set(cl::time_point other);
         /* Wether `m_next` is less than the current time */
-        bool hasPassed();
+        bool hasPassed() const;
+
+        void operator=(const cl::time_point other);
+        cl::time_point operator+(const cl::duration other);
+        bool operator<(const cl::time_point other);
+        bool operator>(const cl::time_point other);
 };
