@@ -17,6 +17,7 @@ add_executable(tetris
     src/scoring.cpp
     src/tetrovis.cpp
     src/file.cpp
+    src/timer.cpp
 )
 
 target_link_libraries(tetris PUBLIC SDL2 SDL2_ttf)
