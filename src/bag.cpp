@@ -21,10 +21,11 @@ void SevenBag::shuffleBag() {
     next_bag_element = 0;
 }
 
+/*
+ * Return the next element in the bag
+ */
 TetrominoKind_t SevenBag::pullFromBag() {
-    // Return the next element in the bag
-
-    // Run out of elements? -> Shuffle the bag
+    // Ran out of elements? -> Shuffle the bag
     if (next_bag_element >= bag.size()) {
         shuffleBag();
     }
@@ -41,26 +42,32 @@ void SevenBag::initQueue() {
     }
 }
 
+/*
+ * Return one element from top of the Queue and push a new one to the bottom
+ *
+ * @return the popped element
+ */
 TetrominoKind_t SevenBag::popQueue() {
-    // Pop one element from top of the Queue and push a new one to the bottom
-
     // Get the topmost element, which will be returned
-    TetrominoKind_t ret = queue[queue_top];
+    TetrominoKind_t ret = queue[queue_head];
     // Replace the old element that is now at the new bottom of the queue
-    queue[queue_top] = pullFromBag();
+    queue[queue_head] = pullFromBag();
     // Move the top of the queue to its new position
-    queue_top = (queue_top + 1) % queue.size();
+    queue_head = (queue_head + 1) % queue.size();
 
     return ret;
 }
 
+/*
+ * Return the queue in its virtual shape, i. e. starting with the element
+ * pointed at by queue_head and wrapping around the end
+ *
+ * @return the queue
+ */
 std::array<TetrominoKind_t, QUEUE_LEN> SevenBag::getQueue() {
-    // Return the Queue in its virtual, not its actual shape (I know this
-    // description sucks -- just read the the code and you will understand)
-
     std::array<TetrominoKind_t, QUEUE_LEN> ret_queue;
     for (int i = 0; i < QUEUE_LEN; i++) {
-        ret_queue[i] = queue[(queue_top + i) % QUEUE_LEN];
+        ret_queue[i] = queue[(queue_head + i) % QUEUE_LEN];
     }
     return ret_queue;
 }

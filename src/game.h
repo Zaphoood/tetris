@@ -20,21 +20,17 @@ class Game {
     // Current state of the game
     GameState state = GameState::PreInit;
 
-    // ### Controls ###
     // When to perform the next fall step
-    //std::chrono::steady_clock::time_point t_next_fall;
     Timer next_fall;
     // When to perform the next soft drop step
-    //std::chrono::steady_clock::time_point t_next_soft_drop;
     Timer next_soft_drop;
-    // Whether the Tetromino is currently Soft Dropping, i. e. the Down Arrow
+    // Whether the Tetromino is currently Soft Dropping, i. e. the down arrow
     // key is held
     bool soft_dropping = false;
-    // When to lock down the falling Tetromino
-    //std::chrono::steady_clock::time_point t_lock_down;
+    // When to lock down the active Tetromino
     Timer lock_down;
-    // Whether the falling Tetromino is currently in contact with a Mino on the
-    // Playfield; used in combination with t_lock_down
+    // Whether the active Tetromino is currently in contact with a Mino on the
+    // Playfield; used in combination with lock_down Timer
     bool surface_contact = false;
     void startSoftDropping();
     void stopSoftDropping();
@@ -99,3 +95,4 @@ class Game {
     void handleEvent(const SDL_Event &e);
     void draw(SDL_Renderer *renderer);
 };
+

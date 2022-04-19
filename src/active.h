@@ -7,13 +7,18 @@
 
 class Active {
   public:
+    // Reference to playfield is necessary in order to set Minos when the
+    // active Tetromino is locked down
     Playfield& p_playfield;
-    int m_x, m_y; // Top left position of rectangle that contains the Tetromino
-    uint8_t m_orientation; // A clockwise rotation increases the orientation by
-                           // one, counter-clockwise decreases by one
-    TetroGrid_t m_grid;    // grid representation of the current Tetromino
-
-    uint8_t m_type; // Type of current Tetrmino (e.g. O)
+    // Top left corner of containing rectangle of the Tetromino
+    int m_x, m_y;
+    // Orientation of the Tetromino: A clockwise rotation increases the
+    // orientation by one, counter-clockwise decreases by one
+    uint8_t m_orientation;
+    // Grid representation of the current Tetromino
+    TetroGrid_t m_grid;
+    // Current type of Tetrmino (e.g. O, L, T etc.)
+    uint8_t m_type;
 
   private:
     void loadGrid();

@@ -20,9 +20,10 @@ void Game::init() {
     state = GameState::Running;
 }
 
+/**
+ * Main update function, handles game logic
+ */
 void Game::update() {
-    // Check if the falling Tetromino has made surface contact, if so schedule
-    // lock down timer
     if (state != GameState::Running || paused) {
         return;
     }
@@ -40,6 +41,7 @@ void Game::update() {
         }
     }
 
+    // Check if the falling Tetromino has made surface contact; if so, schedule lock down timer
     if (!active.canStepDown()) {
         if (!surface_contact) {
             surface_contact = true;
@@ -142,6 +144,11 @@ void Game::scheduleLockDown() {
     lock_down = cl::now() + std::chrono::milliseconds(LOCK_DOWN_DELAY_MS);
 }
 
+/**
+ * Handle any event. Should be called by the main loop with all events that occur.
+ *
+ * @param an event
+ */
 void Game::handleEvent(const SDL_Event &e) {
     switch (e.type) {
     case SDL_KEYDOWN:
@@ -230,6 +237,9 @@ void Game::handleEvent(const SDL_Event &e) {
     }
 }
 
+/**
+ * Start moving the active Tetromino to the right repeatedly
+ */
 void Game::initMoveRight() {
     if (!moving_right) {
         moving_right = true;
@@ -242,6 +252,9 @@ void Game::initMoveRight() {
     }
 }
 
+/**
+ * Stop moving the active Tetromino to the right
+ */
 void Game::stopMoveRight() {
     moving_right = false;
     keystate = SDL_GetKeyboardState(NULL);
@@ -250,6 +263,9 @@ void Game::stopMoveRight() {
     }
 }
 
+/**
+ * Move the active Tetromino to the right by one cell
+ */
 void Game::moveRight() {
     if (active.moveRight()) {
         // If the move was successfull, reset Lock Down timer to give the
@@ -261,6 +277,9 @@ void Game::moveRight() {
     t_next_mv_right += std::chrono::milliseconds(KEY_REPEAT_DELAY_MS);
 }
 
+/**
+ * Start moving the active Tetromino to the left repeatedly
+ */
 void Game::initMoveLeft() {
     if (!moving_left) {
         moving_left = true;
@@ -273,6 +292,9 @@ void Game::initMoveLeft() {
     }
 }
 
+/**
+ * Stop moving the active Tetromino to the left
+ */
 void Game::stopMoveLeft() {
     moving_left = false;
     keystate = SDL_GetKeyboardState(NULL);
@@ -281,6 +303,9 @@ void Game::stopMoveLeft() {
     }
 }
 
+/**
+ * Move the active Tetromino to the left by one cell
+ */
 void Game::moveLeft() {
     if (active.moveLeft()) {
         // Only reset lockdown timer if the move was successfull
@@ -289,6 +314,10 @@ void Game::moveLeft() {
     t_next_mv_left += std::chrono::milliseconds(KEY_REPEAT_DELAY_MS);
 }
 
+/**
+ * Put the current Tetromino in the "Hold" area and replace it with the Tetromino
+ * that is currently held, spawning it at the top of the Playfield
+ */
 void Game::hold() {
     if (can_hold) {
         // Disable hold until next piece is set
@@ -320,6 +349,11 @@ void Game::draw(SDL_Renderer *renderer) {
     hud.draw(renderer);
 }
 
+/**
+ * Check whether the last lock down constitutes a T-Spin or a Mini T-Spin
+ *
+ * @return 2 for T-Spin, 1 for Mini T-Spin, otherwise 0
+ */
 int Game::checkTSpin() {
     // Assert that the current Tetromino is a type T one and that the last input
     // was a rotation
@@ -339,8 +373,11 @@ int Game::checkTSpin() {
     return 0;
 }
 
+/**
+ * Check if the corners surrounding a T-Tetromino are obstructed.
+ */
 void Game::getCorners(bool& tl, bool& tr, bool& bl, bool& br) {
-    // TODO: Maybe use bitmasks instead of bools
+    // TODO: Maybe use bitmask instead of bools
     // clang-format off
     tl = playfield.isObstructed(active.m_x,     active.m_y);
     tr = playfield.isObstructed(active.m_x + 2, active.m_y);
@@ -349,6 +386,11 @@ void Game::getCorners(bool& tl, bool& tr, bool& bl, bool& br) {
     // clang-format on
 }
 
+/**
+ * Check if the active Tetromino is currently in a T-Slot
+ *
+ * @return the above
+ */
 bool Game::inTSlot() {
     bool tl, tr, bl, br;
     getCorners(tl, tr, bl, br);
@@ -372,6 +414,11 @@ bool Game::inTSlot() {
     }
 }
 
+/**
+ * Check if the active Tetromino is currently in a Mini T-Slot
+ *
+ * @return the above
+ */
 bool Game::inMiniTSlot() {
     bool tl, tr, bl, br;
     getCorners(tl, tr, bl, br);
@@ -395,9 +442,11 @@ bool Game::inMiniTSlot() {
     }
 }
 
+/*
+ * Lock down the falling Tetromino, then respawn. If respawn was successful,
+ * clear empty lines on the Playfield.
+ */
 void Game::lockDownAndRespawnActive() {
-    // Lock down the falling Tetromino, then respawn
-    // If respawn was successfull, clear empty lines on the Playfield
 
     int t_spin = checkTSpin();
     active.lockDown();
@@ -422,14 +471,18 @@ void Game::lockDownAndRespawnActive() {
     can_hold = true;
 }
 
+/*
+ * Respawn the active Tetromino, setting its kind to the next value from
+ * the queue
+ */
 bool Game::respawnActive() {
-    // Respawn the active Tetromino, setting its kind to the next value from
-    // the queue
     return Game::respawnActiveWithKind(bag.popQueue());
 }
 
+/*
+ * Respawn the active Tetromino, settings its kind to the given value
+ */
 bool Game::respawnActiveWithKind(TetrominoKind_t kind) {
-    // Respawn the active Tetromino, settings its kind to the given value
     if (!active.respawn(kind)) {
         // Block Out
         state = GameState::GameOver;
@@ -441,3 +494,4 @@ bool Game::respawnActiveWithKind(TetrominoKind_t kind) {
     hud.setQueue(bag.getQueue());
     return true;
 }
+
