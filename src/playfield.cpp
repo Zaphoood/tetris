@@ -73,7 +73,7 @@ void Playfield::drawMino(SDL_Renderer *renderer, int x, int y,
     // Draw a Mino at the given pixel position
 
     // Create destination rectangle
-    SDL_Rect rect{x, y, CELL_SIZE, CELL_SIZE};
+    SDL_Rect rect{x, y, CELL_SIZE + 1, CELL_SIZE + 1};
     // Draw a rectangle filled with the given color
     SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.b);
     SDL_RenderFillRect(renderer, &rect);
@@ -86,7 +86,7 @@ void Playfield::drawGhostMino(SDL_Renderer *renderer, int x, int y) {
     // Draw a Mino representing a Ghost Piece at the given pixel position
 
     // Create destination rectangle
-    SDL_Rect rect = {x, y, CELL_SIZE, CELL_SIZE};
+    SDL_Rect rect = {x, y, CELL_SIZE + 1, CELL_SIZE + 1};
     // Draw a grey outline
     SDL_SetRenderDrawColor(renderer, GHOST_COLOR.r, GHOST_COLOR.g,
                            GHOST_COLOR.b, GHOST_COLOR.a);
