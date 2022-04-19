@@ -149,24 +149,28 @@ void Game::handleEvent(const SDL_Event &e) {
         if (!e.key.repeat) {
             switch (e.key.keysym.sym) {
             case SDLK_RIGHT:
+                if (paused) break;
                 if (state == GameState::Running) {
                     initMoveRight();
                     last_spin = false;
                 }
                 break;
             case SDLK_LEFT:
+                if (paused) break;
                 if (state == GameState::Running) {
                     initMoveLeft();
                     last_spin = false;
                 }
                 break;
             case SDLK_DOWN:
+                if (paused) break;
                 if (state == GameState::Running) {
                     startSoftDropping();
                     last_spin = false;
                 }
                 break;
             case SDLK_UP:
+                if (paused) break;
                 if (state == GameState::Running) {
                     active.rotateClockw(rotation_point);
                     last_spin = true;
@@ -175,6 +179,7 @@ void Game::handleEvent(const SDL_Event &e) {
                 break;
             case SDLK_LCTRL:
             case SDLK_RCTRL:
+                if (paused) break;
                 if (state == GameState::Running) {
                     active.rotateCounterclockw(rotation_point);
                     last_spin = true;
@@ -182,6 +187,7 @@ void Game::handleEvent(const SDL_Event &e) {
                 }
                 break;
             case SDLK_SPACE:
+                if (paused) break;
                 if (state == GameState::Running) {
                     scoring.onHardDrop(active.hardDrop());
                     lockDownAndRespawnActive();
@@ -189,13 +195,21 @@ void Game::handleEvent(const SDL_Event &e) {
                 }
                 break;
             case SDLK_c:
+                if (paused) break;
                 if (state == GameState::Running) {
                     hold();
                     last_spin = false;
                 }
                 break;
-            case SDLK_p:
-                // TODO: Pause timers
+            case SDLK_ESCAPE:
+                if (paused) {
+                    next_fall.resume();
+                    next_soft_drop.resume();
+                }
+                else {
+                    next_fall.pause();
+                    next_soft_drop.pause();
+                }
                 paused = !paused;
                 break;
             }
@@ -231,7 +245,7 @@ void Game::initMoveRight() {
 void Game::stopMoveRight() {
     moving_right = false;
     keystate = SDL_GetKeyboardState(NULL);
-    if (keystate[SDL_SCANCODE_LEFT]) {
+    if (keystate[SDL_SCANCODE_LEFT] && !paused) {
         initMoveLeft();
     }
 }
@@ -262,7 +276,7 @@ void Game::initMoveLeft() {
 void Game::stopMoveLeft() {
     moving_left = false;
     keystate = SDL_GetKeyboardState(NULL);
-    if (keystate[SDL_SCANCODE_RIGHT]) {
+    if (keystate[SDL_SCANCODE_RIGHT] && !paused) {
         initMoveRight();
     }
 }
