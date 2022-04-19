@@ -4,10 +4,7 @@
 using cl = std::chrono::steady_clock; 
 
 Timer::Timer()
-    : m_delta(0) {}
-
-Timer::Timer(cl::duration delta)
-    : m_delta(delta) {}
+    : m_delta(0), m_paused(false) {}
 
 cl::time_point Timer::get() const {
     return m_next;
@@ -19,6 +16,20 @@ void Timer::set(cl::time_point other) {
 
 bool Timer::hasPassed() const {
     return cl::now() > m_next;
+}
+
+void Timer::pause() {
+    m_paused = true;
+    m_delta = m_next - cl::now();
+}
+
+void Timer::resume() {
+    m_paused = false;
+    m_next = cl::now() + m_delta;
+}
+
+bool Timer::isPaused() const {
+    return m_paused;
 }
 
 void Timer::operator=(cl::time_point other) {

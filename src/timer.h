@@ -7,15 +7,19 @@ class Timer {
     private:
         cl::time_point m_next;
         cl::duration m_delta;
+        bool m_paused;
 
     public:
         Timer();
-        Timer(cl::duration delta);
 
         cl::time_point get() const;
         void set(cl::time_point other);
         /* Wether `m_next` is less than the current time */
         bool hasPassed() const;
+
+        void pause();
+        void resume();
+        bool isPaused() const;
 
         void operator=(const cl::time_point other);
         cl::time_point operator+(const cl::duration other);
