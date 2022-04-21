@@ -22,6 +22,7 @@ class Timer {
         bool isPaused() const;
 
         void operator=(const cl::time_point other);
+        void operator+=(const cl::duration other);
         cl::time_point operator+(const cl::duration other);
         bool operator<(const cl::time_point other);
         bool operator>(const cl::time_point other);

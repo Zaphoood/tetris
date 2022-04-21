@@ -36,6 +36,10 @@ void Timer::operator=(cl::time_point other) {
     set(other);
 }
 
+void Timer::operator+=(cl::duration other) {
+    set(m_next + other);
+}
+
 cl::time_point Timer::operator+(cl::duration other) {
     return m_next + other;
 }

@@ -31,12 +31,12 @@ void Game::update() {
     cl::time_point now =
         cl::now();
     if (moving_right) {
-        if (now > t_next_mv_right) {
+        if (next_mv_right < now) {
             moveRight();
         }
     }
     if (moving_left) {
-        if (now > t_next_mv_left) {
+        if (next_mv_left < now) {
             moveLeft();
         }
     }
@@ -247,7 +247,7 @@ void Game::initMoveRight() {
         moveRight();
         // Override the timer for the next right move set by moveRight
         // Instead, set initial delay
-        t_next_mv_right = cl::now() +
+        next_mv_right = cl::now() +
                           std::chrono::milliseconds(KEY_INIT_DELAY_MS);
     }
 }
@@ -274,7 +274,7 @@ void Game::moveRight() {
         // reset lockdown timer if the move was successfull
         scheduleLockDown();
     }
-    t_next_mv_right += std::chrono::milliseconds(KEY_REPEAT_DELAY_MS);
+    next_mv_right += std::chrono::milliseconds(KEY_REPEAT_DELAY_MS);
 }
 
 /**
@@ -287,7 +287,7 @@ void Game::initMoveLeft() {
         moveLeft();
         // Override the timer for the next left move set by moveLeft
         // Instead, set initial delay
-        t_next_mv_left = cl::now() +
+        next_mv_left = cl::now() +
                          std::chrono::milliseconds(KEY_INIT_DELAY_MS);
     }
 }
@@ -311,7 +311,7 @@ void Game::moveLeft() {
         // Only reset lockdown timer if the move was successfull
         scheduleLockDown();
     }
-    t_next_mv_left += std::chrono::milliseconds(KEY_REPEAT_DELAY_MS);
+    next_mv_left += std::chrono::milliseconds(KEY_REPEAT_DELAY_MS);
 }
 
 /**

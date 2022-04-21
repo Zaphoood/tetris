@@ -51,8 +51,8 @@ class Game {
     const Uint8 *keystate;
     bool moving_right = false;
     bool moving_left = false;
-    std::chrono::steady_clock::time_point t_next_mv_right;
-    std::chrono::steady_clock::time_point t_next_mv_left;
+    Timer next_mv_right;
+    Timer next_mv_left;
     void initMoveLeft();
     void stopMoveLeft();
     void moveLeft();
