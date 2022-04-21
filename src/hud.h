@@ -6,6 +6,11 @@
 #include "scoring.h"
 #include "tetrovis.h"
 
+enum class TextRenderMode {
+    SHADED,
+    BLENDED
+};
+
 class HUD {
   private:
     // Visual representation of Tetromino queue
@@ -39,11 +44,22 @@ class HUD {
     SDL_Rect m_score_rect;
     void renderScore(SDL_Renderer *renderer);
 
-    void renderAll(SDL_Renderer *renderer);
+    void renderAllInfo(SDL_Renderer *renderer);
+    
+    SDL_Texture *m_paused_texture = nullptr;
+    SDL_Rect m_paused_rect;
+    int m_paused_x, m_paused_y;
+    void renderPaused(SDL_Renderer *renderer);
+
     void renderText(SDL_Renderer *renderer, int x, int y, const char *text,
                     TTF_Font *font, SDL_Texture **texture, SDL_Rect *rect,
                     const SDL_Color &text_color);
-    void displayAll(SDL_Renderer *renderer);
+    void renderText(SDL_Renderer *renderer, int x, int y, const char *text,
+                    TTF_Font *font, SDL_Texture **texture, SDL_Rect *rect,
+                    const SDL_Color &text_color, const TextRenderMode mode);
+    void drawAllInfo(SDL_Renderer *renderer);
+
+    void drawPauseOverlay(SDL_Renderer *renderer);
 
   public:
     HUD(const std::string& assets_path, const ScoringSystem& p_scoring);
@@ -53,5 +69,5 @@ class HUD {
 
     void setQueue(const std::array<TetrominoKind_t, QUEUE_LEN> &queue);
     void setHold(TetrominoKind_t hold);
-    void draw(SDL_Renderer *renderer);
+    void draw(SDL_Renderer *renderer, bool paused);
 };

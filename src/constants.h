@@ -90,6 +90,9 @@ inline const int GOAL_TEXT_Y = LEVEL_TEXT_Y + 30;
 inline const int LINES_TEXT_X = INFO_TEXT_X;
 inline const int LINES_TEXT_Y = GOAL_TEXT_Y + 30;
 
+// x-position of 'Paused' text is calculated dynamically
+inline const int PAUSED_TEXT_Y = PLAYFIELD_DRAW_Y + PLAYFIELD_HEIGHT * 0.45;
+
 // Scoring
 inline const int LINES_PER_LEVEL = 10;
 inline const std::array<int, 4> LINE_CLEAR_REWARD = {{100, 300, 500, 800}};

@@ -346,8 +346,9 @@ void Game::draw(SDL_Renderer *renderer) {
     playfield.draw(renderer);
     active.drawGhost(renderer);
     active.draw(renderer);
-    hud.draw(renderer);
+    hud.draw(renderer, paused);
 }
+
 
 /**
  * Check whether the last lock down constitutes a T-Spin or a Mini T-Spin
