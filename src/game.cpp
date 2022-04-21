@@ -7,8 +7,8 @@ using cl = std::chrono::steady_clock;
 
 Game::Game(const std::string& assets_path)
     : playfield(PLAYFIELD_DRAW_X, PLAYFIELD_DRAW_Y),
-      active(bag.popQueue(), playfield), hud(assets_path, scoring), scoring() {
-    // Don't set hud's queue in initializer list since the order of
+      active(m_bag.popQueue(), playfield), m_hud(assets_path, m_scoring), m_scoring() {
+    // Don't set m_hud's queue in initializer list since the order of
     // initialization is not guaranteed
     respawnActive();
 }
@@ -19,63 +19,63 @@ void Game::init() {
 
 void Game::restart() {
     // Reset some member variables
-    surface_contact = false;
-    moving_right = false;
-    moving_left = false;
-    last_spin = false;
-    TetrominoKind_t held = -1;
-    bool can_hold = true;
+    m_surface_contact = false;
+    m_moving_right = false;
+    m_moving_left = false;
+    m_last_spin = false;
+    TetrominoKind_t m_held = -1;
+    bool m_can_hold = true;
 
     // Schedule the first fall
     resetFallTimer();
-    state = GameState::Running;
+    m_state = GameState::Running;
     playfield.reset();
-    bag.reset();
-    active.respawn(bag.popQueue());
-    hud.reset();
-    hud.setQueue(bag.getQueue());
-    scoring = FixedGoalScoring(1);
+    m_bag.reset();
+    active.respawn(m_bag.popQueue());
+    m_hud.reset();
+    m_hud.setQueue(m_bag.getQueue());
+    m_scoring = FixedGoalScoring(1);
 }
 
 /**
  * Main update function, handles game logic
  */
 void Game::update() {
-    if (state != GameState::Running) {
+    if (m_state != GameState::Running) {
         return;
     }
 
     cl::time_point now =
         cl::now();
-    if (moving_right) {
-        if (next_mv_right < now) {
+    if (m_moving_right) {
+        if (m_next_mv_right < now) {
             moveRight();
         }
     }
-    if (moving_left) {
-        if (next_mv_left < now) {
+    if (m_moving_left) {
+        if (m_next_mv_left < now) {
             moveLeft();
         }
     }
 
     // Check if the falling Tetromino has made surface contact; if so, schedule lock down timer
     if (!active.canStepDown()) {
-        if (!surface_contact) {
-            surface_contact = true;
+        if (!m_surface_contact) {
+            m_surface_contact = true;
             scheduleLockDown();
         }
     } else {
-        if (surface_contact) {
+        if (m_surface_contact) {
             // No more surface contact; resume falling / soft dropping
-            surface_contact = false;
+            m_surface_contact = false;
             // Reset all timers
             resetFallTimer();
             resetSoftDropTimer();
         }
     }
 
-    if (surface_contact) {
-        if (lock_down < now) {
+    if (m_surface_contact) {
+        if (m_lock_down < now) {
             // Making surface contact and lock down timer has run out
             // Lock down Tetromino and spawn a new one
             lockDownAndRespawnActive();
@@ -84,23 +84,23 @@ void Game::update() {
             performFall();
         }
     } else {
-        if (soft_dropping && next_soft_drop < now) {
+        if (m_soft_dropping && m_next_soft_drop < now) {
             performSoftDrop();
-        } else if (next_fall < now) {
+        } else if (m_next_fall < now) {
             performFall();
         }
     }
 }
 
 GameState Game::getState() {
-    return state;
+    return m_state;
 }
 
 /**
  * Start soft dropping and immediately perform first soft drop
  */
 void Game::startSoftDropping() {
-    soft_dropping = true;
+    m_soft_dropping = true;
     resetSoftDropTimer();
     performSoftDrop();
 }
@@ -109,13 +109,13 @@ void Game::startSoftDropping() {
  * Stop soft dropping and resume normal falling
  */
 void Game::stopSoftDropping() {
-    soft_dropping = false;
+    m_soft_dropping = false;
     resetFallTimer();
 }
 
 bool Game::performSoftDrop() {
     incSoftDropTimer();
-    scoring.onSoftDrop();
+    m_scoring.onSoftDrop();
     return active.stepDown();
 }
 
@@ -123,16 +123,16 @@ bool Game::performSoftDrop() {
  * Reset the soft drop timer
  */
 void Game::resetSoftDropTimer() {
-    next_soft_drop = cl::now() +
-        std::chrono::milliseconds((int) (scoring.getFallSpeedMs() * SOFT_DROP_DELAY_MULT));
+    m_next_soft_drop = cl::now() +
+        std::chrono::milliseconds((int) (m_scoring.getFallSpeedMs() * SOFT_DROP_DELAY_MULT));
 }
 
 /**
  * Schedule the next soft drop
  */
 void Game::incSoftDropTimer() {
-    next_soft_drop = next_soft_drop +
-        std::chrono::milliseconds((int) (scoring.getFallSpeedMs() * SOFT_DROP_DELAY_MULT));
+    m_next_soft_drop = m_next_soft_drop +
+        std::chrono::milliseconds((int) (m_scoring.getFallSpeedMs() * SOFT_DROP_DELAY_MULT));
 }
 
 /**
@@ -147,18 +147,18 @@ bool Game::performFall() {
  * Reset the fall timer.
  */
 void Game::resetFallTimer() {
-    next_fall = cl::now() + std::chrono::milliseconds(scoring.getFallSpeedMs());
+    m_next_fall = cl::now() + std::chrono::milliseconds(m_scoring.getFallSpeedMs());
 }
 
 /**
  * Schedule the next fall
  */
 void Game::incFallTimer() {
-    next_fall = next_fall + std::chrono::milliseconds(scoring.getFallSpeedMs());
+    m_next_fall = m_next_fall + std::chrono::milliseconds(m_scoring.getFallSpeedMs());
 }
 
 void Game::scheduleLockDown() {
-    lock_down = cl::now() + std::chrono::milliseconds(LOCK_DOWN_DELAY_MS);
+    m_lock_down = cl::now() + std::chrono::milliseconds(LOCK_DOWN_DELAY_MS);
 }
 
 /**
@@ -173,75 +173,75 @@ void Game::handleEvent(const SDL_Event &e) {
         if (!e.key.repeat) {
             switch (e.key.keysym.sym) {
             case SDLK_RIGHT:
-                if (state == GameState::Paused) break;
-                if (state == GameState::Running) {
+                if (m_state == GameState::Paused) break;
+                if (m_state == GameState::Running) {
                     initMoveRight();
-                    last_spin = false;
+                    m_last_spin = false;
                 }
                 break;
             case SDLK_LEFT:
-                if (state == GameState::Paused) break;
-                if (state == GameState::Running) {
+                if (m_state == GameState::Paused) break;
+                if (m_state == GameState::Running) {
                     initMoveLeft();
-                    last_spin = false;
+                    m_last_spin = false;
                 }
                 break;
             case SDLK_DOWN:
-                if (state == GameState::Paused) break;
-                if (state == GameState::Running) {
+                if (m_state == GameState::Paused) break;
+                if (m_state == GameState::Running) {
                     startSoftDropping();
-                    last_spin = false;
+                    m_last_spin = false;
                 }
                 break;
             case SDLK_UP:
-                if (state == GameState::Paused) break;
-                if (state == GameState::Running) {
-                    active.rotateClockw(rotation_point);
-                    last_spin = true;
+                if (m_state == GameState::Paused) break;
+                if (m_state == GameState::Running) {
+                    active.rotateClockw(m_last_rotation_point);
+                    m_last_spin = true;
                     scheduleLockDown();
                 }
                 break;
             case SDLK_LCTRL:
             case SDLK_RCTRL:
-                if (state == GameState::Paused) break;
-                if (state == GameState::Running) {
-                    active.rotateCounterclockw(rotation_point);
-                    last_spin = true;
+                if (m_state == GameState::Paused) break;
+                if (m_state == GameState::Running) {
+                    active.rotateCounterclockw(m_last_rotation_point);
+                    m_last_spin = true;
                     scheduleLockDown();
                 }
                 break;
             case SDLK_SPACE:
-                if (state == GameState::Paused) break;
-                if (state == GameState::Running) {
-                    scoring.onHardDrop(active.hardDrop());
+                if (m_state == GameState::Paused) break;
+                if (m_state == GameState::Running) {
+                    m_scoring.onHardDrop(active.hardDrop());
                     lockDownAndRespawnActive();
-                    last_spin = false;
+                    m_last_spin = false;
                 }
                 break;
             case SDLK_c:
-                if (state == GameState::Paused) break;
-                if (state == GameState::Running) {
+                if (m_state == GameState::Paused) break;
+                if (m_state == GameState::Running) {
                     hold();
-                    last_spin = false;
+                    m_last_spin = false;
                 }
                 break;
             case SDLK_ESCAPE:
-                if (state == GameState::Paused) {
-                    next_fall.resume();
-                    next_soft_drop.resume();
+                if (m_state == GameState::Paused) {
+                    m_next_fall.resume();
+                    m_next_soft_drop.resume();
                 }
                 else {
-                    next_fall.pause();
-                    next_soft_drop.pause();
+                    m_next_fall.pause();
+                    m_next_soft_drop.pause();
                 }
-                if (state == GameState::Paused) {
-                    state = GameState::Running;
-                } else if (state == GameState::Running) {
-                    state = GameState::Paused;
+                if (m_state == GameState::Paused) {
+                    m_state = GameState::Running;
+                } else if (m_state == GameState::Running) {
+                    m_state = GameState::Paused;
                 }
                 break;
             case SDLK_RETURN:
-                if (state == GameState::GameOver) {
+                if (m_state == GameState::GameOver) {
                     restart();
                 }
                 break;
@@ -257,7 +257,7 @@ void Game::handleEvent(const SDL_Event &e) {
             stopMoveLeft();
             break;
         case SDLK_DOWN:
-            soft_dropping = false;
+            m_soft_dropping = false;
             break;
         }
     }
@@ -267,13 +267,13 @@ void Game::handleEvent(const SDL_Event &e) {
  * Start moving the active Tetromino to the right repeatedly
  */
 void Game::initMoveRight() {
-    if (!moving_right) {
-        moving_right = true;
-        moving_left = false;
+    if (!m_moving_right) {
+        m_moving_right = true;
+        m_moving_left = false;
         moveRight();
         // Override the timer for the next right move set by moveRight
         // Instead, set initial delay
-        next_mv_right = cl::now() +
+        m_next_mv_right = cl::now() +
                           std::chrono::milliseconds(KEY_INIT_DELAY_MS);
     }
 }
@@ -282,9 +282,9 @@ void Game::initMoveRight() {
  * Stop moving the active Tetromino to the right
  */
 void Game::stopMoveRight() {
-    moving_right = false;
-    keystate = SDL_GetKeyboardState(NULL);
-    if (keystate[SDL_SCANCODE_LEFT] && state == GameState::Running) {
+    m_moving_right = false;
+    const Uint8* keystate = SDL_GetKeyboardState(NULL);
+    if (keystate[SDL_SCANCODE_LEFT] && m_state == GameState::Running) {
         initMoveLeft();
     }
 }
@@ -300,20 +300,20 @@ void Game::moveRight() {
         // reset lockdown timer if the move was successfull
         scheduleLockDown();
     }
-    next_mv_right += std::chrono::milliseconds(KEY_REPEAT_DELAY_MS);
+    m_next_mv_right += std::chrono::milliseconds(KEY_REPEAT_DELAY_MS);
 }
 
 /**
  * Start moving the active Tetromino to the left repeatedly
  */
 void Game::initMoveLeft() {
-    if (!moving_left) {
-        moving_left = true;
-        moving_right = false;
+    if (!m_moving_left) {
+        m_moving_left = true;
+        m_moving_right = false;
         moveLeft();
         // Override the timer for the next left move set by moveLeft
         // Instead, set initial delay
-        next_mv_left = cl::now() +
+        m_next_mv_left = cl::now() +
                          std::chrono::milliseconds(KEY_INIT_DELAY_MS);
     }
 }
@@ -322,9 +322,9 @@ void Game::initMoveLeft() {
  * Stop moving the active Tetromino to the left
  */
 void Game::stopMoveLeft() {
-    moving_left = false;
-    keystate = SDL_GetKeyboardState(NULL);
-    if (keystate[SDL_SCANCODE_RIGHT] && state == GameState::Running) {
+    m_moving_left = false;
+    const Uint8* keystate = SDL_GetKeyboardState(NULL);
+    if (keystate[SDL_SCANCODE_RIGHT] && m_state == GameState::Running) {
         initMoveRight();
     }
 }
@@ -337,34 +337,34 @@ void Game::moveLeft() {
         // Only reset lockdown timer if the move was successfull
         scheduleLockDown();
     }
-    next_mv_left += std::chrono::milliseconds(KEY_REPEAT_DELAY_MS);
+    m_next_mv_left += std::chrono::milliseconds(KEY_REPEAT_DELAY_MS);
 }
 
 /**
  * Put the current Tetromino in the "Hold" area and replace it with the Tetromino
- * that is currently held, spawning it at the top of the Playfield
+ * that is currently m_held, spawning it at the top of the Playfield
  */
 void Game::hold() {
-    if (can_hold) {
+    if (m_can_hold) {
         // Disable hold until next piece is set
-        can_hold = false;
+        m_can_hold = false;
         // 255 corrsponds to no value set
-        if (held == 255) {
-            // Set kind of held Tetromino to be the old active Tetrominos
+        if (m_held == 255) {
+            // Set kind of m_held Tetromino to be the old active Tetrominos
             // kind
-            held = active.m_type;
+            m_held = active.m_type;
             // Respawn Tetromino as new random kind
             respawnActive();
         } else {
             // Store intermediate value
             TetrominoKind_t active_kind = active.m_type;
-            // Set kind of respawned Tetromino to `held`
-            respawnActiveWithKind(held);
-            // Set kind of held Tetromino to be the old active Tetrominos
+            // Set kind of respawned Tetromino to `m_held`
+            respawnActiveWithKind(m_held);
+            // Set kind of m_held Tetromino to be the old active Tetrominos
             // kind
-            held = active_kind;
+            m_held = active_kind;
         }
-        hud.setHold(held);
+        m_hud.setHold(m_held);
     }
 }
 
@@ -372,7 +372,7 @@ void Game::draw(SDL_Renderer *renderer) {
     playfield.draw(renderer);
     active.drawGhost(renderer);
     active.draw(renderer);
-    hud.draw(renderer, state);
+    m_hud.draw(renderer, m_state);
 }
 
 
@@ -384,13 +384,13 @@ void Game::draw(SDL_Renderer *renderer) {
 int Game::checkTSpin() {
     // Assert that the current Tetromino is a type T one and that the last input
     // was a rotation
-    if (active.m_type != 5 || !last_spin) {
+    if (active.m_type != 5 || !m_last_spin) {
         return 0;
     }
 
     // Check whether the last rotation was a T-Spin. Must be called right before
     // lock down occurs
-    if (inTSlot() || rotation_point == 5) {
+    if (inTSlot() || m_last_rotation_point == 5) {
         // T-Spin
         return 2;
     } else if (inMiniTSlot()) {
@@ -481,21 +481,21 @@ void Game::lockDownAndRespawnActive() {
         int cleared = playfield.clearEmptyLines();
         switch (t_spin) {
         case 0:
-            scoring.onLinesCleared(cleared);
+            m_scoring.onLinesCleared(cleared);
             break;
         case 1:
             std::cout << "Mini T-Spin, clearing " << cleared << " lines!\n";
-            scoring.onMiniTSpin(cleared);
+            m_scoring.onMiniTSpin(cleared);
             break;
         case 2:
             std::cout << "T-Spin, clearing " << cleared << " lines!\n";
-            scoring.onTSpin(cleared);
+            m_scoring.onTSpin(cleared);
             break;
         }
         resetFallTimer();
     }
     // Re-enable hold
-    can_hold = true;
+    m_can_hold = true;
 }
 
 /*
@@ -503,7 +503,7 @@ void Game::lockDownAndRespawnActive() {
  * the queue
  */
 bool Game::respawnActive() {
-    return Game::respawnActiveWithKind(bag.popQueue());
+    return Game::respawnActiveWithKind(m_bag.popQueue());
 }
 
 /*
@@ -512,13 +512,13 @@ bool Game::respawnActive() {
 bool Game::respawnActiveWithKind(TetrominoKind_t kind) {
     if (!active.respawn(kind)) {
         // Block Out
-        state = GameState::GameOver;
+        m_state = GameState::GameOver;
         return false;
     }
     // Move down own cell immediatly after respawning; this is according to
     // the Tetromino Guideline
     active.stepDown();
-    hud.setQueue(bag.getQueue());
+    m_hud.setQueue(m_bag.getQueue());
     return true;
 }
 

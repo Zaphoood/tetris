@@ -13,21 +13,21 @@
  */
 class Game {
   private:
-    // Current state of the game
-    GameState state = GameState::PreInit;
+    // Current m_state of the game
+    GameState m_state = GameState::PreInit;
 
     // When to perform the next fall step
-    Timer next_fall;
+    Timer m_next_fall;
     // When to perform the next soft drop step
-    Timer next_soft_drop;
+    Timer m_next_soft_drop;
     // Whether the Tetromino is currently Soft Dropping, i. e. the down arrow
-    // key is held
-    bool soft_dropping = false;
+    // key is m_held
+    bool m_soft_dropping = false;
     // When to lock down the active Tetromino
-    Timer lock_down;
+    Timer m_lock_down;
     // Whether the active Tetromino is currently in contact with a Mino on the
-    // Playfield; used in combination with lock_down Timer
-    bool surface_contact = false;
+    // Playfield; used in combination with m_lock_down Timer
+    bool m_surface_contact = false;
     void startSoftDropping();
     void stopSoftDropping();
     bool performSoftDrop();
@@ -44,11 +44,10 @@ class Game {
     bool respawnActiveWithKind(TetrominoKind_t kind);
 
     // Horizontal movement
-    const Uint8 *keystate;
-    bool moving_right = false;
-    bool moving_left = false;
-    Timer next_mv_right;
-    Timer next_mv_left;
+    bool m_moving_right = false;
+    bool m_moving_left = false;
+    Timer m_next_mv_right;
+    Timer m_next_mv_left;
     void initMoveLeft();
     void stopMoveLeft();
     void moveLeft();
@@ -59,9 +58,9 @@ class Game {
     // T-Spins
     // Store the last rotation point (a value in the range [0, 4] determined by
     // what rotation was used by SRS)
-    int rotation_point;
+    int m_last_rotation_point;
     // Whether the last action was a spin
-    bool last_spin = false;
+    bool m_last_spin = false;
     // Check if the last action was a T-Spin or a Mini T-Spin and award points
     // accordingly
     int checkTSpin();
@@ -70,12 +69,12 @@ class Game {
     bool inMiniTSlot();
 
     void hold();
-    TetrominoKind_t held = -1;
-    bool can_hold = true;
+    TetrominoKind_t m_held = -1;
+    bool m_can_hold = true;
 
-    SevenBag bag;
-    HUD hud;
-    FixedGoalScoring scoring = FixedGoalScoring(1);
+    SevenBag m_bag;
+    HUD m_hud;
+    FixedGoalScoring m_scoring = FixedGoalScoring(1);
 
     void restart();
 

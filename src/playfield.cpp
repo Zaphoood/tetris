@@ -9,7 +9,7 @@
 #include "playfield.h"
 
 Playfield::Playfield() : Playfield(0, 0) {}
-Playfield::Playfield(int draw_x, int draw_y) : draw_x(draw_x), draw_y(draw_y) {
+Playfield::Playfield(int draw_x, int draw_y) : m_draw_x(draw_x), m_draw_y(draw_y) {
     reset();
 }
 
@@ -18,14 +18,14 @@ void Playfield::reset() {
     // values 0~6 correspond to different Minos
     for (int row = 0; row < GRID_SIZE_Y; row++) {
         for (int col = 0; col < GRID_SIZE_X; col++) {
-            grid[row][col] = 7;
+            m_grid[row][col] = 7;
         }
     }
 }
 
 std::array<int, 2> Playfield::cellToPixelPosition(int cell_x, int cell_y) {
-    return std::array<int, 2>{draw_x + cell_x * CELL_SIZE,
-                              draw_y + (cell_y - GRID_START_Y) * CELL_SIZE};
+    return std::array<int, 2>{m_draw_x + cell_x * CELL_SIZE,
+                              m_draw_y + (cell_y - GRID_START_Y) * CELL_SIZE};
 }
 
 void Playfield::draw(SDL_Renderer *renderer) {
@@ -35,18 +35,18 @@ void Playfield::draw(SDL_Renderer *renderer) {
 }
 
 void Playfield::setDrawPosition(int x, int y) {
-    draw_x = x;
-    draw_y = y;
+    m_draw_x = x;
+    m_draw_y = y;
 }
 
 void Playfield::drawPlayfield(SDL_Renderer *renderer) {
     std::array<int, 2> pos;
     for (int row = GRID_START_Y; row < GRID_SIZE_Y; row++) {
         for (int col = 0; col < GRID_SIZE_X; col++) {
-            if (grid[row][col] < 7) {
+            if (m_grid[row][col] < 7) {
                 pos = cellToPixelPosition(col, row);
                 drawMino(renderer, pos[0], pos[1],
-                         TETROMINO_COLORS[grid[row][col]]);
+                         TETROMINO_COLORS[m_grid[row][col]]);
             }
         }
     }
@@ -58,18 +58,18 @@ void Playfield::drawOutline(SDL_Renderer *renderer) {
     // clang-format off
     // Draw vertical lines
     SDL_RenderDrawLine(renderer,
-        draw_x,                   draw_y,
-        draw_x,                   draw_y + PLAYFIELD_HEIGHT);
+        m_draw_x,                   m_draw_y,
+        m_draw_x,                   m_draw_y + PLAYFIELD_HEIGHT);
     SDL_RenderDrawLine(renderer,
-        draw_x + PLAYFIELD_WIDTH, draw_y,
-        draw_x + PLAYFIELD_WIDTH, draw_y + PLAYFIELD_HEIGHT);
+        m_draw_x + PLAYFIELD_WIDTH, m_draw_y,
+        m_draw_x + PLAYFIELD_WIDTH, m_draw_y + PLAYFIELD_HEIGHT);
     // Draw horizontal lines
     SDL_RenderDrawLine(renderer,
-        draw_x,                   draw_y,
-        draw_x + PLAYFIELD_WIDTH, draw_y);
+        m_draw_x,                   m_draw_y,
+        m_draw_x + PLAYFIELD_WIDTH, m_draw_y);
     SDL_RenderDrawLine(renderer,
-        draw_x,                   draw_y + PLAYFIELD_HEIGHT,
-        draw_x + PLAYFIELD_WIDTH, draw_y + PLAYFIELD_HEIGHT);
+        m_draw_x,                   m_draw_y + PLAYFIELD_HEIGHT,
+        m_draw_x + PLAYFIELD_WIDTH, m_draw_y + PLAYFIELD_HEIGHT);
     // clang-format on
 }
 
@@ -99,7 +99,7 @@ void Playfield::drawGhostMino(SDL_Renderer *renderer, int x, int y) {
 }
 
 uint8_t Playfield::getAt(int x, int y) {
-    return grid[y][x];
+    return m_grid[y][x];
 }
 
 bool Playfield::isObstructed(int x, int y) {
@@ -121,11 +121,11 @@ bool Playfield::setAt(int x, int y, uint8_t mino_type) {
 }
 
 void Playfield::setAtHard(int x, int y, uint8_t mino_type) {
-    grid[y][x] = mino_type;
+    m_grid[y][x] = mino_type;
 }
 
 void Playfield::clearAt(int x, int y) {
-    grid[y][x] = 7;
+    m_grid[y][x] = 7;
 }
 
 bool Playfield::isRowFilled(int row) {

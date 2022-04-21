@@ -6,8 +6,9 @@
 #include "constants.h"
 
 class Playfield {
-    uint8_t grid[GRID_SIZE_Y][GRID_SIZE_X];
-    int draw_x, draw_y; // Where to draw the p_playfield on the screen
+    uint8_t m_grid[GRID_SIZE_Y][GRID_SIZE_X];
+    int m_draw_x, m_draw_y; // Where to draw the p_playfield on the screen
+
     void drawOutline(SDL_Renderer *renderer);
     void drawPlayfield(SDL_Renderer *renderer);
     void drawActiveTetromino(SDL_Renderer *renderer);

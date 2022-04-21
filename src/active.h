@@ -9,7 +9,7 @@ class Active {
   public:
     // Reference to playfield is necessary in order to set Minos when the
     // active Tetromino is locked down
-    Playfield& p_playfield;
+    Playfield& m_playfield;
     // Top left corner of containing rectangle of the Tetromino
     int m_x, m_y;
     // Orientation of the Tetromino: A clockwise rotation increases the
