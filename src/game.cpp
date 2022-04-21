@@ -22,7 +22,7 @@ void Game::init() {
  * Main update function, handles game logic
  */
 void Game::update() {
-    if (state != GameState::Running || paused) {
+    if (state != GameState::Running) {
         return;
     }
 
@@ -154,28 +154,28 @@ void Game::handleEvent(const SDL_Event &e) {
         if (!e.key.repeat) {
             switch (e.key.keysym.sym) {
             case SDLK_RIGHT:
-                if (paused) break;
+                if (state == GameState::Paused) break;
                 if (state == GameState::Running) {
                     initMoveRight();
                     last_spin = false;
                 }
                 break;
             case SDLK_LEFT:
-                if (paused) break;
+                if (state == GameState::Paused) break;
                 if (state == GameState::Running) {
                     initMoveLeft();
                     last_spin = false;
                 }
                 break;
             case SDLK_DOWN:
-                if (paused) break;
+                if (state == GameState::Paused) break;
                 if (state == GameState::Running) {
                     startSoftDropping();
                     last_spin = false;
                 }
                 break;
             case SDLK_UP:
-                if (paused) break;
+                if (state == GameState::Paused) break;
                 if (state == GameState::Running) {
                     active.rotateClockw(rotation_point);
                     last_spin = true;
@@ -184,7 +184,7 @@ void Game::handleEvent(const SDL_Event &e) {
                 break;
             case SDLK_LCTRL:
             case SDLK_RCTRL:
-                if (paused) break;
+                if (state == GameState::Paused) break;
                 if (state == GameState::Running) {
                     active.rotateCounterclockw(rotation_point);
                     last_spin = true;
@@ -192,7 +192,7 @@ void Game::handleEvent(const SDL_Event &e) {
                 }
                 break;
             case SDLK_SPACE:
-                if (paused) break;
+                if (state == GameState::Paused) break;
                 if (state == GameState::Running) {
                     scoring.onHardDrop(active.hardDrop());
                     lockDownAndRespawnActive();
@@ -200,14 +200,14 @@ void Game::handleEvent(const SDL_Event &e) {
                 }
                 break;
             case SDLK_c:
-                if (paused) break;
+                if (state == GameState::Paused) break;
                 if (state == GameState::Running) {
                     hold();
                     last_spin = false;
                 }
                 break;
             case SDLK_ESCAPE:
-                if (paused) {
+                if (state == GameState::Paused) {
                     next_fall.resume();
                     next_soft_drop.resume();
                 }
@@ -215,7 +215,11 @@ void Game::handleEvent(const SDL_Event &e) {
                     next_fall.pause();
                     next_soft_drop.pause();
                 }
-                paused = !paused;
+                if (state == GameState::Paused) {
+                    state = GameState::Running;
+                } else if (state == GameState::Running) {
+                    state = GameState::Paused;
+                }
                 break;
             }
         }
@@ -256,7 +260,7 @@ void Game::initMoveRight() {
 void Game::stopMoveRight() {
     moving_right = false;
     keystate = SDL_GetKeyboardState(NULL);
-    if (keystate[SDL_SCANCODE_LEFT] && !paused) {
+    if (keystate[SDL_SCANCODE_LEFT] && state == GameState::Running) {
         initMoveLeft();
     }
 }
@@ -296,7 +300,7 @@ void Game::initMoveLeft() {
 void Game::stopMoveLeft() {
     moving_left = false;
     keystate = SDL_GetKeyboardState(NULL);
-    if (keystate[SDL_SCANCODE_RIGHT] && !paused) {
+    if (keystate[SDL_SCANCODE_RIGHT] && state == GameState::Running) {
         initMoveRight();
     }
 }
@@ -344,7 +348,7 @@ void Game::draw(SDL_Renderer *renderer) {
     playfield.draw(renderer);
     active.drawGhost(renderer);
     active.draw(renderer);
-    hud.draw(renderer, paused);
+    hud.draw(renderer, state);
 }
 
 

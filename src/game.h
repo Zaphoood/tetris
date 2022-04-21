@@ -77,8 +77,6 @@ class Game {
     HUD hud;
     FixedGoalScoring scoring = FixedGoalScoring(1);
 
-    bool paused = false;
-
   public:
     Game(const std::string& assets_path);
 

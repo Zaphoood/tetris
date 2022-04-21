@@ -45,7 +45,7 @@ void HUD::setHold(TetrominoKind_t held) {
     m_hold_visual.setKind(held);
 }
 
-void HUD::draw(SDL_Renderer *renderer, bool paused) {
+void HUD::draw(SDL_Renderer *renderer, GameState state) {
     // Draw queue
     for (int i = 0; i < QUEUE_LEN; i++) {
         m_queue_visuals[i].draw(renderer, QUEUE_X,
@@ -58,8 +58,11 @@ void HUD::draw(SDL_Renderer *renderer, bool paused) {
     // Draw info
     drawAllInfo(renderer);
 
-    if (paused) {
+    if (state == GameState::Paused) {
         drawPauseOverlay(renderer);
+    } else if (state == GameState::GameOver) {
+        // Draw Game Over screen
+        drawGameOverOverlay(renderer);
     }
 }
 
@@ -75,6 +78,31 @@ void HUD::drawPauseOverlay(SDL_Renderer* renderer) {
         renderPaused(renderer);
     }
     SDL_RenderCopy(renderer, m_paused_texture, 0, &m_paused_rect);
+}
+
+void HUD::drawGameOverOverlay(SDL_Renderer* renderer) {
+    // Fill screen with dark, transparent color
+    SDL_Rect full_screen{0, 0, WINDOW_X, WINDOW_Y};
+    uint8_t val = 0;
+    SDL_SetRenderDrawColor(renderer, val, val, val, 100);
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+    SDL_RenderFillRect(renderer, &full_screen);
+    // Render text so that we know the measurements
+    if (!m_game_over_texture) {
+        renderGameOver(renderer);
+    }
+    // Draw a box around the text
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
+    SDL_SetRenderDrawColor(renderer, BACKGROUND.r, BACKGROUND.g, BACKGROUND.b, BACKGROUND.a);
+    int margin = 20;
+    SDL_Rect rect{
+        m_game_over_rect.x - margin, m_game_over_rect.y - margin,
+        m_game_over_rect.w + margin * 2, m_game_over_rect.h + margin * 2};
+    SDL_RenderFillRect(renderer, &rect);
+    SDL_SetRenderDrawColor(renderer, TEXT_COLOR.r, TEXT_COLOR.g, TEXT_COLOR.b, TEXT_COLOR.a);
+    SDL_RenderDrawRect(renderer, &rect);
+    // Draw the text
+    SDL_RenderCopy(renderer, m_game_over_texture, 0, &m_game_over_rect);
 }
 
 /**
@@ -146,11 +174,22 @@ void HUD::renderAllInfo(SDL_Renderer *renderer) {
  * Render the Surface containing the 'Paused' text.
  */
 void HUD::renderPaused(SDL_Renderer *renderer) {
-    // Use dummy values for x-position since it'll be changed afterwards
+    // Use dummy value for x-position since it'll be changed afterwards
     renderText(renderer, 0, PAUSED_TEXT_Y, "Paused", m_font,
         &m_paused_texture, &m_paused_rect, TEXT_COLOR, TextRenderMode::BLENDED);
     // Center rect horizontally
     m_paused_rect.x = PLAYFIELD_DRAW_X + (PLAYFIELD_WIDTH - m_paused_rect.w) / 2;
+}
+
+/**
+ * Render the Surface containing the 'Game Over' text.
+ */
+void HUD::renderGameOver(SDL_Renderer *renderer) {
+    // Use dummy value for x-position since it'll be changed afterwards
+    renderText(renderer, 0, PAUSED_TEXT_Y, "Game Over", m_font,
+        &m_game_over_texture, &m_game_over_rect, TEXT_COLOR, TextRenderMode::BLENDED);
+    // Center rect horizontally
+    m_game_over_rect.x = PLAYFIELD_DRAW_X + (PLAYFIELD_WIDTH - m_game_over_rect.w) / 2;
 }
 
 /**

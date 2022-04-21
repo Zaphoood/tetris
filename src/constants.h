@@ -45,7 +45,7 @@ inline const int PLAYFIELD_WIDTH = GRID_SIZE_X * CELL_SIZE;
 inline const int PLAYFIELD_HEIGHT = GRID_SIZE_VISIBLE_Y * CELL_SIZE;
 
 // Game
-enum class GameState { PreInit, Running, GameOver };
+enum class GameState { PreInit, Running, Paused, GameOver };
 
 // Window
 // Include enough space to the right to show queue

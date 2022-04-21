@@ -3,6 +3,7 @@
 
 #include "SDL_ttf.h"
 
+#include "constants.h"
 #include "scoring.h"
 #include "tetrovis.h"
 
@@ -51,6 +52,11 @@ class HUD {
     int m_paused_x, m_paused_y;
     void renderPaused(SDL_Renderer *renderer);
 
+    SDL_Texture *m_game_over_texture = nullptr;
+    SDL_Rect m_game_over_rect;
+    int m_game_over_x, m_game_over_y;
+    void renderGameOver(SDL_Renderer *renderer);
+
     void renderText(SDL_Renderer *renderer, int x, int y, const char *text,
                     TTF_Font *font, SDL_Texture **texture, SDL_Rect *rect,
                     const SDL_Color &text_color);
@@ -60,6 +66,7 @@ class HUD {
     void drawAllInfo(SDL_Renderer *renderer);
 
     void drawPauseOverlay(SDL_Renderer *renderer);
+    void drawGameOverOverlay(SDL_Renderer *renderer);
 
   public:
     HUD(const std::string& assets_path, const ScoringSystem& p_scoring);
@@ -69,5 +76,5 @@ class HUD {
 
     void setQueue(const std::array<TetrominoKind_t, QUEUE_LEN> &queue);
     void setHold(TetrominoKind_t hold);
-    void draw(SDL_Renderer *renderer, bool paused);
+    void draw(SDL_Renderer *renderer, GameState state);
 };
