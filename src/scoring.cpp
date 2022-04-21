@@ -111,6 +111,7 @@ FixedGoalScoring::FixedGoalScoring(int starting_level) {
     // TODO: Implement this (i.e. uncomment that second part)
     m_goal = 5; // starting_level * LINES_PER_LEVEL;
     m_score = 0;
+    m_lines = 0;
     updateFallSpeed();
 }
 
