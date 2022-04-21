@@ -1,7 +1,5 @@
-#include "cstdlib"
-#include "iostream"
+#include <iostream>
 
-#include "constants.h"
 #include "game.h"
 
 using cl = std::chrono::steady_clock;

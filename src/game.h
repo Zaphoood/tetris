@@ -3,14 +3,10 @@
 #include "SDL.h"
 
 #include "active.h"
+#include "constants.h"
 #include "bag.h"
 #include "hud.h"
-#include "playfield.h"
-#include "scoring.h"
-#include "tetrovis.h"
 #include "timer.h"
-
-enum class GameState { PreInit, Running, GameOver };
 
 /*
  * Handles the main game mechanics.
