@@ -10,6 +10,10 @@
 
 Playfield::Playfield() : Playfield(0, 0) {}
 Playfield::Playfield(int draw_x, int draw_y) : draw_x(draw_x), draw_y(draw_y) {
+    reset();
+}
+
+void Playfield::reset() {
     // Initialize all cells to 7, which represents an empty space
     // values 0~6 correspond to different Minos
     for (int row = 0; row < GRID_SIZE_Y; row++) {

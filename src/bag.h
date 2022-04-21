@@ -25,6 +25,10 @@ class SevenBag {
 
   public:
     SevenBag();
+
+    void reset();
+
+
     TetrominoKind_t popQueue();
     std::array<TetrominoKind_t, QUEUE_LEN> getQueue();
 };

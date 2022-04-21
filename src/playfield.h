@@ -20,6 +20,11 @@ class Playfield {
     Playfield();
     Playfield(int draw_x, int draw_y);
 
+    /**
+     * Reset the Playfield to its initial state
+     */
+    void reset();
+
     uint8_t getAt(int x, int y);
     bool isObstructed(int x, int y);
     bool setAt(int x, int y, uint8_t mino_type);

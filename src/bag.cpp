@@ -5,6 +5,10 @@
 #include "bag.h"
 
 SevenBag::SevenBag() {
+    reset();
+}
+
+void SevenBag::reset() {
     // Initialize PRNG
     srand(time(0));
     // Initialize Seven-Bag

@@ -13,11 +13,7 @@ HUD::HUD(const std::string& assets_path, const ScoringSystem& p_scoring) : m_sco
         std::cout << "ERROR: Could not load font.\n";
         exit(1);
     }
-    // Force re-render on first frame by setting impossible values
-    m_last_level = -1;
-    m_last_goal = -1;
-    m_last_lines = -1;
-    m_last_score = -1;
+    reset();
 }
 
 HUD::HUD(const std::string& assets_path, const ScoringSystem& scoring,
@@ -33,6 +29,15 @@ HUD::~HUD() {
     SDL_DestroyTexture(m_goal_texture);
     SDL_DestroyTexture(m_lines_texture);
     m_font = NULL;
+}
+
+void HUD::reset() {
+    // Force re-render on first frame of new game by setting impossible values
+    m_last_level = -1;
+    m_last_goal = -1;
+    m_last_lines = -1;
+    m_last_score = -1;
+    setHold(-1);
 }
 
 void HUD::setQueue(const std::array<TetrominoKind_t, QUEUE_LEN> &queue) {

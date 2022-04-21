@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include "SDL_keycode.h"
 #include "game.h"
 
 using cl = std::chrono::steady_clock;
@@ -13,9 +14,27 @@ Game::Game(const std::string& assets_path)
 }
 
 void Game::init() {
+    restart();
+}
+
+void Game::restart() {
+    // Reset some member variables
+    surface_contact = false;
+    moving_right = false;
+    moving_left = false;
+    last_spin = false;
+    TetrominoKind_t held = -1;
+    bool can_hold = true;
+
     // Schedule the first fall
     resetFallTimer();
     state = GameState::Running;
+    playfield.reset();
+    bag.reset();
+    active.respawn(bag.popQueue());
+    hud.reset();
+    hud.setQueue(bag.getQueue());
+    scoring = FixedGoalScoring(1);
 }
 
 /**
@@ -219,6 +238,11 @@ void Game::handleEvent(const SDL_Event &e) {
                     state = GameState::Running;
                 } else if (state == GameState::Running) {
                     state = GameState::Paused;
+                }
+                break;
+            case SDLK_RETURN:
+                if (state == GameState::GameOver) {
+                    restart();
                 }
                 break;
             }

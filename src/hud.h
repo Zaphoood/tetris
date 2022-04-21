@@ -74,6 +74,8 @@ class HUD {
         const std::array<TetrominoKind_t, QUEUE_LEN> &queue);
     ~HUD();
 
+    void reset();
+
     void setQueue(const std::array<TetrominoKind_t, QUEUE_LEN> &queue);
     void setHold(TetrominoKind_t hold);
     void draw(SDL_Renderer *renderer, GameState state);

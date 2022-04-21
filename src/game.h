@@ -77,6 +77,8 @@ class Game {
     HUD hud;
     FixedGoalScoring scoring = FixedGoalScoring(1);
 
+    void restart();
+
   public:
     Game(const std::string& assets_path);
 
