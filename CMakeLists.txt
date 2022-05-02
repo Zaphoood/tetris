@@ -24,4 +24,5 @@ target_link_libraries(tetris PUBLIC SDL2 SDL2_ttf)
 target_include_directories(tetris PRIVATE
     src
     /usr/local/include/SDL2
+    /usr/include/SDL2
 )
