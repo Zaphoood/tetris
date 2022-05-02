@@ -85,6 +85,9 @@ void Playfield::drawMino(SDL_Renderer *renderer, int x, int y,
     // Draw a black outline
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderDrawRect(renderer, &rect);
+    // There seems to be a bug with SDL_RenderDrawRect since the bottom-right
+    // pixel of a rect sometimes isn't drawn
+    SDL_RenderDrawPoint(renderer, rect.x + rect.w - 1, rect.y + rect.h - 1);
 }
 
 void Playfield::drawGhostMino(SDL_Renderer *renderer, int x, int y) {
