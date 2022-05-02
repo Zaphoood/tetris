@@ -7,7 +7,7 @@ You'll need gcc and make for compiling and the [SDL2](https://github.com/libsdl-
 
 SDL2 and SDL2_ttf can be installed using apt:
 ```
-sudo apt install libsdl2-2.0 libsdl2-dev libsdl2-ttf-2.0-0 libsdl2-ttf-dev
+sudo apt install libsdl2-2.0-0 libsdl2-dev libsdl2-ttf-2.0-0 libsdl2-ttf-dev
 ```
 Or you can just install them from source.
 
