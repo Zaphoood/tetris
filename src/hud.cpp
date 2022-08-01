@@ -72,11 +72,12 @@ void HUD::draw(SDL_Renderer *renderer, GameState state) {
 }
 
 void HUD::drawPauseOverlay(SDL_Renderer* renderer) {
-    SDL_Rect full_screen{0, 0, WINDOW_X, WINDOW_Y};
+    //SDL_Rect full_screen{0, 0, WINDOW_X, WINDOW_Y};
+    SDL_Rect overlay_rect{PLAYFIELD_DRAW_X, PLAYFIELD_DRAW_Y, PLAYFIELD_WIDTH + 1, PLAYFIELD_HEIGHT + 1};
     uint8_t val = 0;
     SDL_SetRenderDrawColor(renderer, val, val, val, 100);
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-    SDL_RenderFillRect(renderer, &full_screen);
+    SDL_RenderFillRect(renderer, &overlay_rect);
 
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
     if (!m_paused_texture) {
