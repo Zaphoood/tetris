@@ -8,6 +8,9 @@
 inline const int KEY_INIT_DELAY_MS = 500;
 inline const int KEY_REPEAT_DELAY_MS = 50;
 
+// Framerate
+inline const int MIN_FRAMETIME_MS = 15;
+
 // Tetromino
 // Define a type that stores a kind of Tetromino, such as O or L
 using TetrominoKind_t = uint8_t;

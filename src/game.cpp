@@ -1,4 +1,5 @@
 #include <iostream>
+#include <thread>
 
 #include "SDL_keycode.h"
 #include "game.h"
@@ -90,6 +91,11 @@ void Game::update() {
             performFall();
         }
     }
+
+    // Limit framerate; note that the variable `now` holds the time since epoch at
+    // the start of this frame
+    std::this_thread::sleep_for(std::chrono::milliseconds(
+          MIN_FRAMETIME_MS - (std::chrono::duration_cast<std::chrono::milliseconds>(cl::now() - now)).count()));
 }
 
 GameState Game::getState() {
