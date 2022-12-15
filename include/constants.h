@@ -89,10 +89,10 @@ inline const float FONT_SIZE_SCALE = 0.9;
 inline const int FONT_SIZE = (int) (CELL_SIZE * FONT_SIZE_SCALE);
 inline const int LINE_OFFSET = (int) (50 * FONT_SIZE_SCALE);
 inline const int INFO_TEXT_X = 30;
-inline const int INFO_TEXT_Y = 10;
+inline const int INFO_TEXT_Y = HOLD_Y + 4 * CELL_SIZE; // + LINE_OFFSET;
 
 inline const int SCORE_TEXT_X = INFO_TEXT_X;
-inline const int SCORE_TEXT_Y = INFO_TEXT_Y + 2 * LINE_OFFSET;
+inline const int SCORE_TEXT_Y = INFO_TEXT_Y;
 
 inline const int LEVEL_TEXT_X = INFO_TEXT_X;
 inline const int LEVEL_TEXT_Y = SCORE_TEXT_Y + (int) (2 * LINE_OFFSET);
