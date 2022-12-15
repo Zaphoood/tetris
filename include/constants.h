@@ -42,7 +42,7 @@ inline const int GRID_SIZE_VISIBLE_Y = 20;
 // Where the visible part of the grid starts
 inline const int GRID_START_Y = GRID_SIZE_Y - GRID_SIZE_VISIBLE_Y;
 // Size of a cell in pixels
-inline const int CELL_SIZE = 20;
+inline const int CELL_SIZE = 40;
 // Size of the playfield on screen in pixels
 inline const int PLAYFIELD_WIDTH = GRID_SIZE_X * CELL_SIZE;
 inline const int PLAYFIELD_HEIGHT = GRID_SIZE_VISIBLE_Y * CELL_SIZE;
@@ -84,17 +84,22 @@ inline const std::array<SDL_Color, 7> TETROMINO_COLORS = {{
 }};
 
 // Text
-inline const int INFO_TEXT_X = 10;
+inline const char FONT_PATH_RELATIVE[] = "/futura-medium.ttf";
+inline const float FONT_SIZE_SCALE = 0.9;
+inline const int FONT_SIZE = (int) (CELL_SIZE * FONT_SIZE_SCALE);
+inline const int LINE_OFFSET = (int) (50 * FONT_SIZE_SCALE);
+inline const int INFO_TEXT_X = 30;
+inline const int INFO_TEXT_Y = 10;
 
 inline const int SCORE_TEXT_X = INFO_TEXT_X;
-inline const int SCORE_TEXT_Y = 95;
+inline const int SCORE_TEXT_Y = INFO_TEXT_Y + 2 * LINE_OFFSET;
 
 inline const int LEVEL_TEXT_X = INFO_TEXT_X;
-inline const int LEVEL_TEXT_Y = SCORE_TEXT_Y + 45;
+inline const int LEVEL_TEXT_Y = SCORE_TEXT_Y + (int) (2 * LINE_OFFSET);
 inline const int GOAL_TEXT_X = INFO_TEXT_X;
-inline const int GOAL_TEXT_Y = LEVEL_TEXT_Y + 30;
+inline const int GOAL_TEXT_Y = LEVEL_TEXT_Y + LINE_OFFSET;
 inline const int LINES_TEXT_X = INFO_TEXT_X;
-inline const int LINES_TEXT_Y = GOAL_TEXT_Y + 30;
+inline const int LINES_TEXT_Y = GOAL_TEXT_Y + LINE_OFFSET;
 
 // x-position of 'Paused' text is calculated dynamically
 inline const int PAUSED_TEXT_Y = PLAYFIELD_DRAW_Y + PLAYFIELD_HEIGHT * 0.45;

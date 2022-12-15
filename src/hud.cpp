@@ -7,8 +7,8 @@
 
 HUD::HUD(const std::string& assets_path, const ScoringSystem& p_scoring) : m_scoring(p_scoring) {
     TTF_Init();
-    std::string font_path = assets_path + "/futura-medium.ttf"; 
-    m_font = TTF_OpenFont(font_path.c_str(), 20);
+    std::string font_path = assets_path + FONT_PATH_RELATIVE;
+    m_font = TTF_OpenFont(font_path.c_str(), FONT_SIZE);
     if (!m_font) {
         std::cout << "ERROR: Could not load font.\n";
         exit(1);
