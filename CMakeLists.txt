@@ -23,6 +23,7 @@ add_executable(tetris
 target_link_libraries(tetris PUBLIC SDL2 SDL2_ttf)
 target_include_directories(tetris PRIVATE
     src
+    include
     /usr/local/include/SDL2
     /usr/include/SDL2
 )
