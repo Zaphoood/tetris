@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 3.16)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# set the project name
 project(Tetris)
 
 add_executable(tetris
@@ -27,3 +26,5 @@ target_include_directories(tetris PRIVATE
     /usr/local/include/SDL2
     /usr/include/SDL2
 )
+
+install(TARGETS tetris DESTINATION bin)
