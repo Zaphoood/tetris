@@ -101,8 +101,7 @@ void ScoringSystem::awardAction(int points) {
     m_score += points;
 }
 
-FixedGoalScoring::FixedGoalScoring()
-    : FixedGoalScoring(1) {};
+FixedGoalScoring::FixedGoalScoring() : FixedGoalScoring(1){};
 
 FixedGoalScoring::FixedGoalScoring(int starting_level) {
     m_level = starting_level;

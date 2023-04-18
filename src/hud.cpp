@@ -5,7 +5,8 @@
 #include "constants.h"
 #include "hud.h"
 
-HUD::HUD(const std::string& assets_path, const ScoringSystem& p_scoring) : m_scoring(p_scoring) {
+HUD::HUD(const std::string &assets_path, const ScoringSystem &p_scoring)
+    : m_scoring(p_scoring) {
     TTF_Init();
     std::string font_path = assets_path + FONT_PATH_RELATIVE;
     m_font = TTF_OpenFont(font_path.c_str(), FONT_SIZE);
@@ -16,7 +17,7 @@ HUD::HUD(const std::string& assets_path, const ScoringSystem& p_scoring) : m_sco
     reset();
 }
 
-HUD::HUD(const std::string& assets_path, const ScoringSystem& scoring,
+HUD::HUD(const std::string &assets_path, const ScoringSystem &scoring,
          const std::array<TetrominoKind_t, QUEUE_LEN> &queue)
     : HUD(assets_path, scoring) {
     setQueue(queue);
@@ -71,9 +72,10 @@ void HUD::draw(SDL_Renderer *renderer, GameState state) {
     }
 }
 
-void HUD::drawPauseOverlay(SDL_Renderer* renderer) {
-    //SDL_Rect full_screen{0, 0, WINDOW_X, WINDOW_Y};
-    SDL_Rect overlay_rect{PLAYFIELD_DRAW_X, PLAYFIELD_DRAW_Y, PLAYFIELD_WIDTH + 1, PLAYFIELD_HEIGHT + 1};
+void HUD::drawPauseOverlay(SDL_Renderer *renderer) {
+    // SDL_Rect full_screen{0, 0, WINDOW_X, WINDOW_Y};
+    SDL_Rect overlay_rect{PLAYFIELD_DRAW_X, PLAYFIELD_DRAW_Y,
+                          PLAYFIELD_WIDTH + 1, PLAYFIELD_HEIGHT + 1};
     uint8_t val = 0;
     SDL_SetRenderDrawColor(renderer, val, val, val, 100);
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
@@ -86,7 +88,7 @@ void HUD::drawPauseOverlay(SDL_Renderer* renderer) {
     SDL_RenderCopy(renderer, m_paused_texture, 0, &m_paused_rect);
 }
 
-void HUD::drawGameOverOverlay(SDL_Renderer* renderer) {
+void HUD::drawGameOverOverlay(SDL_Renderer *renderer) {
     // Fill screen with dark, transparent color
     SDL_Rect full_screen{0, 0, WINDOW_X, WINDOW_Y};
     uint8_t val = 0;
@@ -99,13 +101,15 @@ void HUD::drawGameOverOverlay(SDL_Renderer* renderer) {
     }
     // Draw a box around the text
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
-    SDL_SetRenderDrawColor(renderer, BACKGROUND.r, BACKGROUND.g, BACKGROUND.b, BACKGROUND.a);
+    SDL_SetRenderDrawColor(renderer, BACKGROUND.r, BACKGROUND.g, BACKGROUND.b,
+                           BACKGROUND.a);
     int margin = 20;
-    SDL_Rect rect{
-        m_game_over_rect.x - margin, m_game_over_rect.y - margin,
-        m_game_over_rect.w + margin * 2, m_game_over_rect.h + margin * 2};
+    SDL_Rect rect{m_game_over_rect.x - margin, m_game_over_rect.y - margin,
+                  m_game_over_rect.w + margin * 2,
+                  m_game_over_rect.h + margin * 2};
     SDL_RenderFillRect(renderer, &rect);
-    SDL_SetRenderDrawColor(renderer, TEXT_COLOR.r, TEXT_COLOR.g, TEXT_COLOR.b, TEXT_COLOR.a);
+    SDL_SetRenderDrawColor(renderer, TEXT_COLOR.r, TEXT_COLOR.g, TEXT_COLOR.b,
+                           TEXT_COLOR.a);
     SDL_RenderDrawRect(renderer, &rect);
     // Draw the text
     SDL_RenderCopy(renderer, m_game_over_texture, 0, &m_game_over_rect);
@@ -181,10 +185,11 @@ void HUD::renderAllInfo(SDL_Renderer *renderer) {
  */
 void HUD::renderPaused(SDL_Renderer *renderer) {
     // Use dummy value for x-position since it'll be changed afterwards
-    renderText(renderer, 0, PAUSED_TEXT_Y, "Paused", m_font,
-        &m_paused_texture, &m_paused_rect, TEXT_COLOR, TextRenderMode::BLENDED);
+    renderText(renderer, 0, PAUSED_TEXT_Y, "Paused", m_font, &m_paused_texture,
+               &m_paused_rect, TEXT_COLOR, TextRenderMode::BLENDED);
     // Center rect horizontally
-    m_paused_rect.x = PLAYFIELD_DRAW_X + (PLAYFIELD_WIDTH - m_paused_rect.w) / 2;
+    m_paused_rect.x =
+        PLAYFIELD_DRAW_X + (PLAYFIELD_WIDTH - m_paused_rect.w) / 2;
 }
 
 /**
@@ -193,9 +198,11 @@ void HUD::renderPaused(SDL_Renderer *renderer) {
 void HUD::renderGameOver(SDL_Renderer *renderer) {
     // Use dummy value for x-position since it'll be changed afterwards
     renderText(renderer, 0, PAUSED_TEXT_Y, "Game Over", m_font,
-        &m_game_over_texture, &m_game_over_rect, TEXT_COLOR, TextRenderMode::BLENDED);
+               &m_game_over_texture, &m_game_over_rect, TEXT_COLOR,
+               TextRenderMode::BLENDED);
     // Center rect horizontally
-    m_game_over_rect.x = PLAYFIELD_DRAW_X + (PLAYFIELD_WIDTH - m_game_over_rect.w) / 2;
+    m_game_over_rect.x =
+        PLAYFIELD_DRAW_X + (PLAYFIELD_WIDTH - m_game_over_rect.w) / 2;
 }
 
 /**
@@ -205,7 +212,8 @@ void HUD::renderGameOver(SDL_Renderer *renderer) {
 void HUD::renderText(SDL_Renderer *renderer, int x, int y, const char *text,
                      TTF_Font *font, SDL_Texture **texture, SDL_Rect *rect,
                      const SDL_Color &text_color) {
-    renderText(renderer, x, y, text, font, texture, rect, text_color, TextRenderMode::SHADED);
+    renderText(renderer, x, y, text, font, texture, rect, text_color,
+               TextRenderMode::SHADED);
 }
 
 void HUD::renderText(SDL_Renderer *renderer, int x, int y, const char *text,
@@ -213,15 +221,16 @@ void HUD::renderText(SDL_Renderer *renderer, int x, int y, const char *text,
                      const SDL_Color &text_color, const TextRenderMode mode) {
     SDL_Surface *surface;
     switch (mode) {
-        case TextRenderMode::SHADED:
-            surface = TTF_RenderText_Shaded(font, text, text_color, BACKGROUND);
-            break;
-        case TextRenderMode::BLENDED:
-            surface = TTF_RenderText_Blended(font, text, text_color);
-            break;
-        default:
-            std::cout << "Exhaustive handling of TextRenderMode in HUD::renderText()\n";
-            exit(1);
+    case TextRenderMode::SHADED:
+        surface = TTF_RenderText_Shaded(font, text, text_color, BACKGROUND);
+        break;
+    case TextRenderMode::BLENDED:
+        surface = TTF_RenderText_Blended(font, text, text_color);
+        break;
+    default:
+        std::cout
+            << "Exhaustive handling of TextRenderMode in HUD::renderText()\n";
+        exit(1);
     }
     if (!surface) {
         std::cout << "ERROR: Couldn't create surface\n";

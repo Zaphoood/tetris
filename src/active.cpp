@@ -6,7 +6,7 @@
 #include "constants.h"
 #include "playfield.h"
 
-Active::Active(uint8_t type, Playfield& _p_playfield) 
+Active::Active(uint8_t type, Playfield &_p_playfield)
     : m_playfield(_p_playfield) {
     respawn(type);
 }
@@ -60,7 +60,7 @@ void Active::lockDown() {
 
 /*
  * Calculate the vertical position of the Ghost Tetromino.
- * 
+ *
  * @return vertical position
  */
 int Active::getGhostY() {
@@ -166,8 +166,9 @@ bool Active::stepDown() {
 }
 
 /*
- * Check if the Tetromino can move down by one cell without colliding with anything
- * 
+ * Check if the Tetromino can move down by one cell without colliding with
+ * anything
+ *
  * @return the above
  */
 bool Active::canStepDown() {
@@ -232,7 +233,8 @@ TetroGrid_t Active::getGridRotatedClockw() {
 }
 
 /*
- * Create a new grid with the contents of the current one rotated counterclockwise
+ * Create a new grid with the contents of the current one rotated
+ * counterclockwise
  *
  * @return the new grid
  */
@@ -260,7 +262,8 @@ TetroGrid_t Active::getGridRotatedCounterclockw() {
 }
 
 /*
- * Check if the given grid, placed at the given location, overlaps with any Mino on the Playfield
+ * Check if the given grid, placed at the given location, overlaps with any Mino
+ * on the Playfield
  *
  * @return whether there is an overlap
  */
@@ -268,8 +271,8 @@ bool Active::gridConflict(const TetroGrid_t &grid, int x, int y) {
     for (int row = 0; row < 4; row++) {
         for (int col = 0; col < 4; col++) {
             if (grid[row][col]) {
-                if (m_playfield.isObstructed(x + col, y + row) ||
-                    x + col < 0 || x + col >= GRID_SIZE_X || y + col < 0 ||
+                if (m_playfield.isObstructed(x + col, y + row) || x + col < 0 ||
+                    x + col >= GRID_SIZE_X || y + col < 0 ||
                     y + col >= GRID_SIZE_Y) {
                     return true;
                 }
@@ -282,27 +285,28 @@ bool Active::gridConflict(const TetroGrid_t &grid, int x, int y) {
 /**
  * Try all wall kicks for clockwise rotation with the given grid and store the
  * first found non-conflicting one in `success`.
- * 
+ *
  * @return whether a non-conflicting wall kick was found
  */
 bool Active::tryWallkicksC(const TetroGrid_t &new_grid, Wallkick_t &success,
-                           int& rotation_point) {
+                           int &rotation_point) {
     return tryWallkicks(new_grid, 1, success, rotation_point);
 }
 
 /**
- * Try all wall kicks for counterclockwise rotation with the given grid and store the
- * first found non-conflicting one in `success`.
- * 
+ * Try all wall kicks for counterclockwise rotation with the given grid and
+ * store the first found non-conflicting one in `success`.
+ *
  * @return whether a non-conflicting wall kick was found
  */
 bool Active::tryWallkicksCC(const TetroGrid_t &new_grid, Wallkick_t &success,
-                            int& rotation_point) {
+                            int &rotation_point) {
     return tryWallkicks(new_grid, -1, success, rotation_point);
 }
 
 /**
- * Try all wall kicks and store the first found successful (non-conflicting) one in `success`
+ * Try all wall kicks and store the first found successful (non-conflicting) one
+ * in `success`
  *
  * @param new_grid grid to check
  * @param direction direction of rotation
@@ -312,7 +316,7 @@ bool Active::tryWallkicksCC(const TetroGrid_t &new_grid, Wallkick_t &success,
  * @return whether a non-conflicting wall kick was found
  */
 bool Active::tryWallkicks(const TetroGrid_t &new_grid, int8_t direction,
-                          Wallkick_t &success, int& rotation_point) {
+                          Wallkick_t &success, int &rotation_point) {
     // O Tetromino; doesn't perform Wall Kicks
     if (m_type == 3) {
         success = Wallkick_t{0, 0};
@@ -345,7 +349,7 @@ bool Active::tryWallkicks(const TetroGrid_t &new_grid, int8_t direction,
  */
 bool Active::tryWallkickData(const TetroGrid_t &new_grid,
                              const WallkickData_t *wallkick_data,
-                             Wallkick_t &success, int& rotation_point) {
+                             Wallkick_t &success, int &rotation_point) {
     for (uint8_t i = 0; i < wallkick_data->size(); i++) {
         // Check if there would be a conflict using the current Wall Kick
         if (!gridConflict(new_grid, m_x + (*wallkick_data)[i][0],
@@ -365,7 +369,7 @@ bool Active::tryWallkickData(const TetroGrid_t &new_grid,
  *
  * @return whether the rotation was successful
  */
-bool Active::rotateClockw(int& rotation_point) {
+bool Active::rotateClockw(int &rotation_point) {
     TetroGrid_t new_grid = getGridRotatedClockw();
     // Try to perform Wall Kick. Note that no offset (i. e. [0, 0]) is the
     // first Wall Kick that is tried first, therefore it isn't necesarry to
@@ -390,7 +394,7 @@ bool Active::rotateClockw(int& rotation_point) {
  *
  * @return whether the rotation was successful
  */
-bool Active::rotateCounterclockw(int& rotation_point) {
+bool Active::rotateCounterclockw(int &rotation_point) {
     TetroGrid_t new_grid = getGridRotatedCounterclockw();
     Wallkick_t wallkick;
     if (!tryWallkicksCC(new_grid, wallkick, rotation_point)) {
@@ -426,7 +430,8 @@ void Active::draw(SDL_Renderer *renderer) {
  */
 void Active::drawGhost(SDL_Renderer *renderer) {
     int ghost_y = getGhostY();
-    //  Don't draw the Ghost if it's at the same position as the actual Tetromino
+    //  Don't draw the Ghost if it's at the same position as the actual
+    //  Tetromino
     if (ghost_y == m_y) {
         return;
     }
@@ -436,7 +441,7 @@ void Active::drawGhost(SDL_Renderer *renderer) {
             for (int col = 0; col < 4; col++) {
                 if (m_grid[row][col]) {
                     pos = m_playfield.cellToPixelPosition(m_x + col,
-                                                           ghost_y + row);
+                                                          ghost_y + row);
                     Playfield::drawGhostMino(renderer, pos[0], pos[1]);
                 }
             }

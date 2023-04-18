@@ -9,7 +9,8 @@
 #include "playfield.h"
 
 Playfield::Playfield() : Playfield(0, 0) {}
-Playfield::Playfield(int draw_x, int draw_y) : m_draw_x(draw_x), m_draw_y(draw_y) {
+Playfield::Playfield(int draw_x, int draw_y)
+    : m_draw_x(draw_x), m_draw_y(draw_y) {
     reset();
 }
 

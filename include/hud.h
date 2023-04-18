@@ -7,10 +7,7 @@
 #include "scoring.h"
 #include "tetrovis.h"
 
-enum class TextRenderMode {
-    SHADED,
-    BLENDED
-};
+enum class TextRenderMode { SHADED, BLENDED };
 
 class HUD {
   private:
@@ -20,7 +17,7 @@ class HUD {
     TetroVisual m_hold_visual;
 
     // Game classes's gameplay info
-    const ScoringSystem& m_scoring;
+    const ScoringSystem &m_scoring;
 
     // Font
     TTF_Font *m_font;
@@ -46,7 +43,7 @@ class HUD {
     void renderScore(SDL_Renderer *renderer);
 
     void renderAllInfo(SDL_Renderer *renderer);
-    
+
     SDL_Texture *m_paused_texture = nullptr;
     SDL_Rect m_paused_rect;
     int m_paused_x, m_paused_y;
@@ -69,8 +66,8 @@ class HUD {
     void drawGameOverOverlay(SDL_Renderer *renderer);
 
   public:
-    HUD(const std::string& assets_path, const ScoringSystem& p_scoring);
-    HUD(const std::string& assets_path, const ScoringSystem& p_scoring,
+    HUD(const std::string &assets_path, const ScoringSystem &p_scoring);
+    HUD(const std::string &assets_path, const ScoringSystem &p_scoring,
         const std::array<TetrominoKind_t, QUEUE_LEN> &queue);
     ~HUD();
 

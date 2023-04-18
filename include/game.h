@@ -3,8 +3,8 @@
 #include "SDL.h"
 
 #include "active.h"
-#include "constants.h"
 #include "bag.h"
+#include "constants.h"
 #include "hud.h"
 #include "timer.h"
 
@@ -64,7 +64,7 @@ class Game {
     // Check if the last action was a T-Spin or a Mini T-Spin and award points
     // accordingly
     int checkTSpin();
-    void getCorners(bool& tl, bool& tr, bool& bl, bool& br);
+    void getCorners(bool &tl, bool &tr, bool &bl, bool &br);
     bool inTSlot();
     bool inMiniTSlot();
 
@@ -79,7 +79,7 @@ class Game {
     void restart();
 
   public:
-    Game(const std::string& assets_path);
+    Game(const std::string &assets_path);
 
     Playfield playfield;
     Active active;
@@ -90,4 +90,3 @@ class Game {
     void handleEvent(const SDL_Event &e);
     void draw(SDL_Renderer *renderer);
 };
-

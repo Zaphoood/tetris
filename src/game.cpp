@@ -6,9 +6,10 @@
 
 using cl = std::chrono::steady_clock;
 
-Game::Game(const std::string& assets_path)
+Game::Game(const std::string &assets_path)
     : playfield(PLAYFIELD_DRAW_X, PLAYFIELD_DRAW_Y),
-      active(m_bag.popQueue(), playfield), m_hud(assets_path, m_scoring), m_scoring() {
+      active(m_bag.popQueue(), playfield), m_hud(assets_path, m_scoring),
+      m_scoring() {
     // Don't set m_hud's queue in initializer list since the order of
     // initialization is not guaranteed
     respawnActive();
@@ -46,8 +47,7 @@ void Game::update() {
         return;
     }
 
-    cl::time_point now =
-        cl::now();
+    cl::time_point now = cl::now();
     if (m_moving_right) {
         if (m_next_mv_right < now) {
             moveRight();
@@ -59,7 +59,8 @@ void Game::update() {
         }
     }
 
-    // Check if the falling Tetromino has made surface contact; if so, schedule lock down timer
+    // Check if the falling Tetromino has made surface contact; if so, schedule
+    // lock down timer
     if (!active.canStepDown()) {
         if (!m_surface_contact) {
             m_surface_contact = true;
@@ -92,10 +93,12 @@ void Game::update() {
         }
     }
 
-    // Limit framerate; note that the variable `now` holds the time since epoch at
-    // the start of this frame
+    // Limit framerate; note that the variable `now` holds the time since epoch
+    // at the start of this frame
     std::this_thread::sleep_for(std::chrono::milliseconds(
-          MIN_FRAMETIME_MS - (std::chrono::duration_cast<std::chrono::milliseconds>(cl::now() - now)).count()));
+        MIN_FRAMETIME_MS -
+        (std::chrono::duration_cast<std::chrono::milliseconds>(cl::now() - now))
+            .count()));
 }
 
 GameState Game::getState() {
@@ -129,16 +132,19 @@ bool Game::performSoftDrop() {
  * Reset the soft drop timer
  */
 void Game::resetSoftDropTimer() {
-    m_next_soft_drop = cl::now() +
-        std::chrono::milliseconds((int) (m_scoring.getFallSpeedMs() * SOFT_DROP_DELAY_MULT));
+    m_next_soft_drop =
+        cl::now() + std::chrono::milliseconds((int)(m_scoring.getFallSpeedMs() *
+                                                    SOFT_DROP_DELAY_MULT));
 }
 
 /**
  * Schedule the next soft drop
  */
 void Game::incSoftDropTimer() {
-    m_next_soft_drop = m_next_soft_drop +
-        std::chrono::milliseconds((int) (m_scoring.getFallSpeedMs() * SOFT_DROP_DELAY_MULT));
+    m_next_soft_drop =
+        m_next_soft_drop +
+        std::chrono::milliseconds(
+            (int)(m_scoring.getFallSpeedMs() * SOFT_DROP_DELAY_MULT));
 }
 
 /**
@@ -153,14 +159,16 @@ bool Game::performFall() {
  * Reset the fall timer.
  */
 void Game::resetFallTimer() {
-    m_next_fall = cl::now() + std::chrono::milliseconds(m_scoring.getFallSpeedMs());
+    m_next_fall =
+        cl::now() + std::chrono::milliseconds(m_scoring.getFallSpeedMs());
 }
 
 /**
  * Schedule the next fall
  */
 void Game::incFallTimer() {
-    m_next_fall = m_next_fall + std::chrono::milliseconds(m_scoring.getFallSpeedMs());
+    m_next_fall =
+        m_next_fall + std::chrono::milliseconds(m_scoring.getFallSpeedMs());
 }
 
 void Game::scheduleLockDown() {
@@ -168,7 +176,8 @@ void Game::scheduleLockDown() {
 }
 
 /**
- * Handle any event. Should be called by the main loop with all events that occur.
+ * Handle any event. Should be called by the main loop with all events that
+ * occur.
  *
  * @param an event
  */
@@ -179,28 +188,32 @@ void Game::handleEvent(const SDL_Event &e) {
         if (!e.key.repeat) {
             switch (e.key.keysym.sym) {
             case SDLK_RIGHT:
-                if (m_state == GameState::Paused) break;
+                if (m_state == GameState::Paused)
+                    break;
                 if (m_state == GameState::Running) {
                     initMoveRight();
                     m_last_spin = false;
                 }
                 break;
             case SDLK_LEFT:
-                if (m_state == GameState::Paused) break;
+                if (m_state == GameState::Paused)
+                    break;
                 if (m_state == GameState::Running) {
                     initMoveLeft();
                     m_last_spin = false;
                 }
                 break;
             case SDLK_DOWN:
-                if (m_state == GameState::Paused) break;
+                if (m_state == GameState::Paused)
+                    break;
                 if (m_state == GameState::Running) {
                     startSoftDropping();
                     m_last_spin = false;
                 }
                 break;
             case SDLK_UP:
-                if (m_state == GameState::Paused) break;
+                if (m_state == GameState::Paused)
+                    break;
                 if (m_state == GameState::Running) {
                     active.rotateClockw(m_last_rotation_point);
                     m_last_spin = true;
@@ -209,7 +222,8 @@ void Game::handleEvent(const SDL_Event &e) {
                 break;
             case SDLK_LCTRL:
             case SDLK_RCTRL:
-                if (m_state == GameState::Paused) break;
+                if (m_state == GameState::Paused)
+                    break;
                 if (m_state == GameState::Running) {
                     active.rotateCounterclockw(m_last_rotation_point);
                     m_last_spin = true;
@@ -217,7 +231,8 @@ void Game::handleEvent(const SDL_Event &e) {
                 }
                 break;
             case SDLK_SPACE:
-                if (m_state == GameState::Paused) break;
+                if (m_state == GameState::Paused)
+                    break;
                 if (m_state == GameState::Running) {
                     m_scoring.onHardDrop(active.hardDrop());
                     lockDownAndRespawnActive();
@@ -225,7 +240,8 @@ void Game::handleEvent(const SDL_Event &e) {
                 }
                 break;
             case SDLK_c:
-                if (m_state == GameState::Paused) break;
+                if (m_state == GameState::Paused)
+                    break;
                 if (m_state == GameState::Running) {
                     hold();
                     m_last_spin = false;
@@ -235,8 +251,7 @@ void Game::handleEvent(const SDL_Event &e) {
                 if (m_state == GameState::Paused) {
                     m_next_fall.resume();
                     m_next_soft_drop.resume();
-                }
-                else {
+                } else {
                     m_next_fall.pause();
                     m_next_soft_drop.pause();
                 }
@@ -279,8 +294,8 @@ void Game::initMoveRight() {
         moveRight();
         // Override the timer for the next right move set by moveRight
         // Instead, set initial delay
-        m_next_mv_right = cl::now() +
-                          std::chrono::milliseconds(KEY_INIT_DELAY_MS);
+        m_next_mv_right =
+            cl::now() + std::chrono::milliseconds(KEY_INIT_DELAY_MS);
     }
 }
 
@@ -289,7 +304,7 @@ void Game::initMoveRight() {
  */
 void Game::stopMoveRight() {
     m_moving_right = false;
-    const Uint8* keystate = SDL_GetKeyboardState(NULL);
+    const Uint8 *keystate = SDL_GetKeyboardState(NULL);
     if (keystate[SDL_SCANCODE_LEFT] && m_state == GameState::Running) {
         initMoveLeft();
     }
@@ -319,8 +334,8 @@ void Game::initMoveLeft() {
         moveLeft();
         // Override the timer for the next left move set by moveLeft
         // Instead, set initial delay
-        m_next_mv_left = cl::now() +
-                         std::chrono::milliseconds(KEY_INIT_DELAY_MS);
+        m_next_mv_left =
+            cl::now() + std::chrono::milliseconds(KEY_INIT_DELAY_MS);
     }
 }
 
@@ -329,7 +344,7 @@ void Game::initMoveLeft() {
  */
 void Game::stopMoveLeft() {
     m_moving_left = false;
-    const Uint8* keystate = SDL_GetKeyboardState(NULL);
+    const Uint8 *keystate = SDL_GetKeyboardState(NULL);
     if (keystate[SDL_SCANCODE_RIGHT] && m_state == GameState::Running) {
         initMoveRight();
     }
@@ -347,8 +362,8 @@ void Game::moveLeft() {
 }
 
 /**
- * Put the current Tetromino in the "Hold" area and replace it with the Tetromino
- * that is currently m_held, spawning it at the top of the Playfield
+ * Put the current Tetromino in the "Hold" area and replace it with the
+ * Tetromino that is currently m_held, spawning it at the top of the Playfield
  */
 void Game::hold() {
     if (m_can_hold) {
@@ -381,7 +396,6 @@ void Game::draw(SDL_Renderer *renderer) {
     m_hud.draw(renderer, m_state);
 }
 
-
 /**
  * Check whether the last lock down constitutes a T-Spin or a Mini T-Spin
  *
@@ -409,7 +423,7 @@ int Game::checkTSpin() {
 /**
  * Check if the corners surrounding a T-Tetromino are obstructed.
  */
-void Game::getCorners(bool& tl, bool& tr, bool& bl, bool& br) {
+void Game::getCorners(bool &tl, bool &tr, bool &bl, bool &br) {
     // TODO: Maybe use bitmask instead of bools
     // clang-format off
     tl = playfield.isObstructed(active.m_x,     active.m_y);
@@ -527,4 +541,3 @@ bool Game::respawnActiveWithKind(TetrominoKind_t kind) {
     m_hud.setQueue(m_bag.getQueue());
     return true;
 }
-

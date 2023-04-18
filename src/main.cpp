@@ -1,12 +1,12 @@
 #include <chrono>
-#include <iostream>
 #include <filesystem>
+#include <iostream>
 
 #include "SDL.h"
 
-#include "game.h"
-#include "file.h"
 #include "constants.h"
+#include "file.h"
+#include "game.h"
 
 int main(int argc, char *argv[]) {
     // Initialize SDL and create window
@@ -19,7 +19,8 @@ int main(int argc, char *argv[]) {
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
 
     std::string program_name = absolute_path_to_exec(std::string{argv[0]});
-    std::string assets_path = std::filesystem::weakly_canonical(program_name + "/../../assets/");
+    std::string assets_path =
+        std::filesystem::weakly_canonical(program_name + "/../../assets/");
     Game game(assets_path);
 
     bool is_running = true;
@@ -38,7 +39,8 @@ int main(int argc, char *argv[]) {
 
         game.update();
 
-        SDL_SetRenderDrawColor(renderer, BACKGROUND.r, BACKGROUND.g, BACKGROUND.b, BACKGROUND.a);
+        SDL_SetRenderDrawColor(renderer, BACKGROUND.r, BACKGROUND.g,
+                               BACKGROUND.b, BACKGROUND.a);
         SDL_RenderClear(renderer);
         game.draw(renderer);
         SDL_RenderPresent(renderer);
