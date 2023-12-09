@@ -1,4 +1,5 @@
 # Tetris
+
 A simple Tetris clone written in C++ using the SDL2 library.
 
 ## Dependencies

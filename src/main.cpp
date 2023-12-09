@@ -18,9 +18,19 @@ int main(int argc, char *argv[]) {
                          SDL_WINDOWPOS_CENTERED, WINDOW_X, WINDOW_Y, 0);
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
 
+#ifdef RELEASE
+    std::cout << "Release mode\n";
+    const char *home = std::getenv("HOME");
+    if (home == NULL) {
+        std::cerr << "ERROR: HOME variable not set." << std::endl;
+    }
+    std::string assets_path = std::string(home) + "/.fonts";
+#else
+    std::cout << "Debug mode\n";
     std::string program_name = absolute_path_to_exec(std::string{argv[0]});
     std::string assets_path =
         std::filesystem::weakly_canonical(program_name + "/../../assets/");
+#endif
     Game game(assets_path);
 
     bool is_running = true;

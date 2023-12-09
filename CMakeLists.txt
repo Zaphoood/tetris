@@ -27,4 +27,12 @@ target_include_directories(tetris PRIVATE
     /usr/include/SDL2
 )
 
+target_compile_definitions(tetris
+  PRIVATE
+  $<$<CONFIG:Release>: RELEASE>
+  $<$<CONFIG:MinSizeRel>: RELEASE>
+  $<$<CONFIG:RelWithDebInfo>: RELEASE>
+  )
+
+install(FILES assets/futura-medium.ttf DESTINATION $ENV{HOME}/.fonts)
 install(TARGETS tetris DESTINATION bin)

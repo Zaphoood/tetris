@@ -11,7 +11,7 @@ HUD::HUD(const std::string &assets_path, const ScoringSystem &p_scoring)
     std::string font_path = assets_path + FONT_PATH_RELATIVE;
     m_font = TTF_OpenFont(font_path.c_str(), FONT_SIZE);
     if (!m_font) {
-        std::cout << "ERROR: Could not load font.\n";
+        std::cout << "ERROR: Failed to load font from " << font_path << "\n";
         exit(1);
     }
     reset();
